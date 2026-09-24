@@ -12,6 +12,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Sinh ra boi `npm run db:pull`, sua tay se bi ghi de.
+    "src/db/schema.ts",
+    "src/db/relations.ts",
   ]),
 ]);
 

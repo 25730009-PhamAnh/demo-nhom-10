@@ -1,0 +1,374 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Báo cáo — Sen Vàng Hotel</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+body{margin:0;font-family:'Be Vietnam Pro',system-ui,sans-serif;background:#F3EFE8;color:#1B1916;-webkit-font-smoothing:antialiased}
+a{color:#14483F}
+a:hover{color:#0E3730}
+.sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+</style>
+</helmet>
+<div style="width: 1440px; height: 1024px; box-sizing: border-box; display: flex; background: #F3EFE8;">
+
+  <aside style="width: 248px; flex-shrink: 0; box-sizing: border-box; background: #13332E; display: flex; flex-direction: column;">
+    <div style="padding: 26px 22px 18px 22px; display: flex; flex-direction: column; gap: 3px;">
+      <div style="display: flex; align-items: center; gap: 11px;">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#C9A227" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21c-4.4 0-8-3.1-8-7 3 0 5.7 1.3 7.2 3.4"/><path d="M12 21c4.4 0 8-3.1 8-7-3 0-5.7 1.3-7.2 3.4"/><path d="M12 17.5c-2.1-2.7-2.1-6.9 0-14.5 2.1 7.6 2.1 11.8 0 14.5z"/></svg>
+        <span style="font-family: 'Playfair Display', Georgia, serif; font-size: 19px; font-weight: 700; color: #FFFFFF; letter-spacing: 0.07em;">SEN VÀNG</span>
+      </div>
+      <span style="font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: #8AA29B; padding-left: 37px;">Hotel Management</span>
+    </div>
+
+    <nav aria-label="Điều hướng chính" style="flex-grow: 1; padding: 6px 14px; display: flex; flex-direction: column; gap: 2px;">
+      <sc-for list="{{nav}}" as="n" hint-placeholder-count="8">
+        <a href="{{n.href}}" style="display: flex; align-items: center; gap: 11px; height: 44px; padding: 0 12px; border-radius: 9px; text-decoration: none; font-size: 13.5px; font-weight: {{n.weight}}; color: {{n.color}}; background: {{n.bg}};">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0;"><path d="{{n.d}}"/></svg>
+          <span style="flex-grow: 1;">{{n.label}}</span>
+          <sc-if value="{{n.on}}" hint-placeholder-val="{{true}}"><span style="width: 5px; height: 5px; border-radius: 50%; background: #C9A227;"></span></sc-if>
+        </a>
+      </sc-for>
+    </nav>
+
+    <div style="padding: 12px 14px 16px 14px; display: flex; flex-direction: column; gap: 2px; border-top: 1px solid rgba(255,255,255,0.09);">
+      <div style="display: flex; align-items: center; gap: 10px; padding: 10px 12px;">
+        <span style="width: 34px; height: 34px; flex-shrink: 0; border-radius: 50%; background: #1E5146; color: #E8F1ED; font-size: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center;">TT</span>
+        <span style="flex-grow: 1; display: flex; flex-direction: column; gap: 1px;">
+          <span style="font-size: 13px; font-weight: 500; color: #FFFFFF;">Trần Lệ Thu</span>
+          <span style="font-size: 11px; color: #8AA29B;">Lễ tân · TK0007</span>
+        </span>
+      </div>
+      <a href="Login.dc.html" style="display: flex; align-items: center; gap: 11px; height: 42px; padding: 0 12px; border-radius: 9px; text-decoration: none; font-size: 13px; color: #9FB5AE;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+        <span>Đăng xuất</span>
+      </a>
+    </div>
+  </aside>
+
+  <div style="flex-grow: 1; min-width: 0; display: flex; flex-direction: column;">
+
+    <header style="height: 76px; flex-shrink: 0; box-sizing: border-box; background: #FFFFFF; border-bottom: 1px solid #E5DED3; padding: 0 32px; display: flex; align-items: center; gap: 18px;">
+      <div style="display: flex; flex-direction: column; gap: 2px;">
+        <h1 style="margin: 0; font-family: 'Playfair Display', Georgia, serif; font-size: 22px; font-weight: 600; color: #1B1916;">Báo cáo doanh thu</h1>
+        <span style="font-size: 12px; color: #7B7269;">Kỳ 12 tháng · tính đến 23/09/2026</span>
+      </div>
+      <span style="flex-grow: 1;"></span>
+      <button type="button" style="height: 40px; display: flex; align-items: center; gap: 8px; padding: 0 16px; border: 1px solid #DCD5C9; border-radius: 10px; background: #FFFFFF; color: #57504A; font-family: inherit; font-size: 13.5px; font-weight: 500; cursor: pointer;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg>
+        <span>Xuất Excel</span>
+      </button>
+      <button type="button" style="height: 40px; display: flex; align-items: center; gap: 8px; padding: 0 18px; border: 0; border-radius: 10px; background: #14483F; color: #FFFFFF; font-family: inherit; font-size: 13.5px; font-weight: 600; cursor: pointer;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z"/></svg>
+        <span>In báo cáo</span>
+      </button>
+    </header>
+
+    <main style="flex-grow: 1; min-height: 0; box-sizing: border-box; padding: 28px 32px; display: flex; flex-direction: column; gap: 20px;">
+
+      <section style="height: 64px; flex-shrink: 0; box-sizing: border-box; padding: 0 16px; background: #FFFFFF; border: 1px solid #E5DED3; border-radius: 14px; display: flex; align-items: center; gap: 14px;">
+        <div style="display: flex; gap: 4px; padding: 3px; border-radius: 10px; background: #F3EFE8;">
+          <button type="button" style="height: 34px; padding: 0 15px; border: 0; border-radius: 8px; background: transparent; color: #7B7269; font-family: inherit; font-size: 12.5px; cursor: pointer;">Hôm nay</button>
+          <button type="button" style="height: 34px; padding: 0 15px; border: 0; border-radius: 8px; background: transparent; color: #7B7269; font-family: inherit; font-size: 12.5px; cursor: pointer;">Tuần này</button>
+          <button type="button" style="height: 34px; padding: 0 15px; border: 0; border-radius: 8px; background: transparent; color: #7B7269; font-family: inherit; font-size: 12.5px; cursor: pointer;">Tháng này</button>
+          <button type="button" aria-pressed="true" style="height: 34px; padding: 0 15px; border: 0; border-radius: 8px; background: #FFFFFF; color: #1B1916; font-family: inherit; font-size: 12.5px; font-weight: 600; cursor: pointer;">12 tháng</button>
+        </div>
+        <span style="width: 1px; height: 24px; background: #E5DED3;"></span>
+        <div style="display: flex; align-items: center; gap: 9px;">
+          <label for="tu" style="font-size: 12.5px; color: #7B7269;">Từ</label>
+          <input id="tu" type="text" value="01/10/2025" style="width: 128px; height: 36px; box-sizing: border-box; padding: 0 12px; border: 1px solid #E5DED3; border-radius: 9px; background: #FAF7F1; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 12.5px; color: #1B1916;">
+          <label for="den" style="font-size: 12.5px; color: #7B7269;">đến</label>
+          <input id="den" type="text" value="23/09/2026" style="width: 128px; height: 36px; box-sizing: border-box; padding: 0 12px; border: 1px solid #E5DED3; border-radius: 9px; background: #FAF7F1; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 12.5px; color: #1B1916;">
+        </div>
+        <span style="flex-grow: 1;"></span>
+        <label for="loaibc" class="sr">Loại báo cáo</label>
+        <select id="loaibc" style="height: 36px; padding: 0 10px; border: 1px solid #E5DED3; border-radius: 9px; background: #FAF7F1; font-family: inherit; font-size: 12.5px; color: #1B1916;">
+          <option>Tất cả loại phòng</option>
+          <option>Phòng Đơn Standard</option>
+          <option>Phòng Đôi VIP</option>
+        </select>
+      </section>
+
+      <section style="height: 116px; flex-shrink: 0; display: flex; gap: 20px;">
+        <div style="flex-grow: 1; flex-basis: 0; box-sizing: border-box; padding: 17px 20px; background: #FFFFFF; border: 1px solid #E5DED3; border-radius: 14px; display: flex; flex-direction: column; gap: 9px;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="flex-grow: 1; font-size: 10.5px; font-weight: 600; letter-spacing: 0.09em; text-transform: uppercase; color: #857C73;">Doanh thu tháng 09</span>
+            <span style="display: flex; align-items: center; gap: 3px; padding: 2px 7px; border-radius: 20px; background: #E3F0E9; color: #14664B; font-size: 11px; font-weight: 600;">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 15 7-7 7 7"/></svg>4%
+            </span>
+          </div>
+          <span style="font-family: 'Playfair Display', Georgia, serif; font-size: 30px; font-weight: 600; line-height: 1; color: #1B1916;">438.200.000 ₫</span>
+          <span style="font-size: 12px; color: #7B7269;">Đến hết 23/09 · còn 7 ngày</span>
+        </div>
+        <div style="flex-grow: 1; flex-basis: 0; box-sizing: border-box; padding: 17px 20px; background: #FFFFFF; border: 1px solid #E5DED3; border-radius: 14px; display: flex; flex-direction: column; gap: 9px;">
+          <span style="font-size: 10.5px; font-weight: 600; letter-spacing: 0.09em; text-transform: uppercase; color: #857C73;">Công suất trung bình</span>
+          <span style="font-family: 'Playfair Display', Georgia, serif; font-size: 30px; font-weight: 600; line-height: 1; color: #1B1916;">68%</span>
+          <span style="font-size: 12px; color: #7B7269;">Trung bình 12 tháng gần nhất</span>
+        </div>
+        <div style="flex-grow: 1; flex-basis: 0; box-sizing: border-box; padding: 17px 20px; background: #FFFFFF; border: 1px solid #E5DED3; border-radius: 14px; display: flex; flex-direction: column; gap: 9px;">
+          <span style="font-size: 10.5px; font-weight: 600; letter-spacing: 0.09em; text-transform: uppercase; color: #857C73;">Giá bán TB mỗi đêm</span>
+          <span style="font-family: 'Playfair Display', Georgia, serif; font-size: 30px; font-weight: 600; line-height: 1; color: #1B1916;">742.000 ₫</span>
+          <span style="font-size: 12px; color: #7B7269;">Tổng tiền phòng ÷ số đêm bán</span>
+        </div>
+        <div style="flex-grow: 1; flex-basis: 0; box-sizing: border-box; padding: 17px 20px; background: #FFFFFF; border: 1px solid #E5DED3; border-radius: 14px; display: flex; flex-direction: column; gap: 9px;">
+          <span style="font-size: 10.5px; font-weight: 600; letter-spacing: 0.09em; text-transform: uppercase; color: #857C73;">Phiếu đặt trong kỳ</span>
+          <span style="font-family: 'Playfair Display', Georgia, serif; font-size: 30px; font-weight: 600; line-height: 1; color: #1B1916;">312</span>
+          <span style="font-size: 12px; color: #8C3A31;">9 phiếu bị hủy · 4 no-show</span>
+        </div>
+      </section>
+
+      <section style="height: 300px; flex-shrink: 0; display: flex; gap: 20px;">
+
+        <div style="width: 740px; flex-shrink: 0; box-sizing: border-box; padding: 20px 24px; background: #FFFFFF; border: 1px solid #E5DED3; border-radius: 14px; display: flex; flex-direction: column; gap: 16px;">
+          <div style="display: flex; align-items: baseline; gap: 12px;">
+            <h2 style="margin: 0; flex-grow: 1; font-size: 15px; font-weight: 600; color: #1B1916;">Doanh thu theo tháng</h2>
+            <span style="font-size: 12px; color: #857C73;">Đơn vị: triệu đồng · T9/26 tính đến 23/09</span>
+          </div>
+
+          <div style="flex-grow: 1; min-height: 0; display: flex; gap: 12px;">
+            <div style="width: 40px; flex-shrink: 0; display: flex; flex-direction: column; justify-content: space-between; align-items: flex-end; padding-bottom: 22px;">
+              <span style="font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 10.5px; color: #948A80;">480</span>
+              <span style="font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 10.5px; color: #948A80;">320</span>
+              <span style="font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 10.5px; color: #948A80;">160</span>
+              <span style="font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 10.5px; color: #948A80;">0</span>
+            </div>
+            <div style="flex-grow: 1; min-width: 0; display: flex; flex-direction: column; gap: 0;">
+              <div style="flex-grow: 1; min-height: 0; display: flex; align-items: flex-end; gap: 12px; border-bottom: 1px solid #E5DED3;">
+                <sc-for list="{{bars}}" as="b" hint-placeholder-count="12">
+                  <div title="{{b.tip}}" style="flex-grow: 1; flex-basis: 0; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; align-items: stretch; gap: 5px;">
+                    <sc-if value="{{b.nhan}}" hint-placeholder-val="{{false}}">
+                      <span style="text-align: center; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 10.5px; font-weight: 500; color: #14483F;">{{b.v}}</span>
+                    </sc-if>
+                    <span style="height: {{b.h}}; border-radius: 4px 4px 0 0; background: {{b.mau}};"></span>
+                  </div>
+                </sc-for>
+              </div>
+              <div style="height: 22px; flex-shrink: 0; display: flex; align-items: center; gap: 12px;">
+                <sc-for list="{{bars}}" as="b" hint-placeholder-count="12">
+                  <span style="flex-grow: 1; flex-basis: 0; text-align: center; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 10.5px; color: {{b.nhanMau}};">{{b.thang}}</span>
+                </sc-for>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="flex-grow: 1; min-width: 0; box-sizing: border-box; padding: 20px; background: #FFFFFF; border: 1px solid #E5DED3; border-radius: 14px; display: flex; flex-direction: column; gap: 16px;">
+          <h2 style="margin: 0; font-size: 15px; font-weight: 600; color: #1B1916;">Cơ cấu doanh thu</h2>
+
+          <div style="height: 16px; flex-shrink: 0; display: flex; gap: 2px;">
+            <span style="width: 76%; border-radius: 4px 0 0 4px; background: #1B8A6A;"></span>
+            <span style="width: 19%; background: #B57C10;"></span>
+            <span style="flex-grow: 1; border-radius: 0 4px 4px 0; background: #4A72C0;"></span>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 12px;">
+            <div style="display: flex; align-items: baseline; gap: 10px;">
+              <span style="width: 9px; height: 9px; flex-shrink: 0; border-radius: 2px; background: #1B8A6A;"></span>
+              <span style="flex-grow: 1; font-size: 13px; color: #1B1916;">Tiền phòng</span>
+              <span style="font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 12.5px; color: #1B1916;">333,0 tr</span>
+              <span style="width: 40px; text-align: right; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 12.5px; color: #7B7269;">76%</span>
+            </div>
+            <div style="display: flex; align-items: baseline; gap: 10px;">
+              <span style="width: 9px; height: 9px; flex-shrink: 0; border-radius: 2px; background: #B57C10;"></span>
+              <span style="flex-grow: 1; font-size: 13px; color: #1B1916;">Dịch vụ</span>
+              <span style="font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 12.5px; color: #1B1916;">83,3 tr</span>
+              <span style="width: 40px; text-align: right; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 12.5px; color: #7B7269;">19%</span>
+            </div>
+            <div style="display: flex; align-items: baseline; gap: 10px;">
+              <span style="width: 9px; height: 9px; flex-shrink: 0; border-radius: 2px; background: #4A72C0;"></span>
+              <span style="flex-grow: 1; font-size: 13px; color: #1B1916;">Phụ thu</span>
+              <span style="font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 12.5px; color: #1B1916;">21,9 tr</span>
+              <span style="width: 40px; text-align: right; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 12.5px; color: #7B7269;">5%</span>
+            </div>
+          </div>
+
+          <span style="height: 1px; background: #F0EAE0;"></span>
+
+          <div style="display: flex; flex-direction: column; gap: 11px;">
+            <h3 style="margin: 0; font-size: 12.5px; font-weight: 600; color: #57504A;">Trạng thái hóa đơn trong kỳ</h3>
+            <div style="display: flex; align-items: baseline; gap: 10px;">
+              <span style="flex-grow: 1; font-size: 13px; color: #1B1916;">Đã thanh toán</span>
+              <span style="font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px; color: #14664B;">289</span>
+            </div>
+            <div style="display: flex; align-items: baseline; gap: 10px;">
+              <span style="flex-grow: 1; font-size: 13px; color: #1B1916;">Chưa thanh toán</span>
+              <span style="font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px; color: #8A5A0E;">14</span>
+            </div>
+            <div style="display: flex; align-items: baseline; gap: 10px;">
+              <span style="flex-grow: 1; font-size: 13px; color: #1B1916;">Đã hủy</span>
+              <span style="font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px; color: #8C3A31;">9</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section style="flex-grow: 1; min-height: 0; display: flex; gap: 20px;">
+
+        <div style="width: 740px; flex-shrink: 0; box-sizing: border-box; padding: 20px; background: #FFFFFF; border: 1px solid #E5DED3; border-radius: 14px; display: flex; flex-direction: column; gap: 14px;">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <h2 style="margin: 0; flex-grow: 1; font-size: 15px; font-weight: 600; color: #1B1916;">Hóa đơn gần đây</h2>
+            <a href="Invoice.dc.html" style="font-size: 12.5px; font-weight: 600; color: #14483F; text-decoration: none;">Xem tất cả</a>
+          </div>
+          <table style="width: 100%; border-collapse: separate; border-spacing: 0; table-layout: fixed;">
+            <thead>
+              <tr>
+                <th scope="col" style="width: 92px; text-align: left; padding: 0 10px 9px 0; font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #857C73; border-bottom: 1px solid #E5DED3;">Mã HĐ</th>
+                <th scope="col" style="text-align: left; padding: 0 10px 9px 0; font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #857C73; border-bottom: 1px solid #E5DED3;">Khách hàng</th>
+                <th scope="col" style="width: 70px; text-align: left; padding: 0 10px 9px 0; font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #857C73; border-bottom: 1px solid #E5DED3;">Phòng</th>
+                <th scope="col" style="width: 118px; text-align: left; padding: 0 10px 9px 0; font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #857C73; border-bottom: 1px solid #E5DED3;">Hình thức</th>
+                <th scope="col" style="width: 128px; text-align: right; padding: 0 10px 9px 0; font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #857C73; border-bottom: 1px solid #E5DED3;">Tổng tiền</th>
+                <th scope="col" style="width: 140px; text-align: left; padding: 0 0 9px 10px; font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #857C73; border-bottom: 1px solid #E5DED3;">Trạng thái</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="padding: 10px 10px 10px 0; border-bottom: 1px solid #F0EAE0; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 12.5px; color: #57504A;">HD0087</td>
+                <td style="padding: 10px 10px 10px 0; border-bottom: 1px solid #F0EAE0; font-size: 13px; color: #1B1916;">Nguyễn Minh Khôi</td>
+                <td style="padding: 10px 10px 10px 0; border-bottom: 1px solid #F0EAE0; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 12.5px; color: #1B1916;">305</td>
+                <td style="padding: 10px 10px 10px 0; border-bottom: 1px solid #F0EAE0; font-size: 12.5px; color: #57504A;">—</td>
+                <td style="padding: 10px 10px 10px 0; border-bottom: 1px solid #F0EAE0; text-align: right; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px; color: #1B1916;">3.770.000 ₫</td>
+                <td style="padding: 10px 0 10px 10px; border-bottom: 1px solid #F0EAE0;"><span style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 20px; background: #F7EFDD; color: #8A5A0E; font-size: 11.5px; font-weight: 600;"><span style="width: 6px; height: 6px; border-radius: 50%; background: #B57C10;"></span>Chưa thanh toán</span></td>
+              </tr>
+              <tr>
+                <td style="padding: 10px 10px 10px 0; border-bottom: 1px solid #F0EAE0; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 12.5px; color: #57504A;">HD0086</td>
+                <td style="padding: 10px 10px 10px 0; border-bottom: 1px solid #F0EAE0; font-size: 13px; color: #1B1916;">Hoàng Thị Lan</td>
+                <td style="padding: 10px 10px 10px 0; border-bottom: 1px solid #F0EAE0; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 12.5px; color: #1B1916;">310</td>
+                <td style="padding: 10px 10px 10px 0; border-bottom: 1px solid #F0EAE0; font-size: 12.5px; color: #57504A;">Chuyển khoản</td>
+                <td style="padding: 10px 10px 10px 0; border-bottom: 1px solid #F0EAE0; text-align: right; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px; color: #1B1916;">6.240.000 ₫</td>
+                <td style="padding: 10px 0 10px 10px; border-bottom: 1px solid #F0EAE0;"><span style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 20px; background: #E3F0E9; color: #14664B; font-size: 11.5px; font-weight: 600;"><span style="width: 6px; height: 6px; border-radius: 50%; background: #1B8A6A;"></span>Đã thanh toán</span></td>
+              </tr>
+              <tr>
+                <td style="padding: 10px 10px 10px 0; border-bottom: 1px solid #F0EAE0; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 12.5px; color: #57504A;">HD0085</td>
+                <td style="padding: 10px 10px 10px 0; border-bottom: 1px solid #F0EAE0; font-size: 13px; color: #1B1916;">Lâm Thảo Sương</td>
+                <td style="padding: 10px 10px 10px 0; border-bottom: 1px solid #F0EAE0; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 12.5px; color: #1B1916;">204</td>
+                <td style="padding: 10px 10px 10px 0; border-bottom: 1px solid #F0EAE0; font-size: 12.5px; color: #57504A;">Tiền mặt</td>
+                <td style="padding: 10px 10px 10px 0; border-bottom: 1px solid #F0EAE0; text-align: right; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px; color: #1B1916;">1.560.000 ₫</td>
+                <td style="padding: 10px 0 10px 10px; border-bottom: 1px solid #F0EAE0;"><span style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 20px; background: #E3F0E9; color: #14664B; font-size: 11.5px; font-weight: 600;"><span style="width: 6px; height: 6px; border-radius: 50%; background: #1B8A6A;"></span>Đã thanh toán</span></td>
+              </tr>
+              <tr>
+                <td style="padding: 10px 10px 10px 0; border-bottom: 1px solid #F0EAE0; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 12.5px; color: #57504A;">HD0084</td>
+                <td style="padding: 10px 10px 10px 0; border-bottom: 1px solid #F0EAE0; font-size: 13px; color: #1B1916;">Đặng Kim Ngân</td>
+                <td style="padding: 10px 10px 10px 0; border-bottom: 1px solid #F0EAE0; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 12.5px; color: #1B1916;">107</td>
+                <td style="padding: 10px 10px 10px 0; border-bottom: 1px solid #F0EAE0; font-size: 12.5px; color: #57504A;">—</td>
+                <td style="padding: 10px 10px 10px 0; border-bottom: 1px solid #F0EAE0; text-align: right; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px; color: #1B1916;">2.180.000 ₫</td>
+                <td style="padding: 10px 0 10px 10px; border-bottom: 1px solid #F0EAE0;"><span style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 20px; background: #F7EFDD; color: #8A5A0E; font-size: 11.5px; font-weight: 600;"><span style="width: 6px; height: 6px; border-radius: 50%; background: #B57C10;"></span>Chưa thanh toán</span></td>
+              </tr>
+              <tr>
+                <td style="padding: 10px 10px 10px 0; border-bottom: 1px solid #F0EAE0; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 12.5px; color: #57504A;">HD0083</td>
+                <td style="padding: 10px 10px 10px 0; border-bottom: 1px solid #F0EAE0; font-size: 13px; color: #1B1916;">Trịnh Văn Kha</td>
+                <td style="padding: 10px 10px 10px 0; border-bottom: 1px solid #F0EAE0; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 12.5px; color: #1B1916;">302</td>
+                <td style="padding: 10px 10px 10px 0; border-bottom: 1px solid #F0EAE0; font-size: 12.5px; color: #57504A;">Thẻ</td>
+                <td style="padding: 10px 10px 10px 0; border-bottom: 1px solid #F0EAE0; text-align: right; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px; color: #1B1916;">4.925.000 ₫</td>
+                <td style="padding: 10px 0 10px 10px; border-bottom: 1px solid #F0EAE0;"><span style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 20px; background: #E3F0E9; color: #14664B; font-size: 11.5px; font-weight: 600;"><span style="width: 6px; height: 6px; border-radius: 50%; background: #1B8A6A;"></span>Đã thanh toán</span></td>
+              </tr>
+              <tr>
+                <td style="padding: 10px 10px 10px 0; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 12.5px; color: #57504A;">HD0082</td>
+                <td style="padding: 10px 10px 10px 0; font-size: 13px; color: #1B1916;">Phùng Gia Quý</td>
+                <td style="padding: 10px 10px 10px 0; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 12.5px; color: #1B1916;">202</td>
+                <td style="padding: 10px 10px 10px 0; font-size: 12.5px; color: #57504A;">—</td>
+                <td style="padding: 10px 10px 10px 0; text-align: right; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px; color: #857C73;">1.000.000 ₫</td>
+                <td style="padding: 10px 0 10px 10px;"><span style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 20px; background: #EFE9DF; color: #57504A; font-size: 11.5px; font-weight: 600;"><span style="width: 6px; height: 6px; border-radius: 50%; background: #A69C8F;"></span>Đã hủy</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div style="flex-grow: 1; min-width: 0; box-sizing: border-box; padding: 20px; background: #FFFFFF; border: 1px solid #E5DED3; border-radius: 14px; display: flex; flex-direction: column; gap: 16px;">
+          <h2 style="margin: 0; font-size: 15px; font-weight: 600; color: #1B1916;">Theo loại phòng</h2>
+
+          <div style="display: flex; flex-direction: column; gap: 9px;">
+            <div style="display: flex; align-items: baseline; gap: 10px;">
+              <span style="flex-grow: 1; font-size: 13px; font-weight: 500; color: #1B1916;">Phòng Đôi VIP</span>
+              <span style="font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 12.5px; color: #1B1916;">214,6 tr</span>
+            </div>
+            <span style="height: 10px; border-radius: 5px; background: #F3EFE8; display: flex;">
+              <span style="width: 64%; height: 10px; border-radius: 0 4px 4px 0; background: #1B8A6A;"></span>
+            </span>
+            <div style="display: flex; align-items: baseline; gap: 10px;">
+              <span style="flex-grow: 1; font-size: 11.5px; color: #7B7269;">289 đêm bán · công suất 72%</span>
+              <span style="font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 11.5px; color: #7B7269;">743.000 ₫/đêm</span>
+            </div>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 9px;">
+            <div style="display: flex; align-items: baseline; gap: 10px;">
+              <span style="flex-grow: 1; font-size: 13px; font-weight: 500; color: #1B1916;">Phòng Đơn Standard</span>
+              <span style="font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 12.5px; color: #1B1916;">118,4 tr</span>
+            </div>
+            <span style="height: 10px; border-radius: 5px; background: #F3EFE8; display: flex;">
+              <span style="width: 36%; height: 10px; border-radius: 0 4px 4px 0; background: #1B8A6A;"></span>
+            </span>
+            <div style="display: flex; align-items: baseline; gap: 10px;">
+              <span style="flex-grow: 1; font-size: 11.5px; color: #7B7269;">241 đêm bán · công suất 64%</span>
+              <span style="font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 11.5px; color: #7B7269;">491.000 ₫/đêm</span>
+            </div>
+          </div>
+
+          <div style="margin-top: auto; display: flex; align-items: baseline; gap: 12px; padding: 14px 16px; border-radius: 11px; background: #F1F7F4;">
+            <span style="flex-grow: 1; font-size: 12.5px; font-weight: 600; color: #14664B;">Tổng tiền phòng</span>
+            <span style="font-family: 'Playfair Display', Georgia, serif; font-size: 20px; font-weight: 600; color: #14483F;">333,0 tr</span>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1024}}'>
+class Component extends DCLogic {
+  navItems(active) {
+    const items = [
+      ['Tổng quan', 'Main.dc.html', 'M4 4h6v7H4zM14 4h6v4h-6zM14 12h6v8h-6zM4 15h6v5H4z'],
+      ['Sơ đồ phòng', 'Rooms.dc.html', 'M2 20v-8a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v8M4 10V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v4M12 4v6M2 17h20'],
+      ['Đặt phòng', 'Booking.dc.html', 'M8 2v4M16 2v4M3 10h18M21 13V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h8M16 19h6M19 16v6'],
+      ['Nhận & trả phòng', 'CheckInOut.dc.html', 'M8 3 4 7l4 4M4 7h16M16 21l4-4-4-4M20 17H4'],
+      ['Khách hàng', 'Customers.dc.html', 'M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8M22 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8'],
+      ['Dịch vụ', 'Services.dc.html', 'M3 20a1 1 0 0 1-1-1v-1a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v1a1 1 0 0 1-1 1zM20 16a8 8 0 1 0-16 0M12 4v4M10 4h4'],
+      ['Hóa đơn', 'Invoice.dc.html', 'M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1zM8 8h6M8 12h8M8 16h5'],
+      ['Báo cáo', 'Reports.dc.html', 'M3 3v16a2 2 0 0 0 2 2h16M18 17V9M13 17V5M8 17v-3']
+    ];
+    return items.map((it, i) => ({
+      label: it[0], href: it[1], d: it[2], on: i === active,
+      bg: i === active ? 'rgba(255,255,255,0.10)' : 'transparent',
+      color: i === active ? '#FFFFFF' : '#9FB5AE',
+      weight: i === active ? '600' : '400'
+    }));
+  }
+
+  renderVals() {
+    const data = [
+      ['T10/25', 286], ['T11/25', 312], ['T12/25', 398], ['T1/26', 342],
+      ['T2/26', 305], ['T3/26', 331], ['T4/26', 368], ['T5/26', 402],
+      ['T6/26', 447], ['T7/26', 421], ['T8/26', 465], ['T9/26', 438]
+    ];
+    const max = 480;
+    const last = data.length - 1;
+    let peak = 0;
+    data.forEach((d, i) => { if (d[1] > data[peak][1]) { peak = i; } });
+
+    const bars = data.map((d, i) => {
+      const nhan = i === peak || i === last;
+      return {
+        thang: d[0],
+        v: String(d[1]),
+        h: Math.round((d[1] / max) * 8200) / 100 + '%',
+        mau: '#1B8A6A',
+        nhan: nhan,
+        nhanMau: nhan ? '#57504A' : '#948A80',
+        tip: d[0] + ': ' + d[1] + ' triệu đồng'
+      };
+    });
+
+    return { nav: this.navItems(7), bars: bars };
+  }
+}
+</script>
+</body>
+</html>

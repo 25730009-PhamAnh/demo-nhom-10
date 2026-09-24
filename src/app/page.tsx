@@ -1,69 +1,161 @@
-import Image from "next/image";
+import { Badge } from "@/components/ui/badge";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { readDbSnapshot, type DbSnapshot } from "@/lib/db-check";
+import { formatVnd } from "@/lib/format";
 
-export default function Home() {
+// Trang nay doc database moi lan tai, khong duoc cache tinh.
+export const dynamic = "force-dynamic";
+
+/** Mau badge theo trang thai phong (CK_PHONG_TrangThai trong schema). */
+const ROOM_STATUS: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
+  Trong: { label: "Trống", variant: "secondary" },
+  DaDat: { label: "Đã đặt", variant: "default" },
+  DangSuDung: { label: "Đang sử dụng", variant: "default" },
+  DangDon: { label: "Đang dọn", variant: "outline" },
+  BaoTri: { label: "Bảo trì", variant: "destructive" },
+};
+
+export default async function Home() {
+  let snapshot: DbSnapshot | null = null;
+  let error: string | null = null;
+
+  try {
+    snapshot = await readDbSnapshot();
+  } catch (e) {
+    error = e instanceof Error ? e.message : String(e);
+  }
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+    <main className="mx-auto w-full max-w-5xl px-6 py-12">
+      <header className="mb-8">
+        <h1 className="text-3xl font-semibold tracking-tight">
+          Demo Quản lý khách sạn
+        </h1>
+        <p className="text-muted-foreground mt-2">
+          Next.js · Drizzle ORM · shadcn/ui · MySQL. Trang này chỉ để kiểm tra
+          kết nối tới database — chưa có màn hình nghiệp vụ nào.
+        </p>
+      </header>
+
+      {error ? <ConnectionError message={error} /> : null}
+      {snapshot ? <Snapshot data={snapshot} /> : null}
+    </main>
+  );
+}
+
+function ConnectionError({ message }: { message: string }) {
+  return (
+    <Card className="border-destructive/50">
+      <CardHeader>
+        <CardTitle className="text-destructive">
+          Không kết nối được database
+        </CardTitle>
+        <CardDescription>
+          Kiểm tra MySQL đã chạy chưa và DATABASE_URL trong{" "}
+          <code className="font-mono">.env.local</code> đã đúng chưa.
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <pre className="bg-muted overflow-x-auto rounded-md p-4 font-mono text-sm">
+          {message}
+        </pre>
+      </CardContent>
+    </Card>
+  );
+}
+
+function Snapshot({ data }: { data: DbSnapshot }) {
+  return (
+    <div className="flex flex-col gap-6">
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            Đã kết nối
+            <Badge variant="secondary" className="font-mono">
+              {data.databaseName}
+            </Badge>
+          </CardTitle>
+          <CardDescription>
+            MySQL {data.serverVersion} · {data.tableCounts.length} bảng ·{" "}
+            {data.tableCounts.reduce((sum, t) => sum + t.rows, 0)} dòng dữ liệu
+            mẫu
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <ul className="grid grid-cols-2 gap-x-6 gap-y-2 sm:grid-cols-3">
+            {data.tableCounts.map((t) => (
+              <li
+                key={t.table}
+                className="flex items-baseline justify-between gap-2 border-b pb-1"
+              >
+                <span className="truncate font-mono text-xs">{t.table}</span>
+                <span className="text-muted-foreground tabular-nums text-sm">
+                  {t.rows}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Danh sách phòng</CardTitle>
+          <CardDescription>
+            Đọc bằng Drizzle: PHONG join LOAI_PHONG.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Số phòng</TableHead>
+                <TableHead>Tầng</TableHead>
+                <TableHead>Loại phòng</TableHead>
+                <TableHead className="text-right">Đơn giá / đêm</TableHead>
+                <TableHead>Trạng thái</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {data.rooms.map((room) => {
+                const status = ROOM_STATUS[room.trangThai] ?? {
+                  label: room.trangThai,
+                  variant: "outline" as const,
+                };
+                return (
+                  <TableRow key={room.maPhong}>
+                    <TableCell className="font-medium">
+                      {room.soPhong}
+                    </TableCell>
+                    <TableCell className="tabular-nums">{room.tang}</TableCell>
+                    <TableCell>{room.tenLoaiPhong}</TableCell>
+                    <TableCell className="text-right tabular-nums">
+                      {formatVnd(room.donGiaNgay)}
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant={status.variant}>{status.label}</Badge>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
     </div>
   );
 }

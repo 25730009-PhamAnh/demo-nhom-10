@@ -1,0 +1,1267 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "prevId": "",
+  "version": "5",
+  "dialect": "mysql",
+  "tables": {
+    "BANG_GIA_PHONG": {
+      "name": "BANG_GIA_PHONG",
+      "columns": {
+        "MaBangGia": {
+          "autoincrement": false,
+          "name": "MaBangGia",
+          "type": "char(10)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "MaLoaiPhong": {
+          "autoincrement": false,
+          "name": "MaLoaiPhong",
+          "type": "char(10)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "HeSo": {
+          "default": "'1.00'",
+          "autoincrement": false,
+          "name": "HeSo",
+          "type": "decimal(4,2)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ApDungTuNgay": {
+          "autoincrement": false,
+          "name": "ApDungTuNgay",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "DenNgay": {
+          "autoincrement": false,
+          "name": "DenNgay",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "DonGia": {
+          "autoincrement": false,
+          "name": "DonGia",
+          "type": "decimal(18,2)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {
+        "BANG_GIA_PHONG_MaBangGia": {
+          "name": "BANG_GIA_PHONG_MaBangGia",
+          "columns": [
+            "MaBangGia"
+          ]
+        }
+      },
+      "indexes": {
+        "IX_BANG_GIA_PHONG_Loai_Ngay": {
+          "name": "IX_BANG_GIA_PHONG_Loai_Ngay",
+          "columns": [
+            "MaLoaiPhong",
+            "ApDungTuNgay",
+            "DenNgay"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "FK_BANG_GIA_PHONG_LOAI_PHONG": {
+          "name": "FK_BANG_GIA_PHONG_LOAI_PHONG",
+          "tableFrom": "BANG_GIA_PHONG",
+          "tableTo": "LOAI_PHONG",
+          "columnsFrom": [
+            "MaLoaiPhong"
+          ],
+          "columnsTo": [
+            "MaLoaiPhong"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {
+        "CK_BANG_GIA_PHONG_DonGia": {
+          "name": "CK_BANG_GIA_PHONG_DonGia",
+          "value": "(`DonGia` >= 0)"
+        },
+        "CK_BANG_GIA_PHONG_HeSo": {
+          "name": "CK_BANG_GIA_PHONG_HeSo",
+          "value": "(`HeSo` > 0)"
+        },
+        "CK_BANG_GIA_PHONG_Ngay": {
+          "name": "CK_BANG_GIA_PHONG_Ngay",
+          "value": "(`DenNgay` >= `ApDungTuNgay`)"
+        }
+      }
+    },
+    "CHI_TIET_DAT_PHONG": {
+      "name": "CHI_TIET_DAT_PHONG",
+      "columns": {
+        "MaDatPhong": {
+          "autoincrement": false,
+          "name": "MaDatPhong",
+          "type": "char(10)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "MaPhong": {
+          "autoincrement": false,
+          "name": "MaPhong",
+          "type": "char(10)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "GiaThueThoiDiem": {
+          "autoincrement": false,
+          "name": "GiaThueThoiDiem",
+          "type": "decimal(18,2)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "SoDem": {
+          "autoincrement": false,
+          "name": "SoDem",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ThanhTien": {
+          "autoincrement": false,
+          "name": "ThanhTien",
+          "type": "decimal(18,2)",
+          "primaryKey": false,
+          "notNull": false,
+          "generated": {
+            "as": "(`GiaThueThoiDiem` * `SoDem`)",
+            "type": "stored"
+          }
+        }
+      },
+      "compositePrimaryKeys": {
+        "CHI_TIET_DAT_PHONG_MaDatPhong_MaPhong": {
+          "name": "CHI_TIET_DAT_PHONG_MaDatPhong_MaPhong",
+          "columns": [
+            "MaDatPhong",
+            "MaPhong"
+          ]
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "FK_CHI_TIET_DAT_PHONG_PHIEU_DAT_PHONG": {
+          "name": "FK_CHI_TIET_DAT_PHONG_PHIEU_DAT_PHONG",
+          "tableFrom": "CHI_TIET_DAT_PHONG",
+          "tableTo": "PHIEU_DAT_PHONG",
+          "columnsFrom": [
+            "MaDatPhong"
+          ],
+          "columnsTo": [
+            "MaDatPhong"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        },
+        "FK_CHI_TIET_DAT_PHONG_PHONG": {
+          "name": "FK_CHI_TIET_DAT_PHONG_PHONG",
+          "tableFrom": "CHI_TIET_DAT_PHONG",
+          "tableTo": "PHONG",
+          "columnsFrom": [
+            "MaPhong"
+          ],
+          "columnsTo": [
+            "MaPhong"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {
+        "CK_CHI_TIET_DAT_PHONG_Gia": {
+          "name": "CK_CHI_TIET_DAT_PHONG_Gia",
+          "value": "(`GiaThueThoiDiem` >= 0)"
+        },
+        "CK_CHI_TIET_DAT_PHONG_SoDem": {
+          "name": "CK_CHI_TIET_DAT_PHONG_SoDem",
+          "value": "(`SoDem` > 0)"
+        }
+      }
+    },
+    "CHI_TIET_HOA_DON": {
+      "name": "CHI_TIET_HOA_DON",
+      "columns": {
+        "MaCTHD": {
+          "autoincrement": false,
+          "name": "MaCTHD",
+          "type": "char(10)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "MaHoaDon": {
+          "autoincrement": false,
+          "name": "MaHoaDon",
+          "type": "char(10)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "LoaiKhoanMuc": {
+          "autoincrement": false,
+          "name": "LoaiKhoanMuc",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "SoTien": {
+          "autoincrement": false,
+          "name": "SoTien",
+          "type": "decimal(18,2)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "GhiChu": {
+          "autoincrement": false,
+          "name": "GhiChu",
+          "type": "varchar(200)",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {
+        "CHI_TIET_HOA_DON_MaCTHD": {
+          "name": "CHI_TIET_HOA_DON_MaCTHD",
+          "columns": [
+            "MaCTHD"
+          ]
+        }
+      },
+      "indexes": {
+        "IX_CHI_TIET_HOA_DON_MaHoaDon": {
+          "name": "IX_CHI_TIET_HOA_DON_MaHoaDon",
+          "columns": [
+            "MaHoaDon"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "FK_CHI_TIET_HOA_DON_HOA_DON": {
+          "name": "FK_CHI_TIET_HOA_DON_HOA_DON",
+          "tableFrom": "CHI_TIET_HOA_DON",
+          "tableTo": "HOA_DON",
+          "columnsFrom": [
+            "MaHoaDon"
+          ],
+          "columnsTo": [
+            "MaHoaDon"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {
+        "CK_CHI_TIET_HOA_DON_LoaiKhoanMuc": {
+          "name": "CK_CHI_TIET_HOA_DON_LoaiKhoanMuc",
+          "value": "(`LoaiKhoanMuc` in (_utf8mb4\\'TienPhong\\',_utf8mb4\\'DichVu\\',_utf8mb4\\'PhuThu\\',_utf8mb4\\'GiamGia\\',_utf8mb4\\'GiamTru\\',_utf8mb4\\'TongHop\\'))"
+        },
+        "CK_CHI_TIET_HOA_DON_SoTienTheoLoai": {
+          "name": "CK_CHI_TIET_HOA_DON_SoTienTheoLoai",
+          "value": "(((`LoaiKhoanMuc` in (_utf8mb4\\'TienPhong\\',_utf8mb4\\'DichVu\\',_utf8mb4\\'PhuThu\\',_utf8mb4\\'TongHop\\')) and (`SoTien` >= 0)) or ((`LoaiKhoanMuc` in (_utf8mb4\\'GiamGia\\',_utf8mb4\\'GiamTru\\')) and (`SoTien` <= 0)))"
+        }
+      }
+    },
+    "DICH_VU": {
+      "name": "DICH_VU",
+      "columns": {
+        "MaDV": {
+          "autoincrement": false,
+          "name": "MaDV",
+          "type": "char(10)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "TenDV": {
+          "autoincrement": false,
+          "name": "TenDV",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "DonViTinh": {
+          "autoincrement": false,
+          "name": "DonViTinh",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "GiaDV": {
+          "autoincrement": false,
+          "name": "GiaDV",
+          "type": "decimal(18,2)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {
+        "DICH_VU_MaDV": {
+          "name": "DICH_VU_MaDV",
+          "columns": [
+            "MaDV"
+          ]
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {
+        "UQ_DICH_VU_Ten": {
+          "name": "UQ_DICH_VU_Ten",
+          "columns": [
+            "TenDV"
+          ]
+        }
+      },
+      "checkConstraint": {
+        "CK_DICH_VU_Gia": {
+          "name": "CK_DICH_VU_Gia",
+          "value": "(`GiaDV` >= 0)"
+        }
+      }
+    },
+    "DON_PHONG": {
+      "name": "DON_PHONG",
+      "columns": {
+        "MaDon": {
+          "autoincrement": false,
+          "name": "MaDon",
+          "type": "char(10)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "MaPhong": {
+          "autoincrement": false,
+          "name": "MaPhong",
+          "type": "char(10)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "MaTK": {
+          "autoincrement": false,
+          "name": "MaTK",
+          "type": "char(10)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ThoiGian": {
+          "default": "(CURRENT_TIMESTAMP)",
+          "autoincrement": false,
+          "name": "ThoiGian",
+          "type": "datetime",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "GhiChu": {
+          "autoincrement": false,
+          "name": "GhiChu",
+          "type": "varchar(200)",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {
+        "DON_PHONG_MaDon": {
+          "name": "DON_PHONG_MaDon",
+          "columns": [
+            "MaDon"
+          ]
+        }
+      },
+      "indexes": {
+        "IX_DON_PHONG_MaPhong_ThoiGian": {
+          "name": "IX_DON_PHONG_MaPhong_ThoiGian",
+          "columns": [
+            "MaPhong",
+            "ThoiGian"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "FK_DON_PHONG_PHONG": {
+          "name": "FK_DON_PHONG_PHONG",
+          "tableFrom": "DON_PHONG",
+          "tableTo": "PHONG",
+          "columnsFrom": [
+            "MaPhong"
+          ],
+          "columnsTo": [
+            "MaPhong"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        },
+        "FK_DON_PHONG_TAI_KHOAN": {
+          "name": "FK_DON_PHONG_TAI_KHOAN",
+          "tableFrom": "DON_PHONG",
+          "tableTo": "TAI_KHOAN",
+          "columnsFrom": [
+            "MaTK"
+          ],
+          "columnsTo": [
+            "MaTK"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "HOA_DON": {
+      "name": "HOA_DON",
+      "columns": {
+        "MaHoaDon": {
+          "autoincrement": false,
+          "name": "MaHoaDon",
+          "type": "char(10)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "MaDatPhong": {
+          "autoincrement": false,
+          "name": "MaDatPhong",
+          "type": "char(10)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "NgayLap": {
+          "default": "(CURRENT_TIMESTAMP)",
+          "autoincrement": false,
+          "name": "NgayLap",
+          "type": "datetime",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "TongTien": {
+          "default": "'0.00'",
+          "autoincrement": false,
+          "name": "TongTien",
+          "type": "decimal(18,2)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "LoaiThanhToan": {
+          "autoincrement": false,
+          "name": "LoaiThanhToan",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "TrangThai": {
+          "default": "'ChuaThanhToan'",
+          "autoincrement": false,
+          "name": "TrangThai",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {
+        "HOA_DON_MaHoaDon": {
+          "name": "HOA_DON_MaHoaDon",
+          "columns": [
+            "MaHoaDon"
+          ]
+        }
+      },
+      "indexes": {
+        "IX_HOA_DON_TrangThai": {
+          "name": "IX_HOA_DON_TrangThai",
+          "columns": [
+            "TrangThai"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "FK_HOA_DON_PHIEU_DAT_PHONG": {
+          "name": "FK_HOA_DON_PHIEU_DAT_PHONG",
+          "tableFrom": "HOA_DON",
+          "tableTo": "PHIEU_DAT_PHONG",
+          "columnsFrom": [
+            "MaDatPhong"
+          ],
+          "columnsTo": [
+            "MaDatPhong"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        }
+      },
+      "uniqueConstraints": {
+        "UQ_HOA_DON_MaDatPhong": {
+          "name": "UQ_HOA_DON_MaDatPhong",
+          "columns": [
+            "MaDatPhong"
+          ]
+        }
+      },
+      "checkConstraint": {
+        "CK_HOA_DON_LoaiThanhToan": {
+          "name": "CK_HOA_DON_LoaiThanhToan",
+          "value": "((`LoaiThanhToan` is null) or (`LoaiThanhToan` in (_utf8mb4\\'TienMat\\',_utf8mb4\\'ChuyenKhoan\\',_utf8mb4\\'The\\')))"
+        },
+        "CK_HOA_DON_ThanhToanHopLe": {
+          "name": "CK_HOA_DON_ThanhToanHopLe",
+          "value": "((`TrangThai` <> _utf8mb4\\'DaThanhToan\\') or (`LoaiThanhToan` is not null))"
+        },
+        "CK_HOA_DON_TongTien": {
+          "name": "CK_HOA_DON_TongTien",
+          "value": "(`TongTien` >= 0)"
+        },
+        "CK_HOA_DON_TrangThai": {
+          "name": "CK_HOA_DON_TrangThai",
+          "value": "(`TrangThai` in (_utf8mb4\\'ChuaThanhToan\\',_utf8mb4\\'DaThanhToan\\',_utf8mb4\\'DaHuy\\'))"
+        }
+      }
+    },
+    "KHACH_HANG": {
+      "name": "KHACH_HANG",
+      "columns": {
+        "MaKH": {
+          "autoincrement": false,
+          "name": "MaKH",
+          "type": "char(10)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "HoTen": {
+          "autoincrement": false,
+          "name": "HoTen",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "CCCD": {
+          "autoincrement": false,
+          "name": "CCCD",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "SDT": {
+          "autoincrement": false,
+          "name": "SDT",
+          "type": "varchar(15)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "Email": {
+          "autoincrement": false,
+          "name": "Email",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {
+        "KHACH_HANG_MaKH": {
+          "name": "KHACH_HANG_MaKH",
+          "columns": [
+            "MaKH"
+          ]
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {
+        "UQ_KHACH_HANG_CCCD": {
+          "name": "UQ_KHACH_HANG_CCCD",
+          "columns": [
+            "CCCD"
+          ]
+        },
+        "UQ_KHACH_HANG_Email": {
+          "name": "UQ_KHACH_HANG_Email",
+          "columns": [
+            "Email"
+          ]
+        }
+      },
+      "checkConstraint": {}
+    },
+    "LOAI_PHONG": {
+      "name": "LOAI_PHONG",
+      "columns": {
+        "MaLoaiPhong": {
+          "autoincrement": false,
+          "name": "MaLoaiPhong",
+          "type": "char(10)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "TenLoaiPhong": {
+          "autoincrement": false,
+          "name": "TenLoaiPhong",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "DonGiaNgay": {
+          "autoincrement": false,
+          "name": "DonGiaNgay",
+          "type": "decimal(18,2)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {
+        "LOAI_PHONG_MaLoaiPhong": {
+          "name": "LOAI_PHONG_MaLoaiPhong",
+          "columns": [
+            "MaLoaiPhong"
+          ]
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {
+        "UQ_LOAI_PHONG_Ten": {
+          "name": "UQ_LOAI_PHONG_Ten",
+          "columns": [
+            "TenLoaiPhong"
+          ]
+        }
+      },
+      "checkConstraint": {
+        "CK_LOAI_PHONG_DonGia": {
+          "name": "CK_LOAI_PHONG_DonGia",
+          "value": "(`DonGiaNgay` >= 0)"
+        }
+      }
+    },
+    "LOAI_TAI_KHOAN": {
+      "name": "LOAI_TAI_KHOAN",
+      "columns": {
+        "MaLoaiTK": {
+          "autoincrement": false,
+          "name": "MaLoaiTK",
+          "type": "char(10)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "TenLoaiTK": {
+          "autoincrement": false,
+          "name": "TenLoaiTK",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "MoTa": {
+          "autoincrement": false,
+          "name": "MoTa",
+          "type": "varchar(200)",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {
+        "LOAI_TAI_KHOAN_MaLoaiTK": {
+          "name": "LOAI_TAI_KHOAN_MaLoaiTK",
+          "columns": [
+            "MaLoaiTK"
+          ]
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {
+        "UQ_LOAI_TAI_KHOAN_Ten": {
+          "name": "UQ_LOAI_TAI_KHOAN_Ten",
+          "columns": [
+            "TenLoaiTK"
+          ]
+        }
+      },
+      "checkConstraint": {}
+    },
+    "PHIEU_DAT_PHONG": {
+      "name": "PHIEU_DAT_PHONG",
+      "columns": {
+        "MaDatPhong": {
+          "autoincrement": false,
+          "name": "MaDatPhong",
+          "type": "char(10)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "MaKH": {
+          "autoincrement": false,
+          "name": "MaKH",
+          "type": "char(10)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "MaTK": {
+          "autoincrement": false,
+          "name": "MaTK",
+          "type": "char(10)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "NgayLap": {
+          "default": "(CURRENT_TIMESTAMP)",
+          "autoincrement": false,
+          "name": "NgayLap",
+          "type": "datetime",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "NgayCheckIn": {
+          "autoincrement": false,
+          "name": "NgayCheckIn",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "NgayCheckOut": {
+          "autoincrement": false,
+          "name": "NgayCheckOut",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "TienCoc": {
+          "default": "'0.00'",
+          "autoincrement": false,
+          "name": "TienCoc",
+          "type": "decimal(18,2)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "TrangThai": {
+          "default": "'DaDat'",
+          "autoincrement": false,
+          "name": "TrangThai",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {
+        "PHIEU_DAT_PHONG_MaDatPhong": {
+          "name": "PHIEU_DAT_PHONG_MaDatPhong",
+          "columns": [
+            "MaDatPhong"
+          ]
+        }
+      },
+      "indexes": {
+        "IX_PHIEU_DAT_PHONG_MaKH": {
+          "name": "IX_PHIEU_DAT_PHONG_MaKH",
+          "columns": [
+            "MaKH"
+          ],
+          "isUnique": false
+        },
+        "IX_PHIEU_DAT_PHONG_Ngay": {
+          "name": "IX_PHIEU_DAT_PHONG_Ngay",
+          "columns": [
+            "NgayCheckIn",
+            "NgayCheckOut"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "FK_PHIEU_DAT_PHONG_KHACH_HANG": {
+          "name": "FK_PHIEU_DAT_PHONG_KHACH_HANG",
+          "tableFrom": "PHIEU_DAT_PHONG",
+          "tableTo": "KHACH_HANG",
+          "columnsFrom": [
+            "MaKH"
+          ],
+          "columnsTo": [
+            "MaKH"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        },
+        "FK_PHIEU_DAT_PHONG_TAI_KHOAN": {
+          "name": "FK_PHIEU_DAT_PHONG_TAI_KHOAN",
+          "tableFrom": "PHIEU_DAT_PHONG",
+          "tableTo": "TAI_KHOAN",
+          "columnsFrom": [
+            "MaTK"
+          ],
+          "columnsTo": [
+            "MaTK"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {
+        "CK_PHIEU_DAT_PHONG_Ngay": {
+          "name": "CK_PHIEU_DAT_PHONG_Ngay",
+          "value": "(`NgayCheckOut` > `NgayCheckIn`)"
+        },
+        "CK_PHIEU_DAT_PHONG_TienCoc": {
+          "name": "CK_PHIEU_DAT_PHONG_TienCoc",
+          "value": "(`TienCoc` >= 0)"
+        },
+        "CK_PHIEU_DAT_PHONG_TrangThai": {
+          "name": "CK_PHIEU_DAT_PHONG_TrangThai",
+          "value": "(`TrangThai` in (_utf8mb4\\'DaDat\\',_utf8mb4\\'DangO\\',_utf8mb4\\'HoanTat\\',_utf8mb4\\'DaHuy\\'))"
+        }
+      }
+    },
+    "PHONG": {
+      "name": "PHONG",
+      "columns": {
+        "MaPhong": {
+          "autoincrement": false,
+          "name": "MaPhong",
+          "type": "char(10)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "MaLoaiPhong": {
+          "autoincrement": false,
+          "name": "MaLoaiPhong",
+          "type": "char(10)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "SoPhong": {
+          "autoincrement": false,
+          "name": "SoPhong",
+          "type": "varchar(10)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "Tang": {
+          "autoincrement": false,
+          "name": "Tang",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "TrangThai": {
+          "default": "'Trong'",
+          "autoincrement": false,
+          "name": "TrangThai",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {
+        "PHONG_MaPhong": {
+          "name": "PHONG_MaPhong",
+          "columns": [
+            "MaPhong"
+          ]
+        }
+      },
+      "indexes": {
+        "IX_PHONG_TrangThai": {
+          "name": "IX_PHONG_TrangThai",
+          "columns": [
+            "TrangThai"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "FK_PHONG_LOAI_PHONG": {
+          "name": "FK_PHONG_LOAI_PHONG",
+          "tableFrom": "PHONG",
+          "tableTo": "LOAI_PHONG",
+          "columnsFrom": [
+            "MaLoaiPhong"
+          ],
+          "columnsTo": [
+            "MaLoaiPhong"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        }
+      },
+      "uniqueConstraints": {
+        "UQ_PHONG_SoPhong": {
+          "name": "UQ_PHONG_SoPhong",
+          "columns": [
+            "SoPhong"
+          ]
+        }
+      },
+      "checkConstraint": {
+        "CK_PHONG_Tang": {
+          "name": "CK_PHONG_Tang",
+          "value": "(`Tang` >= 1)"
+        },
+        "CK_PHONG_TrangThai": {
+          "name": "CK_PHONG_TrangThai",
+          "value": "(`TrangThai` in (_utf8mb4\\'Trong\\',_utf8mb4\\'DaDat\\',_utf8mb4\\'DangSuDung\\',_utf8mb4\\'DangDon\\',_utf8mb4\\'BaoTri\\'))"
+        }
+      }
+    },
+    "SU_DUNG_DICH_VU": {
+      "name": "SU_DUNG_DICH_VU",
+      "columns": {
+        "MaSuDungDV": {
+          "autoincrement": false,
+          "name": "MaSuDungDV",
+          "type": "char(10)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "MaDatPhong": {
+          "autoincrement": false,
+          "name": "MaDatPhong",
+          "type": "char(10)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "MaDV": {
+          "autoincrement": false,
+          "name": "MaDV",
+          "type": "char(10)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "NgaySuDung": {
+          "default": "(CURRENT_TIMESTAMP)",
+          "autoincrement": false,
+          "name": "NgaySuDung",
+          "type": "datetime",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "SoLuong": {
+          "autoincrement": false,
+          "name": "SoLuong",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "DonGiaThoiDiem": {
+          "autoincrement": false,
+          "name": "DonGiaThoiDiem",
+          "type": "decimal(18,2)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ThanhTien": {
+          "autoincrement": false,
+          "name": "ThanhTien",
+          "type": "decimal(18,2)",
+          "primaryKey": false,
+          "notNull": false,
+          "generated": {
+            "as": "(`SoLuong` * `DonGiaThoiDiem`)",
+            "type": "stored"
+          }
+        }
+      },
+      "compositePrimaryKeys": {
+        "SU_DUNG_DICH_VU_MaSuDungDV": {
+          "name": "SU_DUNG_DICH_VU_MaSuDungDV",
+          "columns": [
+            "MaSuDungDV"
+          ]
+        }
+      },
+      "indexes": {
+        "IX_SU_DUNG_DICH_VU_MaDatPhong": {
+          "name": "IX_SU_DUNG_DICH_VU_MaDatPhong",
+          "columns": [
+            "MaDatPhong"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "FK_SU_DUNG_DICH_VU_DICH_VU": {
+          "name": "FK_SU_DUNG_DICH_VU_DICH_VU",
+          "tableFrom": "SU_DUNG_DICH_VU",
+          "tableTo": "DICH_VU",
+          "columnsFrom": [
+            "MaDV"
+          ],
+          "columnsTo": [
+            "MaDV"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        },
+        "FK_SU_DUNG_DICH_VU_PHIEU_DAT_PHONG": {
+          "name": "FK_SU_DUNG_DICH_VU_PHIEU_DAT_PHONG",
+          "tableFrom": "SU_DUNG_DICH_VU",
+          "tableTo": "PHIEU_DAT_PHONG",
+          "columnsFrom": [
+            "MaDatPhong"
+          ],
+          "columnsTo": [
+            "MaDatPhong"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {
+        "CK_SU_DUNG_DICH_VU_DonGia": {
+          "name": "CK_SU_DUNG_DICH_VU_DonGia",
+          "value": "(`DonGiaThoiDiem` >= 0)"
+        },
+        "CK_SU_DUNG_DICH_VU_SoLuong": {
+          "name": "CK_SU_DUNG_DICH_VU_SoLuong",
+          "value": "(`SoLuong` > 0)"
+        }
+      }
+    },
+    "SUA_PHONG": {
+      "name": "SUA_PHONG",
+      "columns": {
+        "MaSua": {
+          "autoincrement": false,
+          "name": "MaSua",
+          "type": "char(10)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "MaPhong": {
+          "autoincrement": false,
+          "name": "MaPhong",
+          "type": "char(10)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "MaTK": {
+          "autoincrement": false,
+          "name": "MaTK",
+          "type": "char(10)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ThoiGian": {
+          "default": "(CURRENT_TIMESTAMP)",
+          "autoincrement": false,
+          "name": "ThoiGian",
+          "type": "datetime",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ChiPhi": {
+          "default": "'0.00'",
+          "autoincrement": false,
+          "name": "ChiPhi",
+          "type": "decimal(18,2)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "MoTaLoi": {
+          "autoincrement": false,
+          "name": "MoTaLoi",
+          "type": "varchar(200)",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {
+        "SUA_PHONG_MaSua": {
+          "name": "SUA_PHONG_MaSua",
+          "columns": [
+            "MaSua"
+          ]
+        }
+      },
+      "indexes": {
+        "IX_SUA_PHONG_MaPhong_ThoiGian": {
+          "name": "IX_SUA_PHONG_MaPhong_ThoiGian",
+          "columns": [
+            "MaPhong",
+            "ThoiGian"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "FK_SUA_PHONG_PHONG": {
+          "name": "FK_SUA_PHONG_PHONG",
+          "tableFrom": "SUA_PHONG",
+          "tableTo": "PHONG",
+          "columnsFrom": [
+            "MaPhong"
+          ],
+          "columnsTo": [
+            "MaPhong"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        },
+        "FK_SUA_PHONG_TAI_KHOAN": {
+          "name": "FK_SUA_PHONG_TAI_KHOAN",
+          "tableFrom": "SUA_PHONG",
+          "tableTo": "TAI_KHOAN",
+          "columnsFrom": [
+            "MaTK"
+          ],
+          "columnsTo": [
+            "MaTK"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {
+        "CK_SUA_PHONG_ChiPhi": {
+          "name": "CK_SUA_PHONG_ChiPhi",
+          "value": "(`ChiPhi` >= 0)"
+        }
+      }
+    },
+    "TAI_KHOAN": {
+      "name": "TAI_KHOAN",
+      "columns": {
+        "MaTK": {
+          "autoincrement": false,
+          "name": "MaTK",
+          "type": "char(10)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "MaLoaiTK": {
+          "autoincrement": false,
+          "name": "MaLoaiTK",
+          "type": "char(10)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "TenDangNhap": {
+          "autoincrement": false,
+          "name": "TenDangNhap",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "MatKhau": {
+          "autoincrement": false,
+          "name": "MatKhau",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "HoTen": {
+          "autoincrement": false,
+          "name": "HoTen",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "TrangThai": {
+          "default": "'DangLamViec'",
+          "autoincrement": false,
+          "name": "TrangThai",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {
+        "TAI_KHOAN_MaTK": {
+          "name": "TAI_KHOAN_MaTK",
+          "columns": [
+            "MaTK"
+          ]
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "FK_TAI_KHOAN_LOAI_TAI_KHOAN": {
+          "name": "FK_TAI_KHOAN_LOAI_TAI_KHOAN",
+          "tableFrom": "TAI_KHOAN",
+          "tableTo": "LOAI_TAI_KHOAN",
+          "columnsFrom": [
+            "MaLoaiTK"
+          ],
+          "columnsTo": [
+            "MaLoaiTK"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        }
+      },
+      "uniqueConstraints": {
+        "UQ_TAI_KHOAN_TenDangNhap": {
+          "name": "UQ_TAI_KHOAN_TenDangNhap",
+          "columns": [
+            "TenDangNhap"
+          ]
+        }
+      },
+      "checkConstraint": {
+        "CK_TAI_KHOAN_TrangThai": {
+          "name": "CK_TAI_KHOAN_TrangThai",
+          "value": "(`TrangThai` in (_utf8mb4\\'DangLamViec\\',_utf8mb4\\'TamNghi\\',_utf8mb4\\'NghiViec\\'))"
+        }
+      }
+    }
+  },
+  "views": {},
+  "_meta": {
+    "schemas": {},
+    "tables": {},
+    "columns": {}
+  },
+  "internal": {
+    "tables": {
+      "DON_PHONG": {
+        "columns": {
+          "ThoiGian": {
+            "isDefaultAnExpression": true
+          }
+        }
+      },
+      "HOA_DON": {
+        "columns": {
+          "NgayLap": {
+            "isDefaultAnExpression": true
+          }
+        }
+      },
+      "PHIEU_DAT_PHONG": {
+        "columns": {
+          "NgayLap": {
+            "isDefaultAnExpression": true
+          }
+        }
+      },
+      "SU_DUNG_DICH_VU": {
+        "columns": {
+          "NgaySuDung": {
+            "isDefaultAnExpression": true
+          }
+        }
+      },
+      "SUA_PHONG": {
+        "columns": {
+          "ThoiGian": {
+            "isDefaultAnExpression": true
+          }
+        }
+      }
+    },
+    "indexes": {}
+  }
+}

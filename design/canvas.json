@@ -1,0 +1,62 @@
+{
+  "v": 3,
+  "createdOnFiles": { "v": 1, "at": "2026-09-23T04:20:00Z" },
+  "title": "Hotel Management System — UI Design",
+  "launch": { "view": "canvas" },
+  "pages": [],
+  "designSystems": [],
+  "boards": {
+    "Login.dc.html":      { "x": 0,    "y": 0,    "w": 1440, "h": 1024, "title": "Đăng nhập", "radius": 14 },
+    "Main.dc.html":       { "x": 1520, "y": 0,    "w": 1440, "h": 1024, "title": "Tổng quan", "radius": 14 },
+    "Rooms.dc.html":      { "x": 3040, "y": 0,    "w": 1440, "h": 1024, "title": "Sơ đồ phòng", "radius": 14, "is_interactive": true },
+    "Booking.dc.html":    { "x": 0,    "y": 1424, "w": 1440, "h": 1024, "title": "Đặt phòng", "radius": 14, "is_interactive": true },
+    "CheckInOut.dc.html": { "x": 1520, "y": 1424, "w": 1440, "h": 1024, "title": "Nhận & trả phòng", "radius": 14 },
+    "Customers.dc.html":  { "x": 3040, "y": 1424, "w": 1440, "h": 1024, "title": "Khách hàng", "radius": 14 },
+    "Services.dc.html":   { "x": 0,    "y": 2848, "w": 1440, "h": 1024, "title": "Dịch vụ", "radius": 14, "is_interactive": true },
+    "Invoice.dc.html":    { "x": 1520, "y": 2848, "w": 1440, "h": 1024, "title": "Hóa đơn", "radius": 14 },
+    "Reports.dc.html":    { "x": 3040, "y": 2848, "w": 1440, "h": 1024, "title": "Báo cáo doanh thu", "radius": 14 },
+    "Style.dc.html":      { "x": 0,    "y": 4272, "w": 1440, "h": 1480, "title": "Hệ thống thiết kế", "radius": 14 }
+  },
+  "order": [
+    "Login.dc.html",
+    "Main.dc.html",
+    "Rooms.dc.html",
+    "Booking.dc.html",
+    "CheckInOut.dc.html",
+    "Customers.dc.html",
+    "Services.dc.html",
+    "Invoice.dc.html",
+    "Reports.dc.html",
+    "Style.dc.html"
+  ],
+  "notes": {
+    "t1": { "x": 0, "y": -300, "text": "01 · Đăng nhập & Tổng quan", "kind": "title1", "maxW": 4480 },
+    "t2": { "x": 0, "y": 1124, "text": "02 · Đặt phòng & Lễ tân", "kind": "title1", "maxW": 4480 },
+    "t3": { "x": 0, "y": 2548, "text": "03 · Dịch vụ, Hóa đơn & Báo cáo", "kind": "title1", "maxW": 4480 },
+    "t4": { "x": 0, "y": 3972, "text": "04 · Hệ thống thiết kế", "kind": "title1", "maxW": 4480 },
+    "s1": {
+      "x": 4600,
+      "y": 0,
+      "w": 460,
+      "maxH": 520,
+      "fill": "green",
+      "text": "Đây là prototype bấm được.\n\nNhấn Play trên một artboard: thanh điều hướng trái và các nút chính đều là liên kết thật, đi qua đủ 9 màn hình.\n\nBa artboard có tương tác thật (dấu xanh): Sơ đồ phòng lọc theo trạng thái, Đặt phòng đổi loại phòng / số đêm và tính lại tiền, Dịch vụ đổi số lượng và tính lại thành tiền."
+    },
+    "s2": {
+      "x": 1600,
+      "y": 4272,
+      "w": 560,
+      "maxH": 900,
+      "fill": "blue",
+      "text": "Màn hình ↔ thủ tục / view có sẵn\n\nĐăng nhập → sp_DangNhap\n\nSơ đồ phòng → v_TinhTrangPhongHomNay, sp_GhiNhanDonPhong, sp_GhiNhanSuaPhong\n\nĐặt phòng → sp_TraCuuPhongTrong, v_PhongKhaDung, sp_DatPhong, sp_XacNhanDatCoc, fn_SoDem, fn_DonGiaPhongTheoNgay\n\nNhận & trả phòng → v_PhieuDatDangHieuLuc, sp_NhanPhong, sp_TraPhong, sp_HuyPhieuDat, sp_XuLyNoShow\n\nDịch vụ → sp_GhiNhanDichVu, fn_TienDichVu\n\nHóa đơn → sp_LapHoaDon, sp_LapChiTietHoaDon, sp_ThanhToanHoaDon, fn_TienPhong\n\nMọi nhãn trạng thái trong thiết kế dùng đúng giá trị của ràng buộc CHECK trong CSDL."
+    },
+    "s3": {
+      "x": 4600,
+      "y": 620,
+      "w": 460,
+      "maxH": 420,
+      "fill": "orange",
+      "text": "Cần bạn điền\n\n· Tên & nhận diện khách sạn — \"Sen Vàng\" chỉ là tên tạm.\n· Địa chỉ, số điện thoại, mã số thuế trên mẫu hóa đơn.\n· Dịch vụ DV04–DV06 là ví dụ thêm; DV01–DV03 lấy đúng từ dữ liệu mẫu.\n· Diện tích / số giường của từng loại phòng chưa có trong CSDL."
+    }
+  }
+}

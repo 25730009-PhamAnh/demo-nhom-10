@@ -1,0 +1,351 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Tổng quan — Sen Vàng Hotel</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+body{margin:0;font-family:'Be Vietnam Pro',system-ui,sans-serif;background:#F3EFE8;color:#1B1916;-webkit-font-smoothing:antialiased}
+a{color:#14483F}
+a:hover{color:#0E3730}
+.sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+</style>
+</helmet>
+<div style="width: 1440px; height: 1024px; box-sizing: border-box; display: flex; background: #F3EFE8;">
+
+  <aside style="width: 248px; flex-shrink: 0; box-sizing: border-box; background: #13332E; display: flex; flex-direction: column;">
+    <div style="padding: 26px 22px 18px 22px; display: flex; flex-direction: column; gap: 3px;">
+      <div style="display: flex; align-items: center; gap: 11px;">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#C9A227" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21c-4.4 0-8-3.1-8-7 3 0 5.7 1.3 7.2 3.4"/><path d="M12 21c4.4 0 8-3.1 8-7-3 0-5.7 1.3-7.2 3.4"/><path d="M12 17.5c-2.1-2.7-2.1-6.9 0-14.5 2.1 7.6 2.1 11.8 0 14.5z"/></svg>
+        <span style="font-family: 'Playfair Display', Georgia, serif; font-size: 19px; font-weight: 700; color: #FFFFFF; letter-spacing: 0.07em;">SEN VÀNG</span>
+      </div>
+      <span style="font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: #8AA29B; padding-left: 37px;">Hotel Management</span>
+    </div>
+
+    <nav aria-label="Điều hướng chính" style="flex-grow: 1; padding: 6px 14px; display: flex; flex-direction: column; gap: 2px;">
+      <sc-for list="{{nav}}" as="n" hint-placeholder-count="8">
+        <a href="{{n.href}}" style="display: flex; align-items: center; gap: 11px; height: 44px; padding: 0 12px; border-radius: 9px; text-decoration: none; font-size: 13.5px; font-weight: {{n.weight}}; color: {{n.color}}; background: {{n.bg}};">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0;"><path d="{{n.d}}"/></svg>
+          <span style="flex-grow: 1;">{{n.label}}</span>
+          <sc-if value="{{n.on}}" hint-placeholder-val="{{true}}"><span style="width: 5px; height: 5px; border-radius: 50%; background: #C9A227;"></span></sc-if>
+        </a>
+      </sc-for>
+    </nav>
+
+    <div style="padding: 12px 14px 16px 14px; display: flex; flex-direction: column; gap: 2px; border-top: 1px solid rgba(255,255,255,0.09);">
+      <div style="display: flex; align-items: center; gap: 10px; padding: 10px 12px;">
+        <span style="width: 34px; height: 34px; flex-shrink: 0; border-radius: 50%; background: #1E5146; color: #E8F1ED; font-size: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center;">TT</span>
+        <span style="flex-grow: 1; display: flex; flex-direction: column; gap: 1px;">
+          <span style="font-size: 13px; font-weight: 500; color: #FFFFFF;">Trần Lệ Thu</span>
+          <span style="font-size: 11px; color: #8AA29B;">Lễ tân · TK0007</span>
+        </span>
+      </div>
+      <a href="Login.dc.html" style="display: flex; align-items: center; gap: 11px; height: 42px; padding: 0 12px; border-radius: 9px; text-decoration: none; font-size: 13px; color: #9FB5AE;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+        <span>Đăng xuất</span>
+      </a>
+    </div>
+  </aside>
+
+  <div style="flex-grow: 1; min-width: 0; display: flex; flex-direction: column;">
+
+    <header style="height: 76px; flex-shrink: 0; box-sizing: border-box; background: #FFFFFF; border-bottom: 1px solid #E5DED3; padding: 0 32px; display: flex; align-items: center; gap: 18px;">
+      <div style="display: flex; flex-direction: column; gap: 2px;">
+        <h1 style="margin: 0; font-family: 'Playfair Display', Georgia, serif; font-size: 22px; font-weight: 600; color: #1B1916;">Tổng quan</h1>
+        <span style="font-size: 12px; color: #7B7269;">Thứ Tư, 23/09/2026 · Ca sáng</span>
+      </div>
+      <span style="flex-grow: 1;"></span>
+      <div style="display: flex; align-items: center; gap: 9px; width: 300px; height: 40px; box-sizing: border-box; padding: 0 14px; border: 1px solid #E5DED3; border-radius: 10px; background: #FAF7F1;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#857C73" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0;"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <label for="q" class="sr">Tìm kiếm</label>
+        <input id="q" type="search" placeholder="Tìm phòng, khách, mã đặt phòng…" style="flex-grow: 1; min-width: 0; border: 0; outline: 0; background: transparent; font-family: inherit; font-size: 13px; color: #1B1916;">
+      </div>
+      <button type="button" aria-label="Thông báo" style="width: 40px; height: 40px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; border: 1px solid #E5DED3; border-radius: 10px; background: #FFFFFF; color: #57504A; cursor: pointer;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+      </button>
+      <a href="Booking.dc.html" style="height: 40px; box-sizing: border-box; display: flex; align-items: center; gap: 8px; padding: 0 18px; border-radius: 10px; background: #14483F; color: #FFFFFF; font-size: 13.5px; font-weight: 600; text-decoration: none;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+        <span>Đặt phòng mới</span>
+      </a>
+    </header>
+
+    <main style="flex-grow: 1; min-height: 0; box-sizing: border-box; padding: 28px 32px; display: flex; flex-direction: column; gap: 20px;">
+
+      <section style="height: 116px; flex-shrink: 0; display: flex; gap: 20px;">
+        <div style="flex-grow: 1; flex-basis: 0; box-sizing: border-box; padding: 17px 20px; background: #FFFFFF; border: 1px solid #E5DED3; border-radius: 14px; display: flex; flex-direction: column; gap: 9px;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="flex-grow: 1; font-size: 10.5px; font-weight: 600; letter-spacing: 0.09em; text-transform: uppercase; color: #857C73;">Công suất hôm nay</span>
+            <span style="display: flex; align-items: center; gap: 3px; padding: 2px 7px; border-radius: 20px; background: #E3F0E9; color: #14664B; font-size: 11px; font-weight: 600;">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 15 7-7 7 7"/></svg>6%
+            </span>
+          </div>
+          <span style="font-family: 'Playfair Display', Georgia, serif; font-size: 30px; font-weight: 600; line-height: 1; color: #1B1916;">60%</span>
+          <span style="font-size: 12px; color: #7B7269;">24/40 phòng đang sử dụng</span>
+        </div>
+
+        <div style="flex-grow: 1; flex-basis: 0; box-sizing: border-box; padding: 17px 20px; background: #FFFFFF; border: 1px solid #E5DED3; border-radius: 14px; display: flex; flex-direction: column; gap: 9px;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="flex-grow: 1; font-size: 10.5px; font-weight: 600; letter-spacing: 0.09em; text-transform: uppercase; color: #857C73;">Khách đang lưu trú</span>
+          </div>
+          <span style="font-family: 'Playfair Display', Georgia, serif; font-size: 30px; font-weight: 600; line-height: 1; color: #1B1916;">39</span>
+          <span style="font-size: 12px; color: #7B7269;">24 phiếu · 5 phiếu trả hôm nay</span>
+        </div>
+
+        <div style="flex-grow: 1; flex-basis: 0; box-sizing: border-box; padding: 17px 20px; background: #FFFFFF; border: 1px solid #E5DED3; border-radius: 14px; display: flex; flex-direction: column; gap: 9px;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="flex-grow: 1; font-size: 10.5px; font-weight: 600; letter-spacing: 0.09em; text-transform: uppercase; color: #857C73;">Doanh thu hôm nay</span>
+            <span style="display: flex; align-items: center; gap: 3px; padding: 2px 7px; border-radius: 20px; background: #E3F0E9; color: #14664B; font-size: 11px; font-weight: 600;">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 15 7-7 7 7"/></svg>12%
+            </span>
+          </div>
+          <span style="font-family: 'Playfair Display', Georgia, serif; font-size: 30px; font-weight: 600; line-height: 1; color: #1B1916;">18.400.000 ₫</span>
+          <span style="font-size: 12px; color: #7B7269;">9 hóa đơn đã thanh toán</span>
+        </div>
+
+        <div style="flex-grow: 1; flex-basis: 0; box-sizing: border-box; padding: 17px 20px; background: #FFFFFF; border: 1px solid #E5DED3; border-radius: 14px; display: flex; flex-direction: column; gap: 9px;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="flex-grow: 1; font-size: 10.5px; font-weight: 600; letter-spacing: 0.09em; text-transform: uppercase; color: #857C73;">Nhận / Trả hôm nay</span>
+          </div>
+          <span style="font-family: 'Playfair Display', Georgia, serif; font-size: 30px; font-weight: 600; line-height: 1; color: #1B1916;">12 / 9</span>
+          <span style="font-size: 12px; color: #8A5A0E;">3 phiếu chờ xử lý</span>
+        </div>
+      </section>
+
+      <section style="height: 304px; flex-shrink: 0; display: flex; gap: 20px;">
+
+        <div style="width: 744px; flex-shrink: 0; box-sizing: border-box; padding: 20px; background: #FFFFFF; border: 1px solid #E5DED3; border-radius: 14px; display: flex; flex-direction: column; gap: 14px;">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <h2 style="margin: 0; flex-grow: 1; font-size: 15px; font-weight: 600; color: #1B1916;">Tình trạng phòng · hôm nay</h2>
+            <span style="font-size: 12px; color: #857C73;">Tầng 1–4 · 40 phòng</span>
+            <a href="Rooms.dc.html" style="display: flex; align-items: center; gap: 5px; font-size: 12.5px; font-weight: 600; color: #14483F; text-decoration: none;">
+              <span>Sơ đồ đầy đủ</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </a>
+          </div>
+
+          <div style="display: flex; gap: 8px;">
+            <sc-for list="{{counts}}" as="c" hint-placeholder-count="5">
+              <div style="flex-grow: 1; flex-basis: 0; box-sizing: border-box; padding: 7px 11px; border-radius: 9px; display: flex; flex-direction: column; gap: 2px; background: {{c.bg}};">
+                <div style="display: flex; align-items: center; gap: 6px;">
+                  <span style="width: 7px; height: 7px; border-radius: 50%; background: {{c.dot}};"></span>
+                  <span style="font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 15px; font-weight: 500; line-height: 1; color: {{c.fg}};">{{c.n}}</span>
+                </div>
+                <span style="font-size: 11px; color: {{c.fg}};">{{c.label}}</span>
+              </div>
+            </sc-for>
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 8px;">
+            <sc-for list="{{map}}" as="r" hint-placeholder-count="40">
+              <span style="height: 34px; border-radius: 7px; display: flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 11.5px; background: {{r.bg}}; color: {{r.fg}};">{{r.so}}</span>
+            </sc-for>
+          </div>
+        </div>
+
+        <div style="flex-grow: 1; min-width: 0; box-sizing: border-box; padding: 20px; background: #FFFFFF; border: 1px solid #E5DED3; border-radius: 14px; display: flex; flex-direction: column; gap: 14px;">
+          <h2 style="margin: 0; font-size: 15px; font-weight: 600; color: #1B1916;">Cần xử lý hôm nay</h2>
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+
+            <a href="Booking.dc.html" style="display: flex; align-items: center; gap: 11px; height: 48px; padding: 0 12px; box-sizing: border-box; border-radius: 10px; background: #F7EFDD; text-decoration: none;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8A5A0E" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0;"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+              <span style="flex-grow: 1; display: flex; flex-direction: column; gap: 1px;">
+                <span style="font-size: 13px; font-weight: 600; color: #1B1916;">3 phiếu quá giờ nhận</span>
+                <span style="font-size: 11.5px; color: #7B7269;">Xử lý no-show hoặc dời giờ</span>
+              </span>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#8A5A0E" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>
+            </a>
+
+            <a href="Rooms.dc.html" style="display: flex; align-items: center; gap: 11px; height: 48px; padding: 0 12px; box-sizing: border-box; border-radius: 10px; background: #ECE9F5; text-decoration: none;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5B4B85" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0;"><path d="M3 21h18M6 21V10l6-4 6 4v11M10 21v-5h4v5"/></svg>
+              <span style="flex-grow: 1; display: flex; flex-direction: column; gap: 1px;">
+                <span style="font-size: 13px; font-weight: 600; color: #1B1916;">3 phòng chờ dọn</span>
+                <span style="font-size: 11.5px; color: #7B7269;">107 · 208 · 408</span>
+              </span>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#5B4B85" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>
+            </a>
+
+            <a href="Rooms.dc.html" style="display: flex; align-items: center; gap: 11px; height: 48px; padding: 0 12px; box-sizing: border-box; border-radius: 10px; background: #F8E8E5; text-decoration: none;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8C3A31" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0;"><path d="M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>
+              <span style="flex-grow: 1; display: flex; flex-direction: column; gap: 1px;">
+                <span style="font-size: 13px; font-weight: 600; color: #1B1916;">Phòng 306 báo hỏng</span>
+                <span style="font-size: 11.5px; color: #7B7269;">Máy lạnh không chạy · từ 08:10</span>
+              </span>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#8C3A31" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>
+            </a>
+
+            <a href="Invoice.dc.html" style="display: flex; align-items: center; gap: 11px; height: 48px; padding: 0 12px; box-sizing: border-box; border-radius: 10px; background: #FAF7F1; text-decoration: none;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#57504A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0;"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1z"/><path d="M8 9h6M8 13h8"/></svg>
+              <span style="flex-grow: 1; display: flex; flex-direction: column; gap: 1px;">
+                <span style="font-size: 13px; font-weight: 600; color: #1B1916;">4 hóa đơn chưa thanh toán</span>
+                <span style="font-size: 11.5px; color: #7B7269;">Tổng 9.850.000 ₫</span>
+              </span>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#57504A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>
+            </a>
+
+          </div>
+        </div>
+      </section>
+
+      <section style="flex-grow: 1; min-height: 0; box-sizing: border-box; padding: 20px; background: #FFFFFF; border: 1px solid #E5DED3; border-radius: 14px; display: flex; flex-direction: column; gap: 14px;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <h2 style="margin: 0; flex-grow: 1; font-size: 15px; font-weight: 600; color: #1B1916;">Lịch nhận &amp; trả phòng hôm nay</h2>
+          <div style="display: flex; gap: 6px;">
+            <button type="button" style="height: 30px; padding: 0 13px; border: 0; border-radius: 8px; background: #14483F; color: #FFFFFF; font-family: inherit; font-size: 12.5px; font-weight: 600; cursor: pointer;">Tất cả · 21</button>
+            <button type="button" style="height: 30px; padding: 0 13px; border: 1px solid #E5DED3; border-radius: 8px; background: #FFFFFF; color: #57504A; font-family: inherit; font-size: 12.5px; cursor: pointer;">Nhận · 12</button>
+            <button type="button" style="height: 30px; padding: 0 13px; border: 1px solid #E5DED3; border-radius: 8px; background: #FFFFFF; color: #57504A; font-family: inherit; font-size: 12.5px; cursor: pointer;">Trả · 9</button>
+          </div>
+        </div>
+
+        <table style="width: 100%; border-collapse: separate; border-spacing: 0; table-layout: fixed;">
+          <thead>
+            <tr>
+              <th scope="col" style="width: 112px; text-align: left; padding: 0 10px 10px 0; font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #857C73; border-bottom: 1px solid #E5DED3;">Mã đặt phòng</th>
+              <th scope="col" style="text-align: left; padding: 0 10px 10px 0; font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #857C73; border-bottom: 1px solid #E5DED3;">Khách hàng</th>
+              <th scope="col" style="width: 78px; text-align: left; padding: 0 10px 10px 0; font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #857C73; border-bottom: 1px solid #E5DED3;">Phòng</th>
+              <th scope="col" style="width: 184px; text-align: left; padding: 0 10px 10px 0; font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #857C73; border-bottom: 1px solid #E5DED3;">Loại phòng</th>
+              <th scope="col" style="width: 150px; text-align: left; padding: 0 10px 10px 0; font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #857C73; border-bottom: 1px solid #E5DED3;">Thời gian</th>
+              <th scope="col" style="width: 128px; text-align: left; padding: 0 10px 10px 0; font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #857C73; border-bottom: 1px solid #E5DED3;">Trạng thái</th>
+              <th scope="col" style="width: 128px; text-align: right; padding: 0 0 10px 10px; font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #857C73; border-bottom: 1px solid #E5DED3;">Thao tác</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="padding: 11px 10px 11px 0; border-bottom: 1px solid #F0EAE0; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 12.5px; color: #57504A;">DP0142</td>
+              <td style="padding: 11px 10px 11px 0; border-bottom: 1px solid #F0EAE0; font-size: 13.5px; font-weight: 500; color: #1B1916;">Nguyễn Minh Khôi</td>
+              <td style="padding: 11px 10px 11px 0; border-bottom: 1px solid #F0EAE0; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px; color: #1B1916;">305</td>
+              <td style="padding: 11px 10px 11px 0; border-bottom: 1px solid #F0EAE0; font-size: 13px; color: #57504A;">Phòng Đôi VIP</td>
+              <td style="padding: 11px 10px 11px 0; border-bottom: 1px solid #F0EAE0; font-size: 13px; color: #57504A;">Nhận · 14:00</td>
+              <td style="padding: 11px 10px 11px 0; border-bottom: 1px solid #F0EAE0;"><span style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 20px; background: #E6EDF6; color: #2A5480; font-size: 11.5px; font-weight: 600;"><span style="width: 6px; height: 6px; border-radius: 50%; background: #4A72C0;"></span>Đã đặt</span></td>
+              <td style="padding: 11px 0 11px 10px; border-bottom: 1px solid #F0EAE0; text-align: right;"><a href="CheckInOut.dc.html" style="display: inline-flex; align-items: center; height: 30px; padding: 0 13px; border-radius: 8px; background: #14483F; color: #FFFFFF; font-size: 12.5px; font-weight: 600; text-decoration: none;">Nhận phòng</a></td>
+            </tr>
+            <tr>
+              <td style="padding: 11px 10px 11px 0; border-bottom: 1px solid #F0EAE0; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 12.5px; color: #57504A;">DP0138</td>
+              <td style="padding: 11px 10px 11px 0; border-bottom: 1px solid #F0EAE0; font-size: 13.5px; font-weight: 500; color: #1B1916;">Trần Thu Hà</td>
+              <td style="padding: 11px 10px 11px 0; border-bottom: 1px solid #F0EAE0; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px; color: #1B1916;">102</td>
+              <td style="padding: 11px 10px 11px 0; border-bottom: 1px solid #F0EAE0; font-size: 13px; color: #57504A;">Phòng Đơn Standard</td>
+              <td style="padding: 11px 10px 11px 0; border-bottom: 1px solid #F0EAE0; font-size: 13px; color: #57504A;">Trả · 12:00</td>
+              <td style="padding: 11px 10px 11px 0; border-bottom: 1px solid #F0EAE0;"><span style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 20px; background: #F7EFDD; color: #8A5A0E; font-size: 11.5px; font-weight: 600;"><span style="width: 6px; height: 6px; border-radius: 50%; background: #B57C10;"></span>Đang ở</span></td>
+              <td style="padding: 11px 0 11px 10px; border-bottom: 1px solid #F0EAE0; text-align: right;"><a href="CheckInOut.dc.html" style="display: inline-flex; align-items: center; height: 30px; padding: 0 13px; border: 1px solid #DCD5C9; border-radius: 8px; background: #FFFFFF; color: #14483F; font-size: 12.5px; font-weight: 600; text-decoration: none;">Trả phòng</a></td>
+            </tr>
+            <tr>
+              <td style="padding: 11px 10px 11px 0; border-bottom: 1px solid #F0EAE0; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 12.5px; color: #57504A;">DP0145</td>
+              <td style="padding: 11px 10px 11px 0; border-bottom: 1px solid #F0EAE0; font-size: 13.5px; font-weight: 500; color: #1B1916;">Lê Quốc Bảo</td>
+              <td style="padding: 11px 10px 11px 0; border-bottom: 1px solid #F0EAE0; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px; color: #1B1916;">210</td>
+              <td style="padding: 11px 10px 11px 0; border-bottom: 1px solid #F0EAE0; font-size: 13px; color: #57504A;">Phòng Đơn Standard</td>
+              <td style="padding: 11px 10px 11px 0; border-bottom: 1px solid #F0EAE0; font-size: 13px; color: #57504A;">Nhận · 15:30</td>
+              <td style="padding: 11px 10px 11px 0; border-bottom: 1px solid #F0EAE0;"><span style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 20px; background: #E6EDF6; color: #2A5480; font-size: 11.5px; font-weight: 600;"><span style="width: 6px; height: 6px; border-radius: 50%; background: #4A72C0;"></span>Đã đặt</span></td>
+              <td style="padding: 11px 0 11px 10px; border-bottom: 1px solid #F0EAE0; text-align: right;"><a href="CheckInOut.dc.html" style="display: inline-flex; align-items: center; height: 30px; padding: 0 13px; border-radius: 8px; background: #14483F; color: #FFFFFF; font-size: 12.5px; font-weight: 600; text-decoration: none;">Nhận phòng</a></td>
+            </tr>
+            <tr>
+              <td style="padding: 11px 10px 11px 0; border-bottom: 1px solid #F0EAE0; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 12.5px; color: #57504A;">DP0131</td>
+              <td style="padding: 11px 10px 11px 0; border-bottom: 1px solid #F0EAE0; font-size: 13.5px; font-weight: 500; color: #1B1916;">Phạm Anh Thư</td>
+              <td style="padding: 11px 10px 11px 0; border-bottom: 1px solid #F0EAE0; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px; color: #1B1916;">401</td>
+              <td style="padding: 11px 10px 11px 0; border-bottom: 1px solid #F0EAE0; font-size: 13px; color: #57504A;">Phòng Đôi VIP</td>
+              <td style="padding: 11px 10px 11px 0; border-bottom: 1px solid #F0EAE0; font-size: 13px; color: #57504A;">Trả · 11:00</td>
+              <td style="padding: 11px 10px 11px 0; border-bottom: 1px solid #F0EAE0;"><span style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 20px; background: #F7EFDD; color: #8A5A0E; font-size: 11.5px; font-weight: 600;"><span style="width: 6px; height: 6px; border-radius: 50%; background: #B57C10;"></span>Đang ở</span></td>
+              <td style="padding: 11px 0 11px 10px; border-bottom: 1px solid #F0EAE0; text-align: right;"><a href="CheckInOut.dc.html" style="display: inline-flex; align-items: center; height: 30px; padding: 0 13px; border: 1px solid #DCD5C9; border-radius: 8px; background: #FFFFFF; color: #14483F; font-size: 12.5px; font-weight: 600; text-decoration: none;">Trả phòng</a></td>
+            </tr>
+            <tr>
+              <td style="padding: 11px 10px 11px 0; border-bottom: 1px solid #F0EAE0; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 12.5px; color: #57504A;">DP0147</td>
+              <td style="padding: 11px 10px 11px 0; border-bottom: 1px solid #F0EAE0; font-size: 13.5px; font-weight: 500; color: #1B1916;">Võ Hoàng Nam</td>
+              <td style="padding: 11px 10px 11px 0; border-bottom: 1px solid #F0EAE0; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px; color: #1B1916;">403</td>
+              <td style="padding: 11px 10px 11px 0; border-bottom: 1px solid #F0EAE0; font-size: 13px; color: #57504A;">Phòng Đôi VIP</td>
+              <td style="padding: 11px 10px 11px 0; border-bottom: 1px solid #F0EAE0; font-size: 13px; color: #57504A;">Nhận · 16:00</td>
+              <td style="padding: 11px 10px 11px 0; border-bottom: 1px solid #F0EAE0;"><span style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 20px; background: #E6EDF6; color: #2A5480; font-size: 11.5px; font-weight: 600;"><span style="width: 6px; height: 6px; border-radius: 50%; background: #4A72C0;"></span>Đã đặt</span></td>
+              <td style="padding: 11px 0 11px 10px; border-bottom: 1px solid #F0EAE0; text-align: right;"><a href="CheckInOut.dc.html" style="display: inline-flex; align-items: center; height: 30px; padding: 0 13px; border-radius: 8px; background: #14483F; color: #FFFFFF; font-size: 12.5px; font-weight: 600; text-decoration: none;">Nhận phòng</a></td>
+            </tr>
+            <tr>
+              <td style="padding: 11px 10px 11px 0; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 12.5px; color: #57504A;">DP0129</td>
+              <td style="padding: 11px 10px 11px 0; font-size: 13.5px; font-weight: 500; color: #1B1916;">Đặng Kim Ngân</td>
+              <td style="padding: 11px 10px 11px 0; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px; color: #1B1916;">107</td>
+              <td style="padding: 11px 10px 11px 0; font-size: 13px; color: #57504A;">Phòng Đơn Standard</td>
+              <td style="padding: 11px 10px 11px 0; font-size: 13px; color: #57504A;">Trả · 12:00</td>
+              <td style="padding: 11px 10px 11px 0;"><span style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 20px; background: #F7EFDD; color: #8A5A0E; font-size: 11.5px; font-weight: 600;"><span style="width: 6px; height: 6px; border-radius: 50%; background: #B57C10;"></span>Đang ở</span></td>
+              <td style="padding: 11px 0 11px 10px; text-align: right;"><a href="CheckInOut.dc.html" style="display: inline-flex; align-items: center; height: 30px; padding: 0 13px; border: 1px solid #DCD5C9; border-radius: 8px; background: #FFFFFF; color: #14483F; font-size: 12.5px; font-weight: 600; text-decoration: none;">Trả phòng</a></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div style="display: flex; align-items: center; gap: 12px; margin-top: auto;">
+          <span style="flex-grow: 1; font-size: 12px; color: #857C73;">Hiển thị 6 trong 21 phiếu</span>
+          <a href="CheckInOut.dc.html" style="font-size: 12.5px; font-weight: 600; color: #14483F; text-decoration: none;">Xem tất cả</a>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1024}}'>
+class Component extends DCLogic {
+  status(key) {
+    const S = {
+      Trong:      { label: 'Trống',        fg: '#14664B', bg: '#E3F0E9', dot: '#1B8A6A' },
+      DaDat:      { label: 'Đã đặt',       fg: '#2A5480', bg: '#E6EDF6', dot: '#4A72C0' },
+      DangSuDung: { label: 'Đang sử dụng', fg: '#8A5A0E', bg: '#F7EFDD', dot: '#B57C10' },
+      DangDon:    { label: 'Đang dọn',     fg: '#5B4B85', bg: '#ECE9F5', dot: '#7561A8' },
+      BaoTri:     { label: 'Bảo trì',      fg: '#8C3A31', bg: '#F8E8E5', dot: '#B04A3E' }
+    };
+    return S[key];
+  }
+
+  navItems(active) {
+    const items = [
+      ['Tổng quan', 'Main.dc.html', 'M4 4h6v7H4zM14 4h6v4h-6zM14 12h6v8h-6zM4 15h6v5H4z'],
+      ['Sơ đồ phòng', 'Rooms.dc.html', 'M2 20v-8a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v8M4 10V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v4M12 4v6M2 17h20'],
+      ['Đặt phòng', 'Booking.dc.html', 'M8 2v4M16 2v4M3 10h18M21 13V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h8M16 19h6M19 16v6'],
+      ['Nhận & trả phòng', 'CheckInOut.dc.html', 'M8 3 4 7l4 4M4 7h16M16 21l4-4-4-4M20 17H4'],
+      ['Khách hàng', 'Customers.dc.html', 'M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8M22 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8'],
+      ['Dịch vụ', 'Services.dc.html', 'M3 20a1 1 0 0 1-1-1v-1a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v1a1 1 0 0 1-1 1zM20 16a8 8 0 1 0-16 0M12 4v4M10 4h4'],
+      ['Hóa đơn', 'Invoice.dc.html', 'M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1zM8 8h6M8 12h8M8 16h5'],
+      ['Báo cáo', 'Reports.dc.html', 'M3 3v16a2 2 0 0 0 2 2h16M18 17V9M13 17V5M8 17v-3']
+    ];
+    return items.map((it, i) => ({
+      label: it[0], href: it[1], d: it[2], on: i === active,
+      bg: i === active ? 'rgba(255,255,255,0.10)' : 'transparent',
+      color: i === active ? '#FFFFFF' : '#9FB5AE',
+      weight: i === active ? '600' : '400'
+    }));
+  }
+
+  roomData() {
+    return [
+      ['101','DangSuDung'],['102','DangSuDung'],['103','Trong'],['104','DangSuDung'],['105','DaDat'],
+      ['106','DangSuDung'],['107','DangDon'],['108','DangSuDung'],['109','Trong'],['110','DangSuDung'],
+      ['201','DangSuDung'],['202','DaDat'],['203','DangSuDung'],['204','DangSuDung'],['205','Trong'],
+      ['206','DangSuDung'],['207','DangSuDung'],['208','DangDon'],['209','DangSuDung'],['210','DaDat'],
+      ['301','DangSuDung'],['302','DangSuDung'],['303','Trong'],['304','DangSuDung'],['305','DangSuDung'],
+      ['306','BaoTri'],['307','DangSuDung'],['308','Trong'],['309','DangSuDung'],['310','DaDat'],
+      ['401','DangSuDung'],['402','DangSuDung'],['403','DaDat'],['404','DangSuDung'],['405','Trong'],
+      ['406','DangSuDung'],['407','DangSuDung'],['408','DangDon'],['409','Trong'],['410','DangSuDung']
+    ];
+  }
+
+  renderVals() {
+    const rooms = this.roomData();
+    const order = ['DangSuDung', 'DaDat', 'Trong', 'DangDon', 'BaoTri'];
+
+    const map = rooms.map((r) => {
+      const s = this.status(r[1]);
+      return { so: r[0], bg: s.bg, fg: s.fg };
+    });
+
+    const counts = order.map((key) => {
+      const s = this.status(key);
+      return {
+        label: s.label, bg: s.bg, fg: s.fg, dot: s.dot,
+        n: rooms.filter((r) => r[1] === key).length
+      };
+    });
+
+    return { nav: this.navItems(0), map: map, counts: counts };
+  }
+}
+</script>
+</body>
+</html>
