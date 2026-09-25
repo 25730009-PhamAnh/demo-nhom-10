@@ -308,7 +308,20 @@ for (let i = 0; i < 9; i++) {
   });
 }
 
-// Nhom 3 — phieu da hoan tat, 4 phieu moi thang trong 12 thang gan nhat.
+// Nhom 3 — 9 phieu da tra phong VA da thanh toan trong hom nay, de man Tong quan
+// co so "doanh thu hom nay" that thay vi 0 dong (phong PH00000032..PH00000040).
+for (let i = 0; i < 9; i++) {
+  themPhieu({
+    soHieu: 90 + i,
+    maKh: ma("KH", 32 + i),
+    maPhong: ma("PH", 32 + i),
+    checkIn: themNgay(NGAY_HIEN_TAI, -2),
+    soDemO: 2,
+    trangThai: "HoanTat",
+  });
+}
+
+// Nhom 4 — phieu da hoan tat, 4 phieu moi thang trong 12 thang gan nhat.
 const THANG_BAO_CAO: string[] = Array.from({ length: 12 }, (_, i) => {
   const d = new Date(Date.UTC(2026, 8, 1));
   d.setUTCMonth(d.getUTCMonth() - (11 - i));
