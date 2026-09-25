@@ -4,10 +4,16 @@ import "./globals.css";
 
 // Ba ho chu theo design/README.md. Subset "vietnamese" la bat buoc — thieu no
 // thi chu co dau se roi ve font du phong cua he thong.
+// adjustFontFallback: false — next/font mac dinh sinh mot font du phong tong hop
+// ("Playfair Display Fallback") va chen no ngay sau Playfair. Font do CO glyph ₫
+// nen trinh duyet dung no va ky hieu bi nho len, lech metric. Tat di roi tu khai
+// bao du phong de ₫ roi xuong Be Vietnam Pro.
 const playfair = Playfair_Display({
   variable: "--font-playfair",
   subsets: ["latin", "vietnamese"],
   weight: ["500", "600", "700"],
+  adjustFontFallback: false,
+  fallback: ["Be Vietnam Pro", "Georgia", "serif"],
 });
 
 const beVietnam = Be_Vietnam_Pro({

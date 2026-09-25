@@ -9,6 +9,8 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-be-vietnam);
   --font-mono: var(--font-jetbrains);
+  /* Ngan xep du phong cua --font-playfair duoc khai bao trong app/layout.tsx
+     (Playfair khong co glyph ₫, phai roi xuong Be Vietnam Pro). */
   --font-display: var(--font-playfair);
   --font-heading: var(--font-playfair);
   --color-sidebar-ring: var(--sidebar-ring);
