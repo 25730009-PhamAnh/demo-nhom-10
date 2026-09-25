@@ -472,8 +472,10 @@ for (const [i, phieu] of phieuThem.entries()) {
     ghiChu: `Phong ${PHONG.find((p) => p.maPhong === ct.maPhong)?.soPhong}: ${ct.soDem} dem`,
   });
 
-  // Khach dang o duoc ghi them mot dich vu, de man Dich vu va Hoa don co dong.
-  if (phieu.trangThai === "DangO") {
+  // Moi phieu co khach thuc su den o deu duoc ghi mot dich vu. Neu chi ghi cho
+  // phieu DangO thi bieu do Bao cao gan nhu mot mau: 10/12 thang khong co dong
+  // DichVu nao, va phan xep chong ba mau ma thiet ke muon the hien se khong thay.
+  {
     const dv = DICH_VU[i % DICH_VU.length];
     const soLuong = 1 + (i % 3);
     suDungThem.push({
