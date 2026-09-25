@@ -1,0 +1,24 @@
+import { describe, expect, it } from "vitest";
+import { MUC_DIEU_HUONG } from "@/lib/nav";
+
+describe("MUC_DIEU_HUONG", () => {
+  it("dung 8 muc, dung thu tu cua artboard", () => {
+    expect(MUC_DIEU_HUONG.map((m) => m.nhan)).toEqual([
+      "Tổng quan",
+      "Sơ đồ phòng",
+      "Đặt phòng",
+      "Nhận & trả phòng",
+      "Khách hàng",
+      "Dịch vụ",
+      "Hóa đơn",
+      "Báo cáo",
+    ]);
+  });
+  it("moi muc co href bat dau bang /", () => {
+    for (const m of MUC_DIEU_HUONG) expect(m.href.startsWith("/")).toBe(true);
+  });
+  it("khong co href trung", () => {
+    const hrefs = MUC_DIEU_HUONG.map((m) => m.href);
+    expect(new Set(hrefs).size).toBe(hrefs.length);
+  });
+});
