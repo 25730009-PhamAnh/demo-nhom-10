@@ -43,11 +43,12 @@ export default async function Home() {
     <main className="mx-auto w-full max-w-5xl px-6 py-12">
       <header className="mb-8">
         <h1 className="text-3xl font-semibold tracking-tight">
-          Demo Quản lý khách sạn
+          Kiểm tra kết nối database
         </h1>
         <p className="text-muted-foreground mt-2">
-          Next.js · Drizzle ORM · shadcn/ui · MySQL. Trang này chỉ để kiểm tra
-          kết nối tới database — chưa có màn hình nghiệp vụ nào.
+          Trang tiện ích, không nằm trong thanh điều hướng. Chín màn hình nghiệp
+          vụ dùng dữ liệu giả trong <code className="font-mono">src/lib/mock/</code>;
+          trang này là chỗ duy nhất đọc thẳng MySQL qua Drizzle.
         </p>
       </header>
 
