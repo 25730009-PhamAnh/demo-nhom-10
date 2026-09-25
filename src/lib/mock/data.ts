@@ -13,7 +13,7 @@
  * tuong tu. Quy tac ma giu dung CHAR(10): tien to + chu so cho du 10 ky tu.
  */
 import type * as schema from "@/db/schema";
-import { congTien, tienDichVu, tienPhong } from "@/lib/tinh-toan";
+import { congTien, themNgay, tienDichVu, tienPhong } from "@/lib/tinh-toan";
 import { NGAY_HIEN_TAI } from "@/lib/mock/now";
 
 type LoaiTaiKhoan = typeof schema.loaiTaiKhoan.$inferSelect;
@@ -34,13 +34,6 @@ type ChiTietHoaDon = typeof schema.chiTietHoaDon.$inferSelect;
 /** Sinh ma CHAR(10): tien to + so, dem 0 cho du 10 ky tu. */
 function ma(tienTo: string, n: number): string {
   return tienTo + String(n).padStart(10 - tienTo.length, "0");
-}
-
-/** Cong them n ngay vao chuoi 'YYYY-MM-DD'. */
-function themNgay(iso: string, n: number): string {
-  const d = new Date(`${iso}T00:00:00Z`);
-  d.setUTCDate(d.getUTCDate() + n);
-  return d.toISOString().slice(0, 10);
 }
 
 // =====================================================================

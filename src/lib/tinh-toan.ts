@@ -76,3 +76,17 @@ export function tamTinhDatPhong(args: {
     };
   }
 }
+
+/**
+ * Cong them n ngay vao chuoi 'YYYY-MM-DD'.
+ *
+ * Chuoi rong hoac khong hop le duoc tra lai NGUYEN VEN thay vi nem loi: o nhap
+ * ngay cua trinh duyet cho phep xoa trong, va truoc day toISOString() nem
+ * RangeError khien hai nut tang/giam so dem chet han.
+ */
+export function themNgay(iso: string, n: number): string {
+  const d = new Date(`${iso}T00:00:00Z`);
+  if (Number.isNaN(d.getTime())) return iso;
+  d.setUTCDate(d.getUTCDate() + n);
+  return d.toISOString().slice(0, 10);
+}

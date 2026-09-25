@@ -11,6 +11,7 @@ type Thang = {
   tienPhong: string;
   dichVu: string;
   phuThu: string;
+  giamTru: string;
   tong: string;
 };
 
@@ -44,7 +45,7 @@ export function PeriodPicker({ duLieu }: { duLieu: Thang[] }) {
   const tongKy = congTien(...hienThi.map((d) => d.tong));
   const tongPhong = congTien(...hienThi.map((d) => d.tienPhong));
   const tongDichVu = congTien(...hienThi.map((d) => d.dichVu));
-  const tongPhuThu = congTien(...hienThi.map((d) => d.phuThu));
+  const tongGiamTru = congTien(...hienThi.map((d) => d.giamTru));
 
   return (
     <>
@@ -79,15 +80,16 @@ export function PeriodPicker({ duLieu }: { duLieu: Thang[] }) {
         <TheSo nhan="Doanh thu kỳ" giaTri={formatVnd(tongKy)} phu={`${hienThi.length} tháng`} />
         <TheSo nhan="Tiền phòng" giaTri={formatVnd(tongPhong)} phu="Khoản mục TienPhong" mau="var(--chart-1)" />
         <TheSo nhan="Dịch vụ" giaTri={formatVnd(tongDichVu)} phu="Khoản mục DichVu" mau="var(--chart-2)" />
-        <TheSo nhan="Phụ thu & giảm trừ" giaTri={formatVnd(tongPhuThu)} phu="Các khoản còn lại" mau="var(--chart-3)" />
+        <TheSo nhan="Giảm trừ & giảm giá" giaTri={formatVnd(tongGiamTru)} phu="Tiền cọc đã thu, khuyến mãi" />
       </section>
 
       <section className="bg-card border-border flex h-[300px] shrink-0 flex-col gap-[14px] rounded-[14px] border p-5">
         <div className="flex items-center gap-3">
           <h2 className="m-0 flex-grow text-[15px] font-semibold">Doanh thu theo tháng</h2>
+          <span className="text-muted-foreground text-[11px]">Chiều cao cột = tổng sau giảm trừ</span>
           <ChuGiai mau="var(--chart-1)" nhan="Tiền phòng" />
           <ChuGiai mau="var(--chart-2)" nhan="Dịch vụ" />
-          <ChuGiai mau="var(--chart-3)" nhan="Phụ thu & giảm trừ" />
+          <ChuGiai mau="var(--chart-3)" nhan="Phụ thu" />
         </div>
 
         {max === 0 ? (
@@ -95,8 +97,17 @@ export function PeriodPicker({ duLieu }: { duLieu: Thang[] }) {
         ) : (
           <div className="flex min-h-0 flex-grow items-end gap-3">
             {hienThi.map((d) => {
-              // Khoan phu thu co the am; chi ve phan duong de cot khong lat nguoc.
-              const phan = (v: string) => (max === 0 ? 0 : (Math.max(0, Number(v)) / max) * 100);
+              // CHIEU CAO COT ti le voi `tong` — dung con so ma nhan va tooltip
+              // bao. Truoc day cot ve bang tong cac phan DUONG nen thang co tong
+              // nho hon lai duoc ve cao hon, va cot cao nhat bi cat cut.
+              const caoCot = (Number(d.tong) / max) * 100;
+
+              // Ben trong cot, ba thanh phan duong chia theo ti le cua chinh
+              // chung, nen luon cong du 100% chieu cao cot.
+              const duong =
+                Number(d.tienPhong) + Number(d.dichVu) + Number(d.phuThu);
+              const phan = (v: string) => (duong === 0 ? 0 : (Number(v) / duong) * 100);
+
               return (
                 <div key={d.thang} className="flex min-w-0 flex-grow flex-col items-center gap-2">
                   <div
@@ -104,12 +115,14 @@ export function PeriodPicker({ duLieu }: { duLieu: Thang[] }) {
                     style={{ height: "170px" }}
                     title={`${nhanThang(d.thang)}: ${formatVnd(d.tong)}`}
                   >
-                    <div style={{ height: `${phan(d.phuThu)}%`, background: "var(--chart-3)" }} />
-                    <div style={{ height: `${phan(d.dichVu)}%`, background: "var(--chart-2)" }} />
                     <div
-                      className="rounded-t-[4px]"
-                      style={{ height: `${phan(d.tienPhong)}%`, background: "var(--chart-1)" }}
-                    />
+                      className="flex w-full flex-col justify-end overflow-hidden rounded-t-[4px]"
+                      style={{ height: `${Math.max(0, caoCot)}%` }}
+                    >
+                      <div style={{ height: `${phan(d.phuThu)}%`, background: "var(--chart-3)" }} />
+                      <div style={{ height: `${phan(d.dichVu)}%`, background: "var(--chart-2)" }} />
+                      <div style={{ height: `${phan(d.tienPhong)}%`, background: "var(--chart-1)" }} />
+                    </div>
                   </div>
                   <span className="text-muted-foreground font-mono text-[10.5px]">
                     {nhanThang(d.thang)}
@@ -130,7 +143,8 @@ export function PeriodPicker({ duLieu }: { duLieu: Thang[] }) {
                 <th className="border-border bg-card sticky top-0 border-b pb-[9px] font-semibold">Tháng</th>
                 <th className="border-border bg-card sticky top-0 border-b pb-[9px] text-right font-semibold">Tiền phòng</th>
                 <th className="border-border bg-card sticky top-0 border-b pb-[9px] text-right font-semibold">Dịch vụ</th>
-                <th className="border-border bg-card sticky top-0 border-b pb-[9px] text-right font-semibold">Phụ thu &amp; giảm trừ</th>
+                <th className="border-border bg-card sticky top-0 border-b pb-[9px] text-right font-semibold">Phụ thu</th>
+                <th className="border-border bg-card sticky top-0 border-b pb-[9px] text-right font-semibold">Giảm trừ</th>
                 <th className="border-border bg-card sticky top-0 border-b pb-[9px] text-right font-semibold">Tổng</th>
               </tr>
             </thead>
@@ -143,6 +157,7 @@ export function PeriodPicker({ duLieu }: { duLieu: Thang[] }) {
                   <td className="border-border border-b py-[11px] text-right font-mono text-[12.5px]">{formatVnd(d.tienPhong)}</td>
                   <td className="border-border border-b py-[11px] text-right font-mono text-[12.5px]">{formatVnd(d.dichVu)}</td>
                   <td className="border-border border-b py-[11px] text-right font-mono text-[12.5px]">{formatVnd(d.phuThu)}</td>
+                  <td className="border-border border-b py-[11px] text-right font-mono text-[12.5px]" style={{ color: "#8C3A31" }}>{formatVnd(d.giamTru)}</td>
                   <td className="border-border border-b py-[11px] text-right font-mono text-[12.5px] font-medium">{formatVnd(d.tong)}</td>
                 </tr>
               ))}

@@ -5,6 +5,7 @@ import {
   getPhieuNhanHomNay,
   getPhieuTheoMa,
   getPhieuTraHomNay,
+  traCuuPhongTrongAnToan,
 } from "@/lib/queries/bookings";
 
 describe("getPhieuNhanHomNay", () => {
@@ -64,5 +65,28 @@ describe("getLoaiPhongConTrong", () => {
     const soTrung = trung.find((l) => l.maLoaiPhong === "LP00000007")!.soPhongTrong;
     const soRoi = roi.find((l) => l.maLoaiPhong === "LP00000007")!.soPhongTrong;
     expect(soTrung).toBeLessThan(soRoi);
+  });
+});
+
+describe("traCuuPhongTrongAnToan", () => {
+  it("ngay hop le thi tra ok kem danh sach", async () => {
+    const r = await traCuuPhongTrongAnToan("2026-10-01", "2026-10-03");
+    expect(r.ok).toBe(true);
+    if (r.ok) expect(r.data).toHaveLength(10);
+  });
+  it("ngay sai thi tra ok:false kem thong bao, khong nem loi", async () => {
+    const r = await traCuuPhongTrongAnToan("2026-10-03", "2026-10-01");
+    expect(r.ok).toBe(false);
+    if (!r.ok) expect(r.loi).toBe("Ngày trả phòng phải sau ngày nhận phòng");
+  });
+  it("khoang ngay khac nhau cho so phong trong khac nhau", async () => {
+    const a = await traCuuPhongTrongAnToan("2026-10-01", "2026-10-03");
+    const b = await traCuuPhongTrongAnToan("2026-10-05", "2026-10-08");
+    expect(a.ok && b.ok).toBe(true);
+    if (a.ok && b.ok) {
+      const cua = (x: typeof a.data, ma: string) =>
+        x.find((l) => l.maLoaiPhong === ma)!.soPhongTrong;
+      expect(cua(a.data, "LP00000007")).not.toBe(cua(b.data, "LP00000007"));
+    }
   });
 });

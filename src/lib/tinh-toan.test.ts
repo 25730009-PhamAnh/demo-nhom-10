@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { congTien, soDem, tamTinhDatPhong, tienDichVu, tienPhong } from "@/lib/tinh-toan";
+import { congTien, soDem, tamTinhDatPhong, themNgay, tienDichVu, tienPhong } from "@/lib/tinh-toan";
 
 describe("soDem", () => {
   it("dem so dem giua hai ngay", () => {
@@ -83,5 +83,20 @@ describe("tamTinhDatPhong", () => {
     expect(r.loi).toBeNull();
     expect(r.soDem).toBe(2);
     expect(r.tienPhong).toBe("0.00");
+  });
+});
+
+describe("themNgay", () => {
+  it("cong va tru ngay, vat qua ranh gioi thang", () => {
+    expect(themNgay("2026-09-30", 1)).toBe("2026-10-01");
+    expect(themNgay("2026-10-01", -1)).toBe("2026-09-30");
+  });
+
+  // Lỗi reviewer tim ra: xoa trong o ngay -> toISOString() nem RangeError,
+  // hai nut +/- chet han va hien overlay loi.
+  it("chuoi rong hoac khong hop le thi tra lai nguyen ven, khong nem loi", () => {
+    expect(() => themNgay("", 1)).not.toThrow();
+    expect(themNgay("", 1)).toBe("");
+    expect(themNgay("khong-phai-ngay", 1)).toBe("khong-phai-ngay");
   });
 });

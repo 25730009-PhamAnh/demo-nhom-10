@@ -1,10 +1,11 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useTransition } from "react";
 import { Minus, Plus, TriangleAlert } from "lucide-react";
 
+import { traCuuPhongTrong } from "@/app/(app)/bookings/new/actions";
 import { formatVnd } from "@/lib/format";
-import { congTien, tamTinhDatPhong } from "@/lib/tinh-toan";
+import { congTien, tamTinhDatPhong, themNgay } from "@/lib/tinh-toan";
 
 type LoaiPhong = {
   maLoaiPhong: string;
@@ -15,13 +16,6 @@ type LoaiPhong = {
 
 type Khach = { maKh: string; hoTen: string; cccd: string; sdt: string | null };
 
-/** Cong them n ngay vao chuoi 'YYYY-MM-DD'. */
-function themNgay(iso: string, n: number): string {
-  const d = new Date(`${iso}T00:00:00Z`);
-  d.setUTCDate(d.getUTCDate() + n);
-  return d.toISOString().slice(0, 10);
-}
-
 /**
  * Form lap phieu dat phong, theo design/Booking.dc.html.
  *
@@ -29,7 +23,7 @@ function themNgay(iso: string, n: number): string {
  * bao gio lech nhau. Nut − / + doi ngay tra chu khong doi so dem truc tiep.
  */
 export function BookingForm({
-  loaiPhong,
+  loaiPhong: loaiPhongBanDau,
   khach,
   ngayMacDinh,
 }: {
@@ -37,6 +31,8 @@ export function BookingForm({
   khach: Khach[];
   ngayMacDinh: string;
 }) {
+  const [loaiPhong, setLoaiPhong] = useState(loaiPhongBanDau);
+  const [dangTraCuu, chuyenTiep] = useTransition();
   const [maKh, setMaKh] = useState(khach[0]?.maKh ?? "");
   const [ngayNhan, setNgayNhan] = useState(ngayMacDinh);
   const [ngayTra, setNgayTra] = useState(themNgay(ngayMacDinh, 2));
@@ -45,6 +41,19 @@ export function BookingForm({
 
   const loai = loaiPhong.find((l) => l.maLoaiPhong === maLoai);
   const khachDaChon = khach.find((k) => k.maKh === maKh);
+
+  // So phong con trong phu thuoc vao khoang ngay, nen phai hoi lai may chu moi
+  // khi ngay doi — khong duoc giu nguyen danh sach tinh cho ngay mac dinh.
+  useEffect(() => {
+    let conHieuLuc = true;
+    chuyenTiep(async () => {
+      const r = await traCuuPhongTrong(ngayNhan, ngayTra);
+      if (conHieuLuc && r.ok) setLoaiPhong(r.data);
+    });
+    return () => {
+      conHieuLuc = false;
+    };
+  }, [ngayNhan, ngayTra]);
 
   const tamTinh = useMemo(
     () =>
@@ -169,8 +178,9 @@ export function BookingForm({
 
         <Buoc so={3} tieuDe="Chọn loại phòng">
           <span className="text-muted-foreground text-[12px]">
-            {loaiPhong.reduce((s, l) => s + l.soPhongTrong, 0)} phòng trống trong khoảng
-            ngày đã chọn
+            {dangTraCuu
+              ? "Đang tra cứu phòng trống…"
+              : `${loaiPhong.reduce((s, l) => s + l.soPhongTrong, 0)} phòng trống trong khoảng ngày đã chọn`}
           </span>
           <div className="grid grid-cols-2 gap-[10px] xl:grid-cols-3">
             {loaiPhong.map((l) => {

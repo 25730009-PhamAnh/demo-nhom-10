@@ -99,3 +99,22 @@ export async function getLoaiPhongConTrong(checkIn: string, checkOut: string) {
     ).length,
   }));
 }
+
+/**
+ * Ban an toan cua getLoaiPhongConTrong: khong nem loi ma tra ve ket qua co gan
+ * nhan, de Server Action goi tu form dat phong khong lam vo trang khi nguoi
+ * dung go ngay sai.
+ */
+export async function traCuuPhongTrongAnToan(
+  checkIn: string,
+  checkOut: string,
+): Promise<
+  | { ok: true; data: Awaited<ReturnType<typeof getLoaiPhongConTrong>> }
+  | { ok: false; loi: string }
+> {
+  try {
+    return { ok: true, data: await getLoaiPhongConTrong(checkIn, checkOut) };
+  } catch {
+    return { ok: false, loi: "Ngày trả phòng phải sau ngày nhận phòng" };
+  }
+}

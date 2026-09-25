@@ -29,15 +29,28 @@ export async function getDoanhThuTheoThang() {
 
     const tienPhong = gom("TienPhong");
     const dichVu = gom("DichVu");
-    // Moi khoan con lai (PhuThu, GiamGia, GiamTru, TongHop) gop vao cot thu ba,
-    // de tong ba cot luon bang tong hoa don.
+
+    // Tach khoan DUONG va khoan AM ra rieng thay vi gop chung. Gop chung thi
+    // cot thu ba luon am (GiamTru lon hon PhuThu), bieu do khong ve duoc no, va
+    // chieu cao cot khong con phan anh dung tong.
+    const conLai = khoanMuc.filter(
+      (c) => c.loaiKhoanMuc !== "TienPhong" && c.loaiKhoanMuc !== "DichVu",
+    );
     const phuThu = congTien(
-      ...khoanMuc
-        .filter((c) => c.loaiKhoanMuc !== "TienPhong" && c.loaiKhoanMuc !== "DichVu")
-        .map((c) => c.soTien),
+      ...conLai.filter((c) => Number(c.soTien) > 0).map((c) => c.soTien),
+    );
+    const giamTru = congTien(
+      ...conLai.filter((c) => Number(c.soTien) < 0).map((c) => c.soTien),
     );
 
-    return { thang, tienPhong, dichVu, phuThu, tong: congTien(tienPhong, dichVu, phuThu) };
+    return {
+      thang,
+      tienPhong,
+      dichVu,
+      phuThu,
+      giamTru,
+      tong: congTien(tienPhong, dichVu, phuThu, giamTru),
+    };
   });
 }
 
