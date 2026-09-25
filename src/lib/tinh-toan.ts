@@ -51,3 +51,28 @@ export function tienDichVu(giaDv: string, soLuong: number): string {
 export function congTien(...cac: string[]): string {
   return sangChuoi(cac.reduce((t, x) => t + sangXu(x), 0));
 }
+
+/**
+ * Tam tinh cho form dat phong: so dem, tien phong, va thong bao loi neu ngay
+ * khong hop le. Tach rieng khoi component de test duoc.
+ *
+ * Khac cac ham tren: ham nay KHONG nem loi ma tra ve truong `loi`, vi form can
+ * hien thong bao va lam mo nut Lap phieu — chu khong duoc hien tien am.
+ * Thong bao o day co dau, vi no hien thang len giao dien.
+ */
+export function tamTinhDatPhong(args: {
+  ngayNhan: string;
+  ngayTra: string;
+  donGia: string;
+}): { soDem: number; tienPhong: string; loi: string | null } {
+  try {
+    const dem = soDem(args.ngayNhan, args.ngayTra);
+    return { soDem: dem, tienPhong: tienPhong(args.donGia, dem), loi: null };
+  } catch {
+    return {
+      soDem: 0,
+      tienPhong: "0.00",
+      loi: "Ngày trả phòng phải sau ngày nhận phòng",
+    };
+  }
+}

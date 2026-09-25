@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { congTien, soDem, tienDichVu, tienPhong } from "@/lib/tinh-toan";
+import { congTien, soDem, tamTinhDatPhong, tienDichVu, tienPhong } from "@/lib/tinh-toan";
 
 describe("soDem", () => {
   it("dem so dem giua hai ngay", () => {
@@ -48,5 +48,40 @@ describe("congTien", () => {
   });
   it("khong doi so nao thi tra 0", () => {
     expect(congTien()).toBe("0.00");
+  });
+});
+
+describe("tamTinhDatPhong", () => {
+  it("tra so dem va tien phong khi ngay hop le", () => {
+    expect(
+      tamTinhDatPhong({ ngayNhan: "2026-09-23", ngayTra: "2026-09-26", donGia: "1000000.00" }),
+    ).toEqual({ soDem: 3, tienPhong: "3000000.00", loi: null });
+  });
+
+  // Review Focus #1 — form dat phong khong duoc hien tien am
+  it("ngay tra truoc ngay nhan: bao loi, khong tra tien am", () => {
+    const r = tamTinhDatPhong({
+      ngayNhan: "2026-09-26", ngayTra: "2026-09-23", donGia: "1000000.00",
+    });
+    expect(r.loi).toBe("Ngày trả phòng phải sau ngày nhận phòng");
+    expect(r.soDem).toBe(0);
+    expect(r.tienPhong).toBe("0.00");
+  });
+
+  it("ngay tra trung ngay nhan: cung bao loi", () => {
+    const r = tamTinhDatPhong({
+      ngayNhan: "2026-09-23", ngayTra: "2026-09-23", donGia: "1000000.00",
+    });
+    expect(r.loi).toBe("Ngày trả phòng phải sau ngày nhận phòng");
+    expect(r.tienPhong).toBe("0.00");
+  });
+
+  it("chua chon loai phong thi tien bang 0 nhung khong bao loi ngay", () => {
+    const r = tamTinhDatPhong({
+      ngayNhan: "2026-09-23", ngayTra: "2026-09-25", donGia: "0.00",
+    });
+    expect(r.loi).toBeNull();
+    expect(r.soDem).toBe(2);
+    expect(r.tienPhong).toBe("0.00");
   });
 });
