@@ -1,8 +1,8 @@
 import Link from "next/link";
-import { Brush, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 
+import { NhatKyForm } from "@/components/rooms/nhat-ky-form";
 import { RoomFilter } from "@/components/rooms/room-filter";
-import { SectionCard } from "@/components/shared/section-card";
 import { Topbar } from "@/components/layout/topbar";
 import { formatNgay, formatNgayGio, formatVnd } from "@/lib/format";
 import { getGioHienTai, getNgayHienTai } from "@/lib/queries/ngay";
@@ -40,15 +40,9 @@ export default async function SoDoPhongPage() {
       <main className="flex min-h-0 flex-grow flex-col gap-5 overflow-auto px-8 py-7">
         <RoomFilter phong={phong} loaiPhong={loaiPhong} />
 
-        <SectionCard
-          tieuDe="Nhật ký buồng phòng & sửa chữa"
+        <NhatKyForm
+          phong={phong.map((p) => ({ maPhong: p.maPhong, soPhong: p.soPhong, trangThai: p.trangThai }))}
           phu={`${nhatKy.length} ghi nhận`}
-          hanhDong={
-            <span className="text-primary flex items-center gap-[5px] text-[12.5px] font-semibold">
-              <Brush size={14} strokeWidth={2} />
-              Ghi nhận dọn phòng
-            </span>
-          }
         >
           <table className="w-full border-collapse text-left">
             <thead>
@@ -97,7 +91,7 @@ export default async function SoDoPhongPage() {
               ))}
             </tbody>
           </table>
-        </SectionCard>
+        </NhatKyForm>
       </main>
     </>
   );
