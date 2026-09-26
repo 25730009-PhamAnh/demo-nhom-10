@@ -1,5 +1,13 @@
 import { describe, expect, it } from "vitest";
-import { congTien, soDem, tamTinhDatPhong, themNgay, tienDichVu, tienPhong } from "@/lib/tinh-toan";
+import {
+  congTien,
+  docSoTien,
+  soDem,
+  tamTinhDatPhong,
+  themNgay,
+  tienDichVu,
+  tienPhong,
+} from "@/lib/tinh-toan";
 
 describe("soDem", () => {
   it("dem so dem giua hai ngay", () => {
@@ -98,5 +106,20 @@ describe("themNgay", () => {
     expect(() => themNgay("", 1)).not.toThrow();
     expect(themNgay("", 1)).toBe("");
     expect(themNgay("khong-phai-ngay", 1)).toBe("khong-phai-ngay");
+  });
+});
+
+// Review Focus: nguoi Viet go "300.000" nghia la ba tram nghin, khong phai 300.
+describe("docSoTien", () => {
+  it("bo dau cham, dau phay, khoang trang ngan cach hang nghin", () => {
+    expect(docSoTien("300.000")).toBe("300000");
+    expect(docSoTien("1,500,000")).toBe("1500000");
+    expect(docSoTien(" 250 000 ")).toBe("250000");
+  });
+
+  it("giu nguyen ky tu la de Server Action bao khong hop le", () => {
+    expect(docSoTien("-50.000")).toBe("-50000");
+    expect(docSoTien("3tr")).toBe("3tr");
+    expect(docSoTien("")).toBe("");
   });
 });

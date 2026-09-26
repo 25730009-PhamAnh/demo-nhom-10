@@ -6,6 +6,7 @@ import { db } from "@/db";
 import { thongBaoCsdl } from "@/db/loi";
 import { callProcedure } from "@/db/procedures";
 import * as schema from "@/db/schema";
+import { laNgay } from "@/lib/thao-tac/kiem-tra";
 import { congTien } from "@/lib/tinh-toan";
 
 /**
@@ -144,15 +145,7 @@ export async function getLoaiPhongConTrong(
   }));
 }
 
-const NGAY_ISO = /^\d{4}-\d{2}-\d{2}$/;
 const SO_DEM_TOI_DA = 1000;
-
-/** Ngay 'YYYY-MM-DD' co that tren lich; chan chuoi rong va ngay nhu 2026-02-30. */
-function laNgayHopLe(s: string): boolean {
-  if (!NGAY_ISO.test(s)) return false;
-  const d = new Date(`${s}T00:00:00Z`);
-  return !Number.isNaN(d.getTime()) && d.toISOString().slice(0, 10) === s;
-}
 
 /**
  * Ban an toan cua getLoaiPhongConTrong: khong nem loi ma tra ve ket qua co gan
@@ -164,8 +157,8 @@ export async function traCuuPhongTrongAnToan(
   checkOut: string,
 ): Promise<{ ok: true; data: LoaiPhongConTrong[] } | { ok: false; loi: string }> {
   // O ngay cua trinh duyet cho xoa trong. Ngay rong / sai den MySQL la loi
-  // 1292 chu khong phai SIGNAL, thongBaoCsdl se nem tiep, nen phai chan truoc.
-  if (!laNgayHopLe(checkIn) || !laNgayHopLe(checkOut)) {
+  // 1292 chu khong phai SIGNAL; chan truoc de bao mot cau de hieu.
+  if (!laNgay(checkIn) || !laNgay(checkOut)) {
     return { ok: false, loi: "Ngày không hợp lệ" };
   }
   // CTE de quy tinh don gia (va buoc 3e cua sp_DatPhong) dung o

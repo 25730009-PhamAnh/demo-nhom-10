@@ -90,3 +90,12 @@ export function themNgay(iso: string, n: number): string {
   d.setUTCDate(d.getUTCDate() + n);
   return d.toISOString().slice(0, 10);
 }
+
+/**
+ * Doc so tien nguoi dung go o o nhap (VND, khong co phan le): bo dau cham, dau
+ * phay va khoang trang ngan cach hang nghin, "300.000" -> "300000". Ky tu khac
+ * (chu, dau tru) giu nguyen de Server Action bao "khong hop le".
+ */
+export function docSoTien(nhap: string): string {
+  return nhap.replace(/[.,\s]/g, "");
+}
