@@ -4,14 +4,14 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Eye, EyeOff, TriangleAlert } from "lucide-react";
 
-import { dangNhapGia } from "@/lib/queries/accounts";
+import { xacThucDangNhap } from "@/app/(auth)/login/actions";
 
 /**
  * Form dang nhap, theo design/Login.dc.html.
  *
- * Goi dangNhapGia ngay phia client vi day la du lieu gia (spec muc 6). Khi noi
- * CSDL that, doi thanh Server Action goi sp_DangNhap — luc do mat khau va danh
- * sach tai khoan se khong con nam trong bundle trinh duyet nua.
+ * Goi Server Action xacThucDangNhap, nen sp_DangNhap chay tren server va mat
+ * khau khong di qua bundle trinh duyet. Chua tao phien: dang nhap dung thi
+ * chuyen ve "/" (phase 3 moi ghi cookie va chan route).
  */
 export function LoginForm() {
   const router = useRouter();
@@ -26,12 +26,17 @@ export function LoginForm() {
     setLoi(null);
     setDangGui(true);
     try {
-      await dangNhapGia(tenDangNhap, matKhau);
-      router.push("/");
-    } catch (err) {
-      setLoi(err instanceof Error ? err.message : String(err));
-      setDangGui(false);
+      const r = await xacThucDangNhap(tenDangNhap, matKhau);
+      if (r.ok) {
+        router.push("/");
+        return;
+      }
+      setLoi(r.loi);
+    } catch {
+      // Loi khong phai loi nghiep vu (vi du mat ket noi CSDL) nem ra tu server.
+      setLoi("Không kết nối được máy chủ, vui lòng thử lại");
     }
+    setDangGui(false);
   }
 
   return (
