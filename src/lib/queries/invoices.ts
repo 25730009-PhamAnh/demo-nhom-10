@@ -1,7 +1,11 @@
-import * as mock from "@/lib/mock/data";
-import { soDem } from "@/lib/tinh-toan";
+import "server-only";
 
-/** Mat tien doc hoa don. Giai doan sau doi sang sp_LapHoaDon / sp_LapChiTietHoaDon. */
+import { asc, desc, eq, sql } from "drizzle-orm";
+
+import { db } from "@/db";
+import * as schema from "@/db/schema";
+
+/** Mat tien doc hoa don. Lap / thanh toan hoa don la viec cua phase 2 (sp_LapHoaDon, sp_ThanhToanHoaDon). */
 
 export type HoaDonDayDu = {
   maHoaDon: string;
@@ -21,15 +25,51 @@ export type HoaDonDayDu = {
   khoanMuc: { loaiKhoanMuc: string; ghiChu: string | null; soTien: string }[];
 };
 
+const hoaDon = schema.hoaDon;
+const pdp = schema.phieuDatPhong;
+const kh = schema.khachHang;
+
 export async function getHoaDon(ma: string): Promise<HoaDonDayDu | null> {
-  const hd = mock.HOA_DON.find((h) => h.maHoaDon === ma);
+  const [hd] = await db
+    .select({
+      maHoaDon: hoaDon.maHoaDon,
+      maDatPhong: hoaDon.maDatPhong,
+      ngayLap: hoaDon.ngayLap,
+      trangThai: hoaDon.trangThai,
+      loaiThanhToan: hoaDon.loaiThanhToan,
+      tongTien: hoaDon.tongTien,
+      hoTen: kh.hoTen,
+      maKh: kh.maKh,
+      cccd: kh.cccd,
+      sdt: kh.sdt,
+      ngayCheckIn: pdp.ngayCheckIn,
+      ngayCheckOut: pdp.ngayCheckOut,
+      soDem: sql<number>`DATEDIFF(${pdp.ngayCheckOut}, ${pdp.ngayCheckIn})`.mapWith(Number),
+    })
+    .from(hoaDon)
+    .innerJoin(pdp, eq(pdp.maDatPhong, hoaDon.maDatPhong))
+    .innerJoin(kh, eq(kh.maKh, pdp.maKh))
+    .where(eq(hoaDon.maHoaDon, ma));
   if (!hd) return null;
 
-  const phieu = mock.PHIEU_DAT_PHONG.find((p) => p.maDatPhong === hd.maDatPhong);
-  const khach = mock.KHACH_HANG.find((k) => k.maKh === phieu?.maKh);
-  const chiTiet = mock.CHI_TIET_DAT_PHONG.filter((c) => c.maDatPhong === hd.maDatPhong);
-  const phong = chiTiet.map((c) => mock.PHONG.find((x) => x.maPhong === c.maPhong));
-  const loai = mock.LOAI_PHONG.find((l) => l.maLoaiPhong === phong[0]?.maLoaiPhong);
+  const [dsPhong, khoanMuc] = await Promise.all([
+    db
+      .select({ soPhong: schema.phong.soPhong, tenLoaiPhong: schema.loaiPhong.tenLoaiPhong })
+      .from(schema.chiTietDatPhong)
+      .innerJoin(schema.phong, eq(schema.phong.maPhong, schema.chiTietDatPhong.maPhong))
+      .innerJoin(schema.loaiPhong, eq(schema.loaiPhong.maLoaiPhong, schema.phong.maLoaiPhong))
+      .where(eq(schema.chiTietDatPhong.maDatPhong, hd.maDatPhong))
+      .orderBy(asc(schema.phong.soPhong)),
+    db
+      .select({
+        loaiKhoanMuc: schema.chiTietHoaDon.loaiKhoanMuc,
+        ghiChu: schema.chiTietHoaDon.ghiChu,
+        soTien: schema.chiTietHoaDon.soTien,
+      })
+      .from(schema.chiTietHoaDon)
+      .where(eq(schema.chiTietHoaDon.maHoaDon, ma))
+      .orderBy(asc(schema.chiTietHoaDon.maCthd)),
+  ]);
 
   return {
     maHoaDon: hd.maHoaDon,
@@ -38,43 +78,32 @@ export async function getHoaDon(ma: string): Promise<HoaDonDayDu | null> {
     trangThai: hd.trangThai,
     loaiThanhToan: hd.loaiThanhToan,
     tongTien: hd.tongTien,
-    khach: {
-      hoTen: khach?.hoTen ?? "—",
-      maKh: khach?.maKh ?? "",
-      cccd: khach?.cccd ?? "",
-      sdt: khach?.sdt ?? null,
-    },
+    khach: { hoTen: hd.hoTen, maKh: hd.maKh, cccd: hd.cccd, sdt: hd.sdt },
     phieu: {
-      ngayCheckIn: phieu?.ngayCheckIn ?? "",
-      ngayCheckOut: phieu?.ngayCheckOut ?? "",
-      soDem: phieu ? soDem(phieu.ngayCheckIn, phieu.ngayCheckOut) : 0,
-      soPhong: phong.map((x) => x?.soPhong ?? "—"),
-      tenLoaiPhong: loai?.tenLoaiPhong ?? "—",
+      ngayCheckIn: hd.ngayCheckIn,
+      ngayCheckOut: hd.ngayCheckOut,
+      soDem: hd.soDem,
+      soPhong: dsPhong.map((p) => p.soPhong),
+      tenLoaiPhong: dsPhong[0]?.tenLoaiPhong ?? "—",
     },
-    khoanMuc: mock.CHI_TIET_HOA_DON
-      .filter((c) => c.maHoaDon === hd.maHoaDon)
-      .map((c) => ({
-        loaiKhoanMuc: c.loaiKhoanMuc,
-        ghiChu: c.ghiChu,
-        soTien: c.soTien,
-      })),
+    khoanMuc,
   };
 }
 
-/** Danh sach cho trang /invoices (muc "Hoa don" tren thanh dieu huong). */
+/** Danh sach cho trang /invoices (muc "Hoa don" tren thanh dieu huong), moi nhat truoc. */
 export async function getDanhSachHoaDon() {
-  return mock.HOA_DON
-    .map((h) => {
-      const phieu = mock.PHIEU_DAT_PHONG.find((p) => p.maDatPhong === h.maDatPhong);
-      const khach = mock.KHACH_HANG.find((k) => k.maKh === phieu?.maKh);
-      return {
-        maHoaDon: h.maHoaDon,
-        maDatPhong: h.maDatPhong,
-        ngayLap: h.ngayLap,
-        tongTien: h.tongTien,
-        trangThai: h.trangThai,
-        hoTenKhach: khach?.hoTen ?? "—",
-      };
+  return db
+    .select({
+      maHoaDon: hoaDon.maHoaDon,
+      maDatPhong: hoaDon.maDatPhong,
+      ngayLap: hoaDon.ngayLap,
+      tongTien: hoaDon.tongTien,
+      trangThai: hoaDon.trangThai,
+      hoTenKhach: kh.hoTen,
     })
-    .sort((a, b) => b.ngayLap.localeCompare(a.ngayLap));
+    .from(hoaDon)
+    .innerJoin(pdp, eq(pdp.maDatPhong, hoaDon.maDatPhong))
+    .innerJoin(kh, eq(kh.maKh, pdp.maKh))
+    // Nhieu hoa don cung gio lap (hoa don nhap sang nay), them ma de thu tu on dinh.
+    .orderBy(desc(hoaDon.ngayLap), desc(hoaDon.maHoaDon));
 }

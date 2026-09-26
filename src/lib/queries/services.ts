@@ -1,27 +1,30 @@
-import type * as schema from "@/db/schema";
-import * as mock from "@/lib/mock/data";
+import "server-only";
 
-/** Mat tien doc dich vu. Giai doan sau doi sang Drizzle va sp_GhiNhanDichVu. */
+import { asc, eq } from "drizzle-orm";
 
-export async function getDanhMucDichVu(): Promise<
-  (typeof schema.dichVu.$inferSelect)[]
-> {
-  return mock.DICH_VU;
+import { db } from "@/db";
+import * as schema from "@/db/schema";
+
+/** Mat tien doc dich vu. Ghi nhan dich vu la viec cua phase 2 (sp_GhiNhanDichVu). */
+
+export async function getDanhMucDichVu(): Promise<(typeof schema.dichVu.$inferSelect)[]> {
+  return db.select().from(schema.dichVu).orderBy(asc(schema.dichVu.maDv));
 }
 
 export async function getSuDungDichVuTheoPhieu(maDatPhong: string) {
-  return mock.SU_DUNG_DICH_VU
-    .filter((s) => s.maDatPhong === maDatPhong)
-    .map((s) => {
-      const dv = mock.DICH_VU.find((d) => d.maDv === s.maDv);
-      return {
-        maDv: s.maDv,
-        tenDv: dv?.tenDv ?? "—",
-        donViTinh: dv?.donViTinh ?? null,
-        giaDv: s.donGiaThoiDiem,
-        soLuong: s.soLuong,
-        // thanhTien la cot sinh nen kieu la string | null.
-        thanhTien: s.thanhTien ?? "0.00",
-      };
-    });
+  const ds = await db
+    .select({
+      maDv: schema.suDungDichVu.maDv,
+      tenDv: schema.dichVu.tenDv,
+      donViTinh: schema.dichVu.donViTinh,
+      giaDv: schema.suDungDichVu.donGiaThoiDiem,
+      soLuong: schema.suDungDichVu.soLuong,
+      thanhTien: schema.suDungDichVu.thanhTien,
+    })
+    .from(schema.suDungDichVu)
+    .innerJoin(schema.dichVu, eq(schema.dichVu.maDv, schema.suDungDichVu.maDv))
+    .where(eq(schema.suDungDichVu.maDatPhong, maDatPhong))
+    .orderBy(asc(schema.suDungDichVu.ngaySuDung));
+  // thanhTien la cot sinh nen kieu la string | null.
+  return ds.map((s) => ({ ...s, thanhTien: s.thanhTien ?? "0.00" }));
 }
