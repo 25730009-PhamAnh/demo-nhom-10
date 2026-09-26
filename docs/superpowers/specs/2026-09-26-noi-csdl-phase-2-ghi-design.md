@@ -45,6 +45,14 @@ toán* / *đã thanh toán* — để lễ tân biết đang ở bước nào. `
 
 **Tiền cọc khi đặt phòng** tính lại trên server bằng `LOAI_PHONG.DonGiaNgay` của loại đã chọn
 (đúng con số form đang hiển thị); không tin số client gửi lên.
+*Cập nhật khi lập plan (26/09/2026):* từ phase 1, form hiện đơn giá mà `sp_DatPhong` sẽ chốt
+(trung bình `BANG_GIA_PHONG` từng đêm, lùi về `DonGiaNgay`), nên tiền cọc lấy đúng số đó từ
+`getLoaiPhongConTrong` — vẫn là "con số form đang hiển thị".
+
+**Tab Trả liệt kê mọi phiếu `DangO`** *(bổ sung khi lập plan)*, phiếu đến hạn hôm nay lên trước.
+`sp_TraPhong` cho trả sớm. Nếu tab Trả chỉ có phiếu trả hôm nay thì phiếu vừa nhận phòng (sớm nhất
+trả ngày mai) không đi tiếp được tới lập hóa đơn / trả phòng, và vòng ở mục 1 không làm được trên
+giao diện. Topbar vẫn đếm lượt trả hôm nay.
 
 ## 3. Quyết định kiến trúc
 
@@ -78,6 +86,8 @@ Dùng `thongBaoCsdl(err)` (`src/db/loi.ts`, tạo ở phase 1):
   phase 1. Người xem thấy rõ quy tắc nằm ở tầng CSDL.
 - **Thêm ở phase này:** lỗi khác không còn ném tiếp mà thành `"Lỗi CSDL (<errno>): <message>"`,
   đồng thời ghi `console.error` trên server, để một nút bấm lỗi không làm vỡ cả trang.
+  Lỗi `fatal` không có `errno` (connection bị ngắt giữa chừng) cũng vào nhánh này, mã hiện là
+  "mất kết nối". Lỗi không đến từ CSDL (lỗi lập trình) vẫn ném tiếp.
 
 Thông báo hiện ngay dưới nút vừa bấm. Nút bị khóa trong lúc chờ (`useTransition` /
 `useActionState`).
@@ -95,8 +105,9 @@ bằng tài khoản trong phiên.
   thành nút).
 - Chi tiết hóa đơn: phần thanh toán chỉ hiện khi hóa đơn `ChuaThanhToan`. Đã thanh toán thì
   hiện đường dẫn "Về Nhận & trả phòng".
-- Bỏ dòng "Bản demo dùng dữ liệu giả — thao tác không được lưu lại." trong
-  `booking-picker.tsx`.
+- Bỏ các dòng "… chưa được nối với CSDL" mà phase 1 để lại thay cho "Bản demo dùng dữ liệu giả"
+  (`booking-picker.tsx`, `booking-form.tsx`, trang Đặt phòng, chi tiết hóa đơn,
+  `service-usage-form.tsx`).
 
 ## 4. Sửa thủ tục (lỗi tìm thấy khi khảo sát)
 
@@ -104,6 +115,10 @@ bằng tài khoản trong phiên.
 |---|---|---|
 | `sp_NhanPhong` | Đòi mọi phòng của phiếu phải `'Trong'`, nhưng `sp_DatPhong` (bước 3f) đã chuyển phòng sang `'DaDat'` → **không phiếu nào đặt qua `sp_DatPhong` nhận phòng được** | Chấp nhận `TrangThai IN ('Trong', 'DaDat')`. An toàn vì `trg_CTDP_ChongTrungPhong` bảo đảm không có phiếu hiệu lực khác trùng khoảng ngày |
 | `sp_GhiNhanDonPhong` | Luôn đưa phòng về `'Trong'`, kể cả phòng đang có khách (`DangSuDung`) hoặc đang giữ cho khách (`DaDat`) | Chỉ đổi sang `'Trong'` khi phòng đang `DangDon` hoặc `BaoTri`; trạng thái khác giữ nguyên, vẫn ghi nhật ký |
+| `sp_GhiNhanDichVu` | Chú thích ghi "hóa đơn nháp đã có thì gọi lại `sp_LapHoaDon`" nhưng thân thủ tục không làm → ghi dịch vụ sau khi lập hóa đơn thì `sp_ThanhToanHoaDon` từ chối vì hóa đơn lệch `fn_TienDichVu` | Hóa đơn `ChuaThanhToan` đã có: trong cùng giao dịch, xóa các dòng tự sinh rồi gọi `sp_LapChiTietHoaDon` (cách `sp_LapHoaDon` lập lại). Không `CALL sp_LapHoaDon` vì thủ tục đó tự mở giao dịch và trả thêm hai result set |
+| `sp_HuyPhieuDat` | Hủy phiếu nhưng hóa đơn nháp của phiếu (lập từ lúc `DaDat`) vẫn `ChuaThanhToan` → Tổng quan vẫn đếm nó là hóa đơn chờ xử lý | Hóa đơn `ChuaThanhToan` của phiếu chuyển sang `DaHuy` trong cùng giao dịch |
+
+*Hai dòng cuối bổ sung khi lập plan (26/09/2026), theo quy tắc ngay dưới đây.*
 
 Lúc triển khai, rà trọn vòng đời trạng thái phòng và phiếu qua 12 thủ tục + trigger. Gặp chỗ
 lệch khác thì **ghi thêm vào bảng trên trước**, rồi mới sửa. Sửa theo quy ước của file: chú
@@ -146,8 +161,9 @@ Trên `QuanLyKhachSan_test`, ngày đóng băng 23/09/2026 10:00 (hạ tầng c�
 ## 7. Rủi ro
 
 - `sp_ThanhToanHoaDon` từ chối khi tiền trên hóa đơn lệch với `fn_TienPhong` /
-  `fn_TienDichVu`, ví dụ dịch vụ ghi sau khi lập hóa đơn mà chưa lập lại. `sp_GhiNhanDichVu`
-  đã tự gọi lại `sp_LapHoaDon` cho hóa đơn nháp; ca đi trọn vòng sẽ kiểm việc này.
+  `fn_TienDichVu`, ví dụ dịch vụ ghi sau khi lập hóa đơn mà chưa lập lại. Khảo sát lúc lập plan
+  cho thấy `sp_GhiNhanDichVu` chưa tự tính lại hóa đơn nháp như chú thích của nó ghi; sửa ở §4,
+  và ca đi trọn vòng kiểm việc này.
 - Hai người đặt cùng một phòng cùng lúc: `sp_DatPhong` khóa dòng `PHONG` và trigger chặn
   trùng. App chỉ việc hiện thông báo của CSDL.
 
