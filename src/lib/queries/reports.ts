@@ -1,13 +1,42 @@
-import * as mock from "@/lib/mock/data";
-import { NGAY_HIEN_TAI } from "@/lib/mock/now";
-import { congTien } from "@/lib/tinh-toan";
+import "server-only";
+
+import type { RowDataPacket } from "mysql2";
+
+import { pool } from "@/db";
+import { callProcedure } from "@/db/procedures";
 import { getPhieuNhanHomNay, getPhieuTraHomNay } from "@/lib/queries/bookings";
+import { getNgayHienTai } from "@/lib/queries/ngay";
 
-/** Mat tien tong hop so lieu bao cao. Giai doan sau gom bang SQL GROUP BY. */
+/**
+ * Mat tien so lieu bao cao. Doanh thu lay tu sp_BaoCaoDoanhThu: chi hoa don
+ * DaThanhToan, doanh thu thuan = TienPhong + DichVu + PhuThu + GiamGia.
+ * GiamTru la tien coc bu tru tren hoa don, KHONG phai giam doanh thu, nen
+ * khong co mat o day.
+ */
 
-/** 12 thang gan nhat tinh den NGAY_HIEN_TAI, dang 'YYYY-MM', cu nhat truoc. */
-function muoiHaiThang(): string[] {
-  const [nam, thang] = NGAY_HIEN_TAI.split("-").map(Number);
+export type DoanhThuThang = {
+  thang: string;
+  tienPhong: string;
+  dichVu: string;
+  phuThu: string;
+  giamGia: string;
+  tong: string;
+};
+
+/** Mot dong ket qua cua sp_BaoCaoDoanhThu. */
+export type DongDoanhThu = {
+  Thang: string;
+  SoHoaDon: number;
+  TienPhong: string;
+  DichVu: string;
+  PhuThu: string;
+  GiamGia: string;
+  DoanhThuThuan: string;
+};
+
+/** 12 thang gan nhat tinh den homNay, dang 'YYYY-MM', cu nhat truoc. */
+function muoiHaiThang(homNay: string): string[] {
+  const [nam, thang] = homNay.split("-").map(Number);
   return Array.from({ length: 12 }, (_, i) => {
     const d = new Date(Date.UTC(nam, thang - 1, 1));
     d.setUTCMonth(d.getUTCMonth() - (11 - i));
@@ -15,71 +44,61 @@ function muoiHaiThang(): string[] {
   });
 }
 
-export async function getDoanhThuTheoThang() {
-  // Hoa don da huy khong tinh vao doanh thu.
-  const hoaDon = mock.HOA_DON.filter((h) => h.trangThai !== "DaHuy");
-
-  return muoiHaiThang().map((thang) => {
-    const trongThang = hoaDon.filter((h) => h.ngayLap.slice(0, 7) === thang);
-    const khoanMuc = mock.CHI_TIET_HOA_DON.filter((c) =>
-      trongThang.some((h) => h.maHoaDon === c.maHoaDon),
-    );
-    const gom = (loai: string) =>
-      congTien(...khoanMuc.filter((c) => c.loaiKhoanMuc === loai).map((c) => c.soTien));
-
-    const tienPhong = gom("TienPhong");
-    const dichVu = gom("DichVu");
-
-    // Tach khoan DUONG va khoan AM ra rieng thay vi gop chung. Gop chung thi
-    // cot thu ba luon am (GiamTru lon hon PhuThu), bieu do khong ve duoc no, va
-    // chieu cao cot khong con phan anh dung tong.
-    const conLai = khoanMuc.filter(
-      (c) => c.loaiKhoanMuc !== "TienPhong" && c.loaiKhoanMuc !== "DichVu",
-    );
-    const phuThu = congTien(
-      ...conLai.filter((c) => Number(c.soTien) > 0).map((c) => c.soTien),
-    );
-    const giamTru = congTien(
-      ...conLai.filter((c) => Number(c.soTien) < 0).map((c) => c.soTien),
-    );
-
+/**
+ * Ghep ket qua sp_BaoCaoDoanhThu vao du 12 thang. Thu tuc chi tra thang CO hoa
+ * don, nen thang trong phai tu dien "0.00" de bieu do luon du 12 cot.
+ */
+export function gopDoanhThu12Thang(homNay: string, dong: DongDoanhThu[]): DoanhThuThang[] {
+  const theoThang = new Map(dong.map((d) => [d.Thang, d]));
+  return muoiHaiThang(homNay).map((thang) => {
+    const d = theoThang.get(thang);
     return {
       thang,
-      tienPhong,
-      dichVu,
-      phuThu,
-      giamTru,
-      tong: congTien(tienPhong, dichVu, phuThu, giamTru),
+      tienPhong: d?.TienPhong ?? "0.00",
+      dichVu: d?.DichVu ?? "0.00",
+      phuThu: d?.PhuThu ?? "0.00",
+      giamGia: d?.GiamGia ?? "0.00",
+      tong: d?.DoanhThuThuan ?? "0.00",
     };
   });
 }
 
-export async function getChiSoTongQuan() {
-  const [nhan, tra] = await Promise.all([getPhieuNhanHomNay(), getPhieuTraHomNay()]);
+export async function getDoanhThuTheoThang(): Promise<DoanhThuThang[]> {
+  const homNay = await getNgayHienTai();
+  const tuNgay = `${muoiHaiThang(homNay)[0]}-01`;
+  const dong = await callProcedure<DongDoanhThu>("sp_BaoCaoDoanhThu", [tuNgay, homNay]);
+  return gopDoanhThu12Thang(homNay, dong);
+}
 
-  const dangSuDung = mock.PHONG.filter((p) => p.trangThai === "DangSuDung").length;
-  const dangO = mock.PHIEU_DAT_PHONG.filter((p) => p.trangThai === "DangO");
+export async function getChiSoTongQuan() {
+  const homNay = await getNgayHienTai();
+  const [nhan, tra, doanhThu, [dem]] = await Promise.all([
+    getPhieuNhanHomNay(),
+    getPhieuTraHomNay(),
+    callProcedure<DongDoanhThu>("sp_BaoCaoDoanhThu", [homNay, homNay]),
+    pool.query<RowDataPacket[]>(`
+      SELECT (SELECT COUNT(*) FROM PHONG)                                    AS soPhong,
+             (SELECT COUNT(*) FROM PHONG WHERE TrangThai = 'DangSuDung')     AS soPhongDangSuDung,
+             (SELECT COUNT(DISTINCT MaKH) FROM PHIEU_DAT_PHONG
+              WHERE  TrangThai = 'DangO')                                    AS khachLuuTru,
+             (SELECT COUNT(*) FROM HOA_DON WHERE TrangThai = 'ChuaThanhToan') AS hoaDonChuaThanhToan`),
+  ]);
+
+  const d = dem[0];
+  const soPhong = Number(d.soPhong);
+  const soPhongDangSuDung = Number(d.soPhongDangSuDung);
+  // Hom nay chua co hoa don nao thanh toan thi thu tuc khong tra dong nao.
+  const homNayDt = doanhThu[0];
 
   return {
-    congSuat:
-      mock.PHONG.length === 0
-        ? 0
-        : Math.round((dangSuDung / mock.PHONG.length) * 100),
-    khachLuuTru: new Set(dangO.map((p) => p.maKh)).size,
-    doanhThuHomNay: congTien(
-      ...mock.HOA_DON
-        .filter(
-          (h) => h.trangThai === "DaThanhToan" && h.ngayLap.slice(0, 10) === NGAY_HIEN_TAI,
-        )
-        .map((h) => h.tongTien),
-    ),
-    soHoaDonHomNay: mock.HOA_DON.filter(
-      (h) => h.trangThai === "DaThanhToan" && h.ngayLap.slice(0, 10) === NGAY_HIEN_TAI,
-    ).length,
+    congSuat: soPhong === 0 ? 0 : Math.round((soPhongDangSuDung / soPhong) * 100),
+    khachLuuTru: Number(d.khachLuuTru),
+    doanhThuHomNay: homNayDt?.DoanhThuThuan ?? "0.00",
+    soHoaDonHomNay: homNayDt?.SoHoaDon ?? 0,
     soNhanHomNay: nhan.length,
     soTraHomNay: tra.length,
-    hoaDonChuaThanhToan: mock.HOA_DON.filter((h) => h.trangThai === "ChuaThanhToan").length,
-    soPhong: mock.PHONG.length,
-    soPhongDangSuDung: dangSuDung,
+    hoaDonChuaThanhToan: Number(d.hoaDonChuaThanhToan),
+    soPhong,
+    soPhongDangSuDung,
   };
 }

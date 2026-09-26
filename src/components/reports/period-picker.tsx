@@ -11,7 +11,7 @@ type Thang = {
   tienPhong: string;
   dichVu: string;
   phuThu: string;
-  giamTru: string;
+  giamGia: string;
   tong: string;
 };
 
@@ -45,7 +45,7 @@ export function PeriodPicker({ duLieu }: { duLieu: Thang[] }) {
   const tongKy = congTien(...hienThi.map((d) => d.tong));
   const tongPhong = congTien(...hienThi.map((d) => d.tienPhong));
   const tongDichVu = congTien(...hienThi.map((d) => d.dichVu));
-  const tongGiamTru = congTien(...hienThi.map((d) => d.giamTru));
+  const tongGiamGia = congTien(...hienThi.map((d) => d.giamGia));
 
   return (
     <>
@@ -80,13 +80,13 @@ export function PeriodPicker({ duLieu }: { duLieu: Thang[] }) {
         <TheSo nhan="Doanh thu kỳ" giaTri={formatVnd(tongKy)} phu={`${hienThi.length} tháng`} />
         <TheSo nhan="Tiền phòng" giaTri={formatVnd(tongPhong)} phu="Khoản mục TienPhong" mau="var(--chart-1)" />
         <TheSo nhan="Dịch vụ" giaTri={formatVnd(tongDichVu)} phu="Khoản mục DichVu" mau="var(--chart-2)" />
-        <TheSo nhan="Giảm trừ & giảm giá" giaTri={formatVnd(tongGiamTru)} phu="Tiền cọc đã thu, khuyến mãi" />
+        <TheSo nhan="Giảm giá" giaTri={formatVnd(tongGiamGia)} phu="Khoản mục GiamGia" />
       </section>
 
       <section className="bg-card border-border flex h-[300px] shrink-0 flex-col gap-[14px] rounded-[14px] border p-5">
         <div className="flex items-center gap-3">
           <h2 className="m-0 flex-grow text-[15px] font-semibold">Doanh thu theo tháng</h2>
-          <span className="text-muted-foreground text-[11px]">Chiều cao cột = tổng sau giảm trừ</span>
+          <span className="text-muted-foreground text-[11px]">Chiều cao cột = doanh thu thuần</span>
           <ChuGiai mau="var(--chart-1)" nhan="Tiền phòng" />
           <ChuGiai mau="var(--chart-2)" nhan="Dịch vụ" />
           <ChuGiai mau="var(--chart-3)" nhan="Phụ thu" />
@@ -144,7 +144,7 @@ export function PeriodPicker({ duLieu }: { duLieu: Thang[] }) {
                 <th className="border-border bg-card sticky top-0 border-b pb-[9px] text-right font-semibold">Tiền phòng</th>
                 <th className="border-border bg-card sticky top-0 border-b pb-[9px] text-right font-semibold">Dịch vụ</th>
                 <th className="border-border bg-card sticky top-0 border-b pb-[9px] text-right font-semibold">Phụ thu</th>
-                <th className="border-border bg-card sticky top-0 border-b pb-[9px] text-right font-semibold">Giảm trừ</th>
+                <th className="border-border bg-card sticky top-0 border-b pb-[9px] text-right font-semibold">Giảm giá</th>
                 <th className="border-border bg-card sticky top-0 border-b pb-[9px] text-right font-semibold">Tổng</th>
               </tr>
             </thead>
@@ -157,7 +157,7 @@ export function PeriodPicker({ duLieu }: { duLieu: Thang[] }) {
                   <td className="border-border border-b py-[11px] text-right font-mono text-[12.5px]">{formatVnd(d.tienPhong)}</td>
                   <td className="border-border border-b py-[11px] text-right font-mono text-[12.5px]">{formatVnd(d.dichVu)}</td>
                   <td className="border-border border-b py-[11px] text-right font-mono text-[12.5px]">{formatVnd(d.phuThu)}</td>
-                  <td className="border-border border-b py-[11px] text-right font-mono text-[12.5px]" style={{ color: "#8C3A31" }}>{formatVnd(d.giamTru)}</td>
+                  <td className="border-border border-b py-[11px] text-right font-mono text-[12.5px]" style={{ color: "#8C3A31" }}>{formatVnd(d.giamGia)}</td>
                   <td className="border-border border-b py-[11px] text-right font-mono text-[12.5px] font-medium">{formatVnd(d.tong)}</td>
                 </tr>
               ))}
