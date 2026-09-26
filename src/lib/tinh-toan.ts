@@ -93,9 +93,12 @@ export function themNgay(iso: string, n: number): string {
 
 /**
  * Doc so tien nguoi dung go o o nhap (VND, khong co phan le): bo dau cham, dau
- * phay va khoang trang ngan cach hang nghin, "300.000" -> "300000". Ky tu khac
- * (chu, dau tru) giu nguyen de Server Action bao "khong hop le".
+ * phay va khoang trang ngan cach hang nghin, "300.000" -> "300000". Chi bo khi
+ * moi nhom sau dau ngan cach du 3 chu so; con lai ("1.500.000,00" co phan le,
+ * chu, dau tru) giu nguyen de Server Action bao "khong hop le", thay vi doc
+ * thanh mot so lon gap 100 lan.
  */
 export function docSoTien(nhap: string): string {
-  return nhap.replace(/[.,\s]/g, "");
+  const s = nhap.trim();
+  return /^-?\d{1,3}([.,\s]\d{3})+$/.test(s) ? s.replace(/[.,\s]/g, "") : s;
 }

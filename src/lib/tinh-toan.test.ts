@@ -122,4 +122,13 @@ describe("docSoTien", () => {
     expect(docSoTien("3tr")).toBe("3tr");
     expect(docSoTien("")).toBe("");
   });
+
+  // Review cuoi: "1.500.000,00" (dang Excel, co phan le) tung bi doc thanh
+  // 150.000.000 va duoc ghi voi dong bao xanh. Nhom sau dau ngan cach khong du
+  // 3 chu so thi giu nguyen de Server Action bao khong hop le.
+  it("so co phan le sau dau ngan cach khong bi doc lon gap 100 lan", () => {
+    expect(docSoTien("1.500.000,00")).toBe("1.500.000,00");
+    expect(docSoTien("300.000,5")).toBe("300.000,5");
+    expect(docSoTien("1,5")).toBe("1,5");
+  });
 });
