@@ -5,8 +5,9 @@ Stack: **Next.js 16** (App Router) · **Drizzle ORM** · **shadcn/ui** · **MySQ
 
 9 màn hình nghiệp vụ (Tổng quan, Sơ đồ phòng, Đặt phòng, Nhận & trả phòng, Khách
 hàng, Dịch vụ, Hóa đơn, Báo cáo, Đăng nhập) **đọc dữ liệu thật** từ database
-`QuanLyKhachSan`. Các nút ghi (nhận phòng, lập phiếu, thanh toán…) chưa nối CSDL
-— đó là phase 2. Phiên đăng nhập và tài khoản MySQL theo vai trò là phase 3.
+`QuanLyKhachSan`. Mọi nút ghi (đặt phòng, thu cọc, nhận / trả phòng, hủy phiếu,
+ghi dịch vụ, lập hóa đơn, thanh toán, dọn / sửa phòng) gọi đúng thủ tục của
+`06_Procedures.sql`. Phiên đăng nhập và tài khoản MySQL theo vai trò là phase 3.
 Thiết kế: `docs/superpowers/specs/2026-09-26-noi-csdl-phase-*.md`.
 
 ---
@@ -43,6 +44,10 @@ done
 
 Rồi `npm run dev` và mở http://localhost:3000. Trang `/db-check` in số dòng
 của 14 bảng để kiểm tra kết nối.
+
+Khi nhóm sửa thủ tục, chỉ cần chạy lại `06`: file chỉ `DROP` / `CREATE` thủ tục,
+không đụng dữ liệu. Nhưng MySQL xóa luôn quyền `EXECUTE` đã cấp trên thủ tục bị
+`DROP`, nên máy nào đã chạy `08` thì chạy lại `08` ngay sau `06`.
 
 ### Trước buổi demo: nạp lại dữ liệu mẫu
 
@@ -90,13 +95,23 @@ Quy trình khi schema đổi: sửa `../Scripts/*.sql` → chạy lại script v
 
 - **Đọc** (danh sách, chi tiết, báo cáo): query bằng Drizzle cho gọn và có type.
   Xem ví dụ ở `src/lib/db-check.ts`.
-- **Ghi** (nhận phòng, ghi dịch vụ, lập hóa đơn, thanh toán): gọi stored
-  procedure qua `callProcedure()` trong `src/db/procedures.ts`, để trigger và
-  ràng buộc ở tầng CSDL còn hiệu lực — đó là phần chính của Chương 4.
+- **Ghi** (đặt phòng, nhận phòng, ghi dịch vụ, lập hóa đơn, thanh toán…): gọi
+  stored procedure qua `callProcedure()` / `callProcedureOut()` trong
+  `src/db/procedures.ts`, để trigger và ràng buộc ở tầng CSDL còn hiệu lực — đó
+  là phần chính của Chương 4.
+
+Một nút ghi đi qua hai tầng:
+
+- `src/lib/thao-tac/*.ts`: mỗi hàm gọi một thủ tục, trả `{ ok: true, data }` hoặc
+  `{ ok: false, loi }`. `loi` là câu của CSDL (`"CSDL từ chối: …"`), hiện ngay dưới
+  nút. Test gọi thẳng tầng này.
+- `actions.ts` cạnh route: Server Action chỉ kiểm **kiểu và định dạng** tham số
+  (`src/lib/thao-tac/kiem-tra.ts`), gọi thao tác, thành công thì `refresh()`. Quy
+  tắc nghiệp vụ (trạng thái phiếu, phòng, hóa đơn) để thủ tục quyết định.
 
 ```ts
-// Dang dung: tra phong trong, bao cao doanh thu, dang nhap.
-const phong = await callProcedure("sp_TraCuuPhongTrong", [checkIn, checkOut, null]);
+// Tham so OUT (@out1...) doc tren cung connection voi CALL.
+const { out } = await callProcedureOut("sp_LapHoaDon", [maDatPhong], 1);
 ```
 
 "Hôm nay" của app là `CURDATE()` của CSDL (`src/lib/queries/ngay.ts`), không
@@ -124,8 +139,11 @@ Demo/
     │   └── loi.ts          # SIGNAL 45000 -> "CSDL từ chối: …"
     ├── lib/
     │   ├── queries/        # mặt tiền đọc dữ liệu cho 9 màn hình
+    │   ├── thao-tac/       # mặt tiền ghi: mỗi hàm một thủ tục, trả { ok, data | loi }
+    │   ├── lam-moi.ts      # refresh() sau khi Server Action ghi xong
     │   ├── db-check.ts     # query cho trang /db-check
     │   └── format.ts       # format tiền VND
+    ├── test/               # dựng / nạp lại CSDL kiểm thử cho vitest
     ├── components/         # theo màn hình + shared/ + ui/ (shadcn)
     └── app/                # (app)/ 8 màn nghiệp vụ, (auth)/login, db-check
 ```
@@ -137,7 +155,7 @@ Demo/
 | `npm run dev` | Chạy dev server ở cổng 3000 |
 | `npm run build` | Build production, có type-check |
 | `npm run lint` | ESLint |
-| `npm test` | Test tích hợp trên `DATABASE_URL_TEST` (dựng lại từ `01`–`07`, ngày đóng băng 23/09/2026) |
+| `npm test` | Test tích hợp trên `DATABASE_URL_TEST` (dựng lại từ `01`–`07`, ngày đóng băng 23/09/2026; test ghi nạp lại dữ liệu mẫu trước từng ca, các file chạy tuần tự) |
 | `npm run db:mau` | Nạp lại dữ liệu mẫu `07` vào CSDL dev theo ngày hôm nay |
 | `npm run db:pull` | Introspect lại schema từ MySQL |
 | `npm run db:studio` | Mở Drizzle Studio để xem dữ liệu |
@@ -146,8 +164,6 @@ Demo/
 
 ## Việc chưa làm
 
-- Phase 2: nối các nút ghi (đặt phòng, nhận / trả phòng, ghi dịch vụ, lập hóa
-  đơn, thanh toán, dọn phòng) với 12 thủ tục của `06_Procedures.sql`.
 - Phase 3: phiên đăng nhập, chặn route, mỗi vai trò dùng tài khoản MySQL riêng
   của `08_Security_Roles.sql`.
 
