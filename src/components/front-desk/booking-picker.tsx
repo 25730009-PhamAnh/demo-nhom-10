@@ -1,11 +1,16 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 
+import { huyPhieu, lapHoaDon, nhanPhong, thuThemCoc, traPhong } from "@/app/(app)/front-desk/actions";
 import { EmptyState } from "@/components/shared/empty-state";
 import { StatusBadge } from "@/components/shared/status-badge";
+import { ThongBao } from "@/components/shared/thong-bao";
+import { useThaoTac } from "@/components/shared/use-thao-tac";
 import { formatNgay, formatVnd } from "@/lib/format";
 import type { PhieuTomTat } from "@/lib/queries/bookings";
+import { docSoTien } from "@/lib/tinh-toan";
 
 type Tab = "nhan" | "tra";
 
@@ -15,24 +20,38 @@ type Tab = "nhan" | "tra";
  *
  * Doi tab thi phieu dang chon nhay ve phieu dau cua danh sach moi, khong giu ma
  * cu (ma cu khong con trong danh sach thi khung ben phai se trong tron).
+ *
+ * Moi nut goi mot Server Action; thanh cong thi trang tu doc lai CSDL
+ * (refresh), nen danh sach va trang thai luon la cua CSDL. Nhan phong xong thi
+ * chuyen sang tab Tra phong, van chon phieu do, de di tiep toi lap hoa don.
  */
 export function BookingPicker({
   nhan,
   tra,
+  homNay,
 }: {
   nhan: PhieuTomTat[];
   tra: PhieuTomTat[];
+  homNay: string;
 }) {
   const [tab, setTab] = useState<Tab>("nhan");
   const [maDangChon, setMaDangChon] = useState(nhan[0]?.maDatPhong ?? "");
+  const [soTienCoc, setSoTienCoc] = useState("");
+  const tt = useThaoTac();
 
   const danhSach = tab === "nhan" ? nhan : tra;
   const phieu = danhSach.find((p) => p.maDatPhong === maDangChon) ?? danhSach[0];
 
+  const chon = (ma: string) => {
+    setMaDangChon(ma);
+    setSoTienCoc("");
+    tt.setThongBao(null);
+  };
+
   const doiTab = (t: Tab) => {
     setTab(t);
     const ds = t === "nhan" ? nhan : tra;
-    setMaDangChon(ds[0]?.maDatPhong ?? "");
+    chon(ds[0]?.maDatPhong ?? "");
   };
 
   return (
@@ -61,7 +80,7 @@ export function BookingPicker({
       <div className="flex min-h-0 flex-grow gap-5">
         <section className="bg-card border-border flex w-[480px] shrink-0 flex-col gap-[14px] rounded-[14px] border p-5">
           <h2 className="m-0 text-[15px] font-semibold">
-            {tab === "nhan" ? "Phiếu chờ nhận phòng" : "Phiếu chờ trả phòng"}
+            {tab === "nhan" ? "Phiếu chờ nhận phòng" : "Phiếu đang ở · đến hạn trả trước"}
           </h2>
           {danhSach.length === 0 ? (
             <EmptyState thongDiep="Không có phiếu nào" />
@@ -73,7 +92,7 @@ export function BookingPicker({
                   <button
                     key={p.maDatPhong}
                     type="button"
-                    onClick={() => setMaDangChon(p.maDatPhong)}
+                    onClick={() => chon(p.maDatPhong)}
                     aria-pressed={on}
                     className={`flex items-center gap-[11px] rounded-[10px] border px-3 py-[10px] text-left ${
                       on ? "border-primary bg-accent" : "border-border bg-card"
@@ -92,6 +111,9 @@ export function BookingPicker({
                       </span>
                       <span className="text-muted-foreground truncate font-mono text-[11.5px]">
                         {p.maDatPhong} · Phòng {p.soPhong.join(", ")}
+                        {tab === "tra"
+                          ? ` · trả ${p.ngayCheckOut === homNay ? "hôm nay" : formatNgay(p.ngayCheckOut)}`
+                          : ""}
                       </span>
                     </span>
                     <StatusBadge trangThai={p.trangThai} loai="phieu" />
@@ -104,7 +126,10 @@ export function BookingPicker({
 
         <section className="bg-card border-border flex min-w-0 flex-grow flex-col gap-[18px] rounded-[14px] border p-6">
           {!phieu ? (
-            <EmptyState thongDiep="Chọn một phiếu ở danh sách bên trái để xem chi tiết" />
+            <>
+              <EmptyState thongDiep="Chọn một phiếu ở danh sách bên trái để xem chi tiết" />
+              <ThongBao tb={tt.thongBao} />
+            </>
           ) : (
             <>
               <div className="flex items-center gap-3">
@@ -152,23 +177,99 @@ export function BookingPicker({
                 </span>
               </div>
 
+              {tab === "nhan" ? (
+                <div className="flex items-center gap-2">
+                  <label htmlFor="coc" className="text-muted-foreground text-[12.5px]">
+                    Thu thêm cọc
+                  </label>
+                  <input
+                    id="coc"
+                    inputMode="decimal"
+                    placeholder="Số tiền, ví dụ 300.000"
+                    value={soTienCoc}
+                    onChange={(e) => setSoTienCoc(e.target.value)}
+                    className="border-input bg-card h-10 flex-grow rounded-[10px] border px-3 font-mono text-[13px]"
+                  />
+                  <button
+                    type="button"
+                    disabled={tt.dangChay || soTienCoc.trim() === ""}
+                    onClick={() =>
+                      tt.chay(
+                        () => thuThemCoc(phieu.maDatPhong, docSoTien(soTienCoc)),
+                        (d) => {
+                          setSoTienCoc("");
+                          return `Đã thu thêm cọc. Tổng cọc của ${phieu.maDatPhong}: ${formatVnd(d.tienCoc)}`;
+                        },
+                      )
+                    }
+                    className="border-border text-foreground h-10 rounded-[10px] border px-4 text-[13px] disabled:opacity-45"
+                  >
+                    Ghi nhận cọc
+                  </button>
+                </div>
+              ) : (
+                <div className="flex items-baseline gap-2 text-[13px]">
+                  <span className="text-muted-foreground flex-grow">Hóa đơn</span>
+                  {phieu.hoaDon ? (
+                    <>
+                      <Link
+                        href={`/invoices/${phieu.hoaDon.maHoaDon}`}
+                        className="text-primary font-mono text-[12.5px] font-semibold"
+                      >
+                        {phieu.hoaDon.maHoaDon}
+                      </Link>
+                      <StatusBadge trangThai={phieu.hoaDon.trangThai} loai="hoaDon" />
+                    </>
+                  ) : (
+                    <span className="text-muted-foreground">Chưa lập</span>
+                  )}
+                </div>
+              )}
+
               <div className="flex gap-2">
                 <button
                   type="button"
-                  className="bg-primary text-primary-foreground h-11 flex-grow rounded-[10px] text-[13.5px] font-semibold"
+                  disabled={tt.dangChay}
+                  onClick={() => {
+                    const ma = phieu.maDatPhong;
+                    if (tab === "nhan") {
+                      tt.chay(
+                        () => nhanPhong(ma),
+                        () => {
+                          setTab("tra");
+                          setMaDangChon(ma);
+                          return `Đã nhận phòng ${ma}. Phiếu chuyển sang tab Trả phòng.`;
+                        },
+                      );
+                    } else {
+                      tt.chay(
+                        () => traPhong(ma),
+                        () => `Đã trả phòng ${ma}. Phòng chuyển sang chờ dọn.`,
+                      );
+                    }
+                  }}
+                  className="bg-primary text-primary-foreground h-11 flex-grow rounded-[10px] text-[13.5px] font-semibold disabled:opacity-45"
                 >
                   {tab === "nhan" ? "Xác nhận nhận phòng" : "Xác nhận trả phòng"}
                 </button>
                 <button
                   type="button"
-                  className="border-border text-foreground h-11 rounded-[10px] border px-5 text-[13.5px]"
+                  disabled={tt.dangChay}
+                  onClick={() => {
+                    const ma = phieu.maDatPhong;
+                    if (tab === "nhan") {
+                      if (!window.confirm(`Hủy phiếu ${ma}? Phiếu chuyển sang Đã hủy, không xóa.`)) return;
+                      tt.chay(() => huyPhieu(ma), () => `Đã hủy phiếu ${ma}.`);
+                    } else {
+                      tt.chay(() => lapHoaDon(ma), () => "");
+                    }
+                  }}
+                  className="border-border text-foreground h-11 rounded-[10px] border px-5 text-[13.5px] disabled:opacity-45"
                 >
                   {tab === "nhan" ? "Hủy phiếu" : "Lập hóa đơn"}
                 </button>
               </div>
-              <p className="text-muted-foreground m-0 text-[11px]">
-                Các nút thao tác chưa được nối với CSDL.
-              </p>
+              <ThongBao tb={tt.thongBao} />
             </>
           )}
         </section>
