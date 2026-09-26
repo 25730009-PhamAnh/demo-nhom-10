@@ -2,11 +2,11 @@ import { ServiceUsageForm } from "@/components/services/service-usage-form";
 import { SectionCard } from "@/components/shared/section-card";
 import { Topbar } from "@/components/layout/topbar";
 import { formatVnd } from "@/lib/format";
-import { getPhieuTraHomNay } from "@/lib/queries/bookings";
+import { getPhieuDangO } from "@/lib/queries/bookings";
 import { getDanhMucDichVu } from "@/lib/queries/services";
 
 export default async function DichVuPage() {
-  const [dichVu, phieu] = await Promise.all([getDanhMucDichVu(), getPhieuTraHomNay()]);
+  const [dichVu, phieu] = await Promise.all([getDanhMucDichVu(), getPhieuDangO()]);
 
   return (
     <>

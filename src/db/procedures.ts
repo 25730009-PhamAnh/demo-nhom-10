@@ -16,7 +16,7 @@ import { pool } from "./index";
  * procedure SELECT ra, roi cuoi cung la mot OkPacket. Ham nay tra ve
  * result set dau tien, la thu procedure thuc su muon tra.
  *
- * Chua duoc su dung o dau — day la khung cho cac man hinh nghiep vu sau nay.
+ * Dang dung cho sp_TraCuuPhongTrong, sp_BaoCaoDoanhThu va sp_DangNhap.
  */
 export async function callProcedure<T = RowDataPacket>(
   name: string,

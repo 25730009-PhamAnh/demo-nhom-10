@@ -1,70 +1,108 @@
 import { describe, expect, it } from "vitest";
-import { NGAY_HIEN_TAI } from "@/lib/mock/now";
+
 import {
   getLoaiPhongConTrong,
+  getPhieuDangO,
   getPhieuNhanHomNay,
   getPhieuTheoMa,
   getPhieuTraHomNay,
   traCuuPhongTrongAnToan,
 } from "@/lib/queries/bookings";
 
+const HOM_NAY = "2026-09-23";
+
 describe("getPhieuNhanHomNay", () => {
-  it("chi tra phieu DaDat co ngay nhan dung hom nay", async () => {
+  it("dung 12 phieu DaDat co ngay nhan la hom nay", async () => {
     const ds = await getPhieuNhanHomNay();
-    expect(ds.length).toBeGreaterThanOrEqual(5);
+    expect(ds).toHaveLength(12);
     for (const p of ds) {
-      expect(p.ngayCheckIn).toBe(NGAY_HIEN_TAI);
+      expect(p.ngayCheckIn).toBe(HOM_NAY);
       expect(p.trangThai).toBe("DaDat");
     }
   });
-  it("kem ten khach va so dem da tinh san", async () => {
+
+  it("kem khach, phong, loai phong, so dem va tien phong", async () => {
     const [p] = await getPhieuNhanHomNay();
-    expect(p.hoTenKhach).toBeTruthy();
-    expect(p.soDem).toBeGreaterThan(0);
-    expect(p.soPhong.length).toBeGreaterThan(0);
+    expect(p).toEqual({
+      maDatPhong: "DP00000011",
+      maKh: "KH00000011",
+      hoTenKhach: "Nguyen Thi An",
+      cccd: "079300000011",
+      sdt: "0910000011",
+      ngayCheckIn: "2026-09-23",
+      ngayCheckOut: "2026-09-25",
+      soDem: 2,
+      trangThai: "DaDat",
+      tienCoc: "600000.00",
+      soPhong: ["103"],
+      tenLoaiPhong: "Standard Single",
+      tongTienPhong: "1200000.00",
+    });
   });
 });
 
 describe("getPhieuTraHomNay", () => {
-  it("chi tra phieu DangO co ngay tra dung hom nay", async () => {
+  it("dung 9 phieu DangO co ngay tra la hom nay", async () => {
     const ds = await getPhieuTraHomNay();
-    expect(ds.length).toBeGreaterThanOrEqual(5);
+    expect(ds).toHaveLength(9);
     for (const p of ds) {
-      expect(p.ngayCheckOut).toBe(NGAY_HIEN_TAI);
+      expect(p.ngayCheckOut).toBe(HOM_NAY);
       expect(p.trangThai).toBe("DangO");
     }
   });
 });
 
-describe("getPhieuTheoMa", () => {
-  it("tra dung phieu khi ma co that", async () => {
-    const [mau] = await getPhieuNhanHomNay();
-    const p = await getPhieuTheoMa(mau.maDatPhong);
-    expect(p?.maDatPhong).toBe(mau.maDatPhong);
+describe("getPhieuDangO", () => {
+  it("moi phieu dang o, ke ca phieu chua den ngay tra (DP00000006)", async () => {
+    const ds = await getPhieuDangO();
+    expect(ds).toHaveLength(10);
+    expect(ds.every((p) => p.trangThai === "DangO")).toBe(true);
+    expect(ds.map((p) => p.maDatPhong)).toContain("DP00000006");
   });
+});
+
+describe("getPhieuTheoMa", () => {
+  it("phieu nhieu phong: du so phong va cong tien tung phong", async () => {
+    const p = await getPhieuTheoMa("DP00000008");
+    expect(p).toMatchObject({
+      soPhong: ["402", "501"],
+      tenLoaiPhong: "Executive Suite",
+      tongTienPhong: "13720000.00",
+    });
+  });
+
   it("tra null khi ma khong ton tai, khong nem loi", async () => {
     await expect(getPhieuTheoMa("DP99999999")).resolves.toBeNull();
   });
 });
 
 describe("getLoaiPhongConTrong", () => {
-  it("tra moi loai phong kem so phong con trong", async () => {
+  it("du 10 loai phong kem so phong con trong theo sp_TraCuuPhongTrong", async () => {
     const ds = await getLoaiPhongConTrong("2026-10-01", "2026-10-03");
-    expect(ds).toHaveLength(10);
-    for (const l of ds) expect(l.soPhongTrong).toBeGreaterThanOrEqual(0);
+    expect(ds[0]).toEqual({
+      maLoaiPhong: "LP00000001",
+      tenLoaiPhong: "Standard Single",
+      donGiaNgay: "600000.00",
+      soPhongTrong: 5,
+    });
+    expect(ds.map((l) => l.soPhongTrong)).toEqual([5, 4, 3, 2, 2, 3, 3, 3, 3, 2]);
   });
-  it("nem loi khi ngay tra khong sau ngay nhan", async () => {
+
+  it("phong DangDon va BaoTri khong bao gio duoc tinh la trong: 42 - 10 - 2 = 30", async () => {
+    const ds = await getLoaiPhongConTrong("2026-10-01", "2026-10-03");
+    expect(ds.reduce((s, l) => s + l.soPhongTrong, 0)).toBe(30);
+  });
+
+  it("phong dang co phieu giu trong khoang ngay thi khong con trong", async () => {
+    // DP00000007 giu phong 401 (Junior Suite, LP00000007) tu 12/10 den 15/10.
+    const trung = await getLoaiPhongConTrong("2026-10-13", "2026-10-14");
+    expect(trung.find((l) => l.maLoaiPhong === "LP00000007")!.soPhongTrong).toBe(2);
+  });
+
+  it("nem loi cua CSDL khi ngay tra khong sau ngay nhan", async () => {
     await expect(getLoaiPhongConTrong("2026-10-03", "2026-10-01")).rejects.toThrow(
       "Ngay tra phong phai sau ngay nhan phong",
     );
-  });
-  it("phong dang co phieu chiem khoang ngay thi khong con trong", async () => {
-    // DP00000007 giu PH00000007 (Junior Suite, LP00000007) tu 05/10 den 08/10.
-    const trung = await getLoaiPhongConTrong("2026-10-06", "2026-10-07");
-    const roi = await getLoaiPhongConTrong("2026-10-01", "2026-10-03");
-    const soTrung = trung.find((l) => l.maLoaiPhong === "LP00000007")!.soPhongTrong;
-    const soRoi = roi.find((l) => l.maLoaiPhong === "LP00000007")!.soPhongTrong;
-    expect(soTrung).toBeLessThan(soRoi);
   });
 });
 
@@ -74,19 +112,19 @@ describe("traCuuPhongTrongAnToan", () => {
     expect(r.ok).toBe(true);
     if (r.ok) expect(r.data).toHaveLength(10);
   });
-  it("ngay sai thi tra ok:false kem thong bao, khong nem loi", async () => {
-    const r = await traCuuPhongTrongAnToan("2026-10-03", "2026-10-01");
-    expect(r.ok).toBe(false);
-    if (!r.ok) expect(r.loi).toBe("Ngày trả phòng phải sau ngày nhận phòng");
+
+  it("ngay sai thu tu thi tra ok:false kem thong bao cua CSDL, khong nem", async () => {
+    await expect(traCuuPhongTrongAnToan("2026-10-03", "2026-10-01")).resolves.toEqual({
+      ok: false,
+      loi: "CSDL từ chối: Ngay tra phong phai sau ngay nhan phong",
+    });
   });
-  it("khoang ngay khac nhau cho so phong trong khac nhau", async () => {
-    const a = await traCuuPhongTrongAnToan("2026-10-01", "2026-10-03");
-    const b = await traCuuPhongTrongAnToan("2026-10-05", "2026-10-08");
-    expect(a.ok && b.ok).toBe(true);
-    if (a.ok && b.ok) {
-      const cua = (x: typeof a.data, ma: string) =>
-        x.find((l) => l.maLoaiPhong === ma)!.soPhongTrong;
-      expect(cua(a.data, "LP00000007")).not.toBe(cua(b.data, "LP00000007"));
-    }
+
+  // Review Focus #1
+  it("o ngay bi xoa trong hoac ngay khong co that thi tra ok:false, khong nem", async () => {
+    const khongHopLe = { ok: false, loi: "Ngày không hợp lệ" };
+    await expect(traCuuPhongTrongAnToan("", "2026-10-03")).resolves.toEqual(khongHopLe);
+    await expect(traCuuPhongTrongAnToan("2026-10-01", "")).resolves.toEqual(khongHopLe);
+    await expect(traCuuPhongTrongAnToan("2026-02-30", "2026-03-02")).resolves.toEqual(khongHopLe);
   });
 });
