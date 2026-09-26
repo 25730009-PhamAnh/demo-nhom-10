@@ -3,33 +3,60 @@
 Project demo cho đồ án môn Quản lý thông tin (Nhóm 10).
 Stack: **Next.js 16** (App Router) · **Drizzle ORM** · **shadcn/ui** · **MySQL**.
 
-Hiện tại project mới chỉ là **khung**: đã nối được tới database `QuanLyKhachSan`
-và có một trang kiểm tra kết nối. Chưa có màn hình nghiệp vụ nào.
+9 màn hình nghiệp vụ (Tổng quan, Sơ đồ phòng, Đặt phòng, Nhận & trả phòng, Khách
+hàng, Dịch vụ, Hóa đơn, Báo cáo, Đăng nhập) **đọc dữ liệu thật** từ database
+`QuanLyKhachSan`. Các nút ghi (nhận phòng, lập phiếu, thanh toán…) chưa nối CSDL
+— đó là phase 2. Phiên đăng nhập và tài khoản MySQL theo vai trò là phase 3.
+Thiết kế: `docs/superpowers/specs/2026-09-26-noi-csdl-phase-*.md`.
 
 ---
 
 ## Chạy lần đầu
 
-Cần có Node.js 20+ và MySQL đang chạy với database `QuanLyKhachSan`.
+Cần có Node.js 20+ và MySQL 8.0.16+ đang chạy.
 
 ```bash
 cd Demo
 npm install
-cp .env.example .env.local   # rồi sửa user/password cho đúng máy bạn
-npm run dev
+cp .env.example .env.local   # sửa user/password, và QLKS_SCRIPTS_DIR
 ```
 
-Mở http://localhost:3000 — nếu thấy danh sách phòng và số dòng của 14 bảng
-thì kết nối đã thông.
+`.env.local` cần ba biến (xem chú thích trong `.env.example`):
 
-### Nếu chưa có database
+| Biến | Dùng cho |
+|------|----------|
+| `DATABASE_URL` | CSDL dev `QuanLyKhachSan` mà app đọc |
+| `QLKS_SCRIPTS_DIR` | Thư mục `Scripts/setup_database` của nhóm (chứa `01`…`07`) |
+| `DATABASE_URL_TEST` | CSDL kiểm thử, **khác** CSDL dev — `npm test` xóa và dựng lại nó |
 
-Chạy script của nhóm theo thứ tự, từ thư mục `Đồ án/`:
+### Tạo database
+
+Chạy `01` → `07` trong `Scripts/setup_database/` theo thứ tự. `01` có
+`DROP DATABASE QuanLyKhachSan`, nên mọi dữ liệu cũ sẽ mất:
 
 ```bash
-mysql -u root -p < Scripts/01_Create_Database.sql
-mysql -u root -p QuanLyKhachSan < Scripts/02_Sample_Data.sql
+cd "<QLKS_SCRIPTS_DIR>"
+for f in 01_Create_Database 02_Functions 03_Views 04_Triggers 05_Cursors 06_Procedures 07_Sample_Data; do
+  mysql -u root -p --default-character-set=utf8mb4 < "$f.sql" || break
+done
 ```
+
+Rồi `npm run dev` và mở http://localhost:3000. Trang `/db-check` in số dòng
+của 14 bảng để kiểm tra kết nối.
+
+### Trước buổi demo: nạp lại dữ liệu mẫu
+
+Ngày tháng trong `07_Sample_Data.sql` tính theo **ngày nạp** (`CURDATE()` lúc
+chạy script). Nạp hôm nay thì hôm nay có 12 lượt nhận và 9 lượt trả phòng; sang
+hôm sau các phiếu đó đã quá hạn và màn Tổng quan không còn lượt nào. Vì vậy,
+vào ngày demo chạy:
+
+```bash
+npm run db:mau
+```
+
+Lệnh này chỉ chạy lại `07` vào CSDL dev (TRUNCATE rồi nạp lại), không đụng
+bảng, thủ tục hay trigger. Mọi thay đổi đã ghi vào CSDL dev sẽ mất.
 
 ---
 
@@ -68,9 +95,13 @@ Quy trình khi schema đổi: sửa `../Scripts/*.sql` → chạy lại script v
   ràng buộc ở tầng CSDL còn hiệu lực — đó là phần chính của Chương 4.
 
 ```ts
-// Mẫu, chưa dùng ở đâu:
-await callProcedure("sp_NhanPhong", [maDatPhong, maPhong, maTk]);
+// Dang dung: tra phong trong, bao cao doanh thu, dang nhap.
+const phong = await callProcedure("sp_TraCuuPhongTrong", [checkIn, checkOut, null]);
 ```
+
+"Hôm nay" của app là `CURDATE()` của CSDL (`src/lib/queries/ngay.ts`), không
+phải đồng hồ của máy chạy Next — thủ tục và view của nhóm cũng so với
+`CURDATE()`.
 
 ---
 
@@ -79,19 +110,24 @@ await callProcedure("sp_NhanPhong", [maDatPhong, maPhong, maTk]);
 ```
 Demo/
 ├── drizzle.config.ts       # cấu hình introspect, trỏ vào QuanLyKhachSan
-├── .env.local              # DATABASE_URL (KHÔNG commit)
+├── .env.local              # DATABASE_URL, QLKS_SCRIPTS_DIR, DATABASE_URL_TEST (KHÔNG commit)
 ├── .env.example            # mẫu cho cả nhóm
+├── scripts/
+│   ├── db-test-setup.sh    # dựng CSDL kiểm thử từ 01–07 (vitest gọi)
+│   └── db-nap-lai-mau.sh   # npm run db:mau
 └── src/
     ├── db/
     │   ├── schema.ts       # sinh ra bởi db:pull
     │   ├── relations.ts    # sinh ra bởi db:pull
     │   ├── index.ts        # connection pool + export db
-    │   └── procedures.ts   # helper gọi CALL sp_*
+    │   ├── procedures.ts   # helper gọi CALL sp_*
+    │   └── loi.ts          # SIGNAL 45000 -> "CSDL từ chối: …"
     ├── lib/
-    │   ├── db-check.ts     # query cho trang kiểm tra kết nối
+    │   ├── queries/        # mặt tiền đọc dữ liệu cho 9 màn hình
+    │   ├── db-check.ts     # query cho trang /db-check
     │   └── format.ts       # format tiền VND
-    ├── components/ui/      # shadcn: button, card, table, badge
-    └── app/page.tsx        # trang kiểm tra kết nối
+    ├── components/         # theo màn hình + shared/ + ui/ (shadcn)
+    └── app/                # (app)/ 8 màn nghiệp vụ, (auth)/login, db-check
 ```
 
 ## Lệnh
@@ -101,6 +137,8 @@ Demo/
 | `npm run dev` | Chạy dev server ở cổng 3000 |
 | `npm run build` | Build production, có type-check |
 | `npm run lint` | ESLint |
+| `npm test` | Test tích hợp trên `DATABASE_URL_TEST` (dựng lại từ `01`–`07`, ngày đóng băng 23/09/2026) |
+| `npm run db:mau` | Nạp lại dữ liệu mẫu `07` vào CSDL dev theo ngày hôm nay |
 | `npm run db:pull` | Introspect lại schema từ MySQL |
 | `npm run db:studio` | Mở Drizzle Studio để xem dữ liệu |
 
@@ -108,18 +146,16 @@ Demo/
 
 ## Việc chưa làm
 
-- Nạp stored procedure / function / trigger vào database. Hiện các script nằm
-  rời ở `../Scripts/Viet's task/` và `../Scripts/Vu Anh's task/`, và **có trùng
-  tên giữa hai thư mục** (`sp_LapHoaDon`, `sp_GhiNhanDichVu`, `fn_TienPhong`,
-  `trg_SDDV_TinhThanhTien`…). Phải chốt bản nào dùng trước khi nạp.
-- Dropdown chọn vai trò (lấy từ bảng `TAI_KHOAN`) để gán `MaTK` cho các phiếu.
-- Các màn hình nghiệp vụ: sơ đồ phòng, đặt phòng, check-in/out, dịch vụ, hóa đơn.
+- Phase 2: nối các nút ghi (đặt phòng, nhận / trả phòng, ghi dịch vụ, lập hóa
+  đơn, thanh toán, dọn phòng) với 12 thủ tục của `06_Procedures.sql`.
+- Phase 3: phiên đăng nhập, chặn route, mỗi vai trò dùng tài khoản MySQL riêng
+  của `08_Security_Roles.sql`.
 
 ---
 
 ## Lưu ý: OneDrive và `node_modules`
 
-Thư mục này nằm trong OneDrive, nên OneDrive sẽ cố sync `node_modules`
+Nếu để `Demo/` trong OneDrive thì OneDrive sẽ cố sync `node_modules`
 (khoảng 30.000 file). Hệ quả: OneDrive chạy nền liên tục, và build có thể chậm.
 
 Cách xử lý, chọn một:

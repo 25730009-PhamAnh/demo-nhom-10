@@ -9,6 +9,7 @@
     "lint": "eslint",
     "db:pull": "drizzle-kit pull",
     "db:studio": "drizzle-kit studio",
+    "db:mau": "bash scripts/db-nap-lai-mau.sh",
     "test": "vitest run",
     "test:watch": "vitest"
   },

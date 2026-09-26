@@ -16,16 +16,8 @@ set -euo pipefail
 : "${DATABASE_URL_TEST:?Thieu DATABASE_URL_TEST (xem .env.example)}"
 : "${DB_NGAY_CO_DINH:?Thieu DB_NGAY_CO_DINH}"
 
-MAU='^mysql://([^:@/]+)(:([^@]*))?@([^:/]+)(:([0-9]+))?/([A-Za-z0-9_]+)$'
-if [[ ! "$DATABASE_URL_TEST" =~ $MAU ]]; then
-  echo "DATABASE_URL_TEST phai co dang mysql://user:pass@host:port/ten_csdl" >&2
-  exit 1
-fi
-NGUOI_DUNG="${BASH_REMATCH[1]}"
-export MYSQL_PWD="${BASH_REMATCH[3]}"
-MAY="${BASH_REMATCH[4]}"
-CONG="${BASH_REMATCH[6]:-3306}"
-TEN_CSDL="${BASH_REMATCH[7]}"
+source "$(dirname "$0")/doc-url-mysql.sh"
+doc_url_mysql "$DATABASE_URL_TEST" DATABASE_URL_TEST || exit 1
 
 if [[ "$(printf '%s' "$TEN_CSDL" | tr '[:upper:]' '[:lower:]')" == "quanlykhachsan" ]]; then
   echo "DATABASE_URL_TEST dang tro vao CSDL dev QuanLyKhachSan - tu choi chay." >&2
