@@ -46,9 +46,8 @@ export default async function Home() {
           Kiểm tra kết nối database
         </h1>
         <p className="text-muted-foreground mt-2">
-          Trang tiện ích, không nằm trong thanh điều hướng. Chín màn hình nghiệp
-          vụ dùng dữ liệu giả trong <code className="font-mono">src/lib/mock/</code>;
-          trang này là chỗ duy nhất đọc thẳng MySQL qua Drizzle.
+          Trang tiện ích, không nằm trong thanh điều hướng: đọc thẳng MySQL qua
+          Drizzle để kiểm tra kết nối và số dòng của từng bảng.
         </p>
       </header>
 

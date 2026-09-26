@@ -167,7 +167,7 @@ export function BookingPicker({
                 </button>
               </div>
               <p className="text-muted-foreground m-0 text-[11px]">
-                Bản demo dùng dữ liệu giả — thao tác không được lưu lại.
+                Các nút thao tác chưa được nối với CSDL.
               </p>
             </>
           )}

@@ -5,11 +5,16 @@ import { RoomFilter } from "@/components/rooms/room-filter";
 import { SectionCard } from "@/components/shared/section-card";
 import { Topbar } from "@/components/layout/topbar";
 import { formatNgay, formatNgayGio, formatVnd } from "@/lib/format";
-import { NGAY_HIEN_TAI } from "@/lib/mock/now";
+import { getGioHienTai, getNgayHienTai } from "@/lib/queries/ngay";
 import { getNhatKyBuongPhong, getSoDoPhong } from "@/lib/queries/rooms";
 
 export default async function SoDoPhongPage() {
-  const [phong, nhatKy] = await Promise.all([getSoDoPhong(), getNhatKyBuongPhong()]);
+  const [homNay, gio, phong, nhatKy] = await Promise.all([
+    getNgayHienTai(),
+    getGioHienTai(),
+    getSoDoPhong(),
+    getNhatKyBuongPhong(),
+  ]);
 
   // Danh sach loai phong cho o chon, lay tu chinh cac phong dang co.
   const loaiPhong = [...new Map(phong.map((p) => [p.tenLoaiPhong, p])).values()]
@@ -20,7 +25,7 @@ export default async function SoDoPhongPage() {
     <>
       <Topbar
         tieuDe="Sơ đồ phòng"
-        phu={`Cập nhật 10:42 · ${formatNgay(NGAY_HIEN_TAI)}`}
+        phu={`Cập nhật ${gio} · ${formatNgay(homNay)}`}
         hanhDong={
           <Link
             href="/bookings/new"

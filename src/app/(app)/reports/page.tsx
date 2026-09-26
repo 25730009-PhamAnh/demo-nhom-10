@@ -1,17 +1,17 @@
 import { PeriodPicker } from "@/components/reports/period-picker";
 import { Topbar } from "@/components/layout/topbar";
 import { formatNgay } from "@/lib/format";
-import { NGAY_HIEN_TAI } from "@/lib/mock/now";
+import { getNgayHienTai } from "@/lib/queries/ngay";
 import { getDoanhThuTheoThang } from "@/lib/queries/reports";
 
 export default async function BaoCaoPage() {
-  const duLieu = await getDoanhThuTheoThang();
+  const [homNay, duLieu] = await Promise.all([getNgayHienTai(), getDoanhThuTheoThang()]);
 
   return (
     <>
       <Topbar
         tieuDe="Báo cáo doanh thu"
-        phu={`Kỳ 12 tháng · tính đến ${formatNgay(NGAY_HIEN_TAI)}`}
+        phu={`Kỳ 12 tháng · tính đến ${formatNgay(homNay)}`}
         hanhDong={
           <span className="text-muted-foreground text-[12.5px]">
             Tổng hợp từ HOA_DON &amp; CHI_TIET_HOA_DON

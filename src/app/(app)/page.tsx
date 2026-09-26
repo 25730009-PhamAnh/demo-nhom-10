@@ -6,8 +6,8 @@ import { SectionCard } from "@/components/shared/section-card";
 import { StatCard } from "@/components/shared/stat-card";
 import { Topbar } from "@/components/layout/topbar";
 import { formatNgay, formatSo, formatVnd } from "@/lib/format";
-import { NGAY_HIEN_TAI } from "@/lib/mock/now";
 import { getPhieuNhanHomNay, getPhieuTraHomNay } from "@/lib/queries/bookings";
+import { getNgayHienTai } from "@/lib/queries/ngay";
 import { getChiSoTongQuan } from "@/lib/queries/reports";
 import {
   getNhatKyBuongPhong,
@@ -19,7 +19,8 @@ import { nhanTrangThaiPhong } from "@/lib/status";
 const THU = ["Chủ Nhật", "Thứ Hai", "Thứ Ba", "Thứ Tư", "Thứ Năm", "Thứ Sáu", "Thứ Bảy"];
 
 export default async function TongQuanPage() {
-  const [chiSo, thongKe, phong, nhan, tra, nhatKy] = await Promise.all([
+  const [homNay, chiSo, thongKe, phong, nhan, tra, nhatKy] = await Promise.all([
+    getNgayHienTai(),
     getChiSoTongQuan(),
     getThongKePhongTheoTrangThai(),
     getSoDoPhong(),
@@ -28,7 +29,7 @@ export default async function TongQuanPage() {
     getNhatKyBuongPhong(),
   ]);
 
-  const thu = THU[new Date(`${NGAY_HIEN_TAI}T00:00:00Z`).getUTCDay()];
+  const thu = THU[new Date(`${homNay}T00:00:00Z`).getUTCDay()];
   const phongChoDon = phong.filter((p) => p.trangThai === "DangDon");
   // Phieu sua chua chua co chi phi = viec dang xu ly, chua xong.
   const dangHong = nhatKy.filter((n) => n.loai === "SuaPhong" && n.chiPhi === "0.00");
@@ -36,7 +37,7 @@ export default async function TongQuanPage() {
 
   return (
     <>
-      <Topbar tieuDe="Tổng quan" phu={`${thu}, ${formatNgay(NGAY_HIEN_TAI)} · Ca sáng`} />
+      <Topbar tieuDe="Tổng quan" phu={`${thu}, ${formatNgay(homNay)} · Ca sáng`} />
 
       <main className="flex min-h-0 flex-grow flex-col gap-5 overflow-auto px-8 py-7">
         <section className="flex shrink-0 gap-5">
