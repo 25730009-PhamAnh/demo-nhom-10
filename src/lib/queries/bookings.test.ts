@@ -99,6 +99,21 @@ describe("getLoaiPhongConTrong", () => {
     expect(trung.find((l) => l.maLoaiPhong === "LP00000007")!.soPhongTrong).toBe(2);
   });
 
+  it("don gia moi dem la gia sp_DatPhong se chot tu BANG_GIA_PHONG, khong phai LOAI_PHONG.DonGiaNgay", async () => {
+    const ds = await getLoaiPhongConTrong("2026-10-01", "2026-10-03");
+    expect(ds.map((l) => l.donGiaNgay)).toEqual([
+      "600000.00", "880000.00", "1000000.00", "1380000.00", "1500000.00",
+      "1840000.00", "2200000.00", "4000000.00", "2860000.00", "7800000.00",
+    ]);
+  });
+
+  it("khoang ngay vuot qua bang gia thi lay trung binh tung dem nhu sp_DatPhong", async () => {
+    // Bang gia LP00000002 (880.000) het hieu luc sau 07/01/2027; hai dem sau
+    // lui ve DonGiaNgay 800.000, nen trung binh 4 dem la 840.000.
+    const ds = await getLoaiPhongConTrong("2027-01-06", "2027-01-10");
+    expect(ds.find((l) => l.maLoaiPhong === "LP00000002")!.donGiaNgay).toBe("840000.00");
+  });
+
   it("nem loi cua CSDL khi ngay tra khong sau ngay nhan", async () => {
     await expect(getLoaiPhongConTrong("2026-10-03", "2026-10-01")).rejects.toThrow(
       "Ngay tra phong phai sau ngay nhan phong",
@@ -126,5 +141,12 @@ describe("traCuuPhongTrongAnToan", () => {
     await expect(traCuuPhongTrongAnToan("", "2026-10-03")).resolves.toEqual(khongHopLe);
     await expect(traCuuPhongTrongAnToan("2026-10-01", "")).resolves.toEqual(khongHopLe);
     await expect(traCuuPhongTrongAnToan("2026-02-30", "2026-03-02")).resolves.toEqual(khongHopLe);
+  });
+
+  it("go nham nam (luu tru hon 1000 dem) thi tra ok:false, khong nem", async () => {
+    await expect(traCuuPhongTrongAnToan("2026-10-01", "2029-10-01")).resolves.toEqual({
+      ok: false,
+      loi: "Mỗi lần chỉ tra cứu tối đa 1000 đêm",
+    });
   });
 });
