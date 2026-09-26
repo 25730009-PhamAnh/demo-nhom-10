@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { Printer } from "lucide-react";
 
+import { ThanhToanForm } from "@/components/invoices/thanh-toan-form";
 import { StatusBadge } from "@/components/shared/status-badge";
 import { Topbar } from "@/components/layout/topbar";
 import { formatNgay, formatNgayGio, formatVnd } from "@/lib/format";
@@ -164,17 +165,7 @@ export default async function HoaDonPage({
               </dd>
             </div>
           </dl>
-          {hd.trangThai === "ChuaThanhToan" ? (
-            <button
-              type="button"
-              className="bg-primary text-primary-foreground h-11 rounded-[10px] text-[13.5px] font-semibold"
-            >
-              Xác nhận thanh toán
-            </button>
-          ) : null}
-          <p className="text-muted-foreground m-0 text-[11px]">
-            Nút thanh toán chưa được nối với CSDL.
-          </p>
+          <ThanhToanForm maHoaDon={hd.maHoaDon} trangThai={hd.trangThai} />
         </aside>
       </main>
     </>
