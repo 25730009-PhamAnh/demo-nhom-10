@@ -173,7 +173,7 @@ export default async function HoaDonPage({
             </button>
           ) : null}
           <p className="text-muted-foreground m-0 text-[11px]">
-            Bản demo dùng dữ liệu giả — thao tác không được lưu lại.
+            Nút thanh toán chưa được nối với CSDL.
           </p>
         </aside>
       </main>

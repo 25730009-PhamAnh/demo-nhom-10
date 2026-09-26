@@ -11,7 +11,7 @@ import { MUC_DIEU_HUONG } from "@/lib/nav";
  *
  * Client Component vi can usePathname() de to sang muc dang mo. Thong tin nhan
  * vien duoc truyen tu (app)/layout.tsx bang prop, KHONG import tu
- * queries/accounts — de du lieu gia khong bi goi vao bundle trinh duyet.
+ * queries/accounts — module do doc CSDL, chi duoc chay tren server.
  */
 export function Sidebar({
   hoTen,

@@ -111,7 +111,7 @@ export function ServiceUsageForm({
         Ghi nhận dịch vụ
       </button>
       <p className="text-muted-foreground m-0 text-[11px]">
-        Bản demo dùng dữ liệu giả — ghi nhận không được lưu lại.
+        Nút ghi nhận chưa được nối với CSDL.
       </p>
     </aside>
   );

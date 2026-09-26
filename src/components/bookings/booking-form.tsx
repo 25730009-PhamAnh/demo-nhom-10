@@ -249,7 +249,7 @@ export function BookingForm({
           Lập phiếu đặt phòng
         </button>
         <p className="text-muted-foreground m-0 text-[11px]">
-          Bản demo dùng dữ liệu giả — phiếu không được lưu lại.
+          Nút lập phiếu chưa được nối với CSDL.
         </p>
       </aside>
     </div>
