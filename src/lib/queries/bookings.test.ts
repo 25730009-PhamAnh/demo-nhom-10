@@ -37,6 +37,7 @@ describe("getPhieuNhanHomNay", () => {
       soPhong: ["103"],
       tenLoaiPhong: "Standard Single",
       tongTienPhong: "1200000.00",
+      hoaDon: null,
     });
   });
 });
@@ -58,6 +59,14 @@ describe("getPhieuDangO", () => {
     expect(ds).toHaveLength(10);
     expect(ds.every((p) => p.trangThai === "DangO")).toBe(true);
     expect(ds.map((p) => p.maDatPhong)).toContain("DP00000006");
+  });
+
+  it("kem hoa don cua phieu, de tab Tra phong biet dang o buoc nao", async () => {
+    const ds = await getPhieuDangO();
+    expect(ds.find((p) => p.maDatPhong === "DP00000023")!.hoaDon).toEqual({
+      maHoaDon: "HD00000023",
+      trangThai: "ChuaThanhToan",
+    });
   });
 });
 

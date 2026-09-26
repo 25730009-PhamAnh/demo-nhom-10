@@ -29,6 +29,8 @@ export type PhieuTomTat = {
   soPhong: string[];
   tenLoaiPhong: string;
   tongTienPhong: string;
+  /** Hoa don cua phieu (moi phieu toi da mot), null khi chua lap. */
+  hoaDon: { maHoaDon: string; trangThai: string } | null;
 };
 
 export type LoaiPhongConTrong = {
@@ -61,9 +63,12 @@ async function docPhieu(dieuKien: SQL | undefined): Promise<PhieuTomTat[]> {
       soDem: sql<number>`DATEDIFF(${pdp.ngayCheckOut}, ${pdp.ngayCheckIn})`.mapWith(Number),
       trangThai: pdp.trangThai,
       tienCoc: pdp.tienCoc,
+      maHoaDon: schema.hoaDon.maHoaDon,
+      trangThaiHoaDon: schema.hoaDon.trangThai,
     })
     .from(pdp)
     .innerJoin(kh, eq(kh.maKh, pdp.maKh))
+    .leftJoin(schema.hoaDon, eq(schema.hoaDon.maDatPhong, pdp.maDatPhong))
     .where(dieuKien)
     .orderBy(asc(pdp.maDatPhong));
   if (phieu.length === 0) return [];
@@ -81,10 +86,11 @@ async function docPhieu(dieuKien: SQL | undefined): Promise<PhieuTomTat[]> {
     .where(inArray(ctdp.maDatPhong, phieu.map((p) => p.maDatPhong)))
     .orderBy(asc(schema.phong.soPhong));
 
-  return phieu.map((p) => {
+  return phieu.map(({ maHoaDon, trangThaiHoaDon, ...p }) => {
     const cua = chiTiet.filter((c) => c.maDatPhong === p.maDatPhong);
     return {
       ...p,
+      hoaDon: maHoaDon && trangThaiHoaDon ? { maHoaDon, trangThai: trangThaiHoaDon } : null,
       soPhong: cua.map((c) => c.soPhong),
       tenLoaiPhong: cua[0]?.tenLoaiPhong ?? "—",
       // thanhTien la cot sinh (generatedAlwaysAs) nen kieu la string | null.
