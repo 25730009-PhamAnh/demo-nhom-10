@@ -20,15 +20,7 @@ export default async function DatPhongPage() {
 
   return (
     <>
-      <Topbar
-        tieuDe="Lập phiếu đặt phòng"
-        phu="Phiếu mới · chưa lưu"
-        hanhDong={
-          <span className="text-muted-foreground text-[12.5px]">
-            Chức năng lưu phiếu chưa được nối với CSDL
-          </span>
-        }
-      />
+      <Topbar tieuDe="Lập phiếu đặt phòng" phu="Phiếu mới · chọn khách, ngày và loại phòng" />
 
       <main className="flex min-h-0 flex-grow overflow-auto px-8 py-7">
         <BookingForm

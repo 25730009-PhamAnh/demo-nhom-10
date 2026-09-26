@@ -1,9 +1,12 @@
 "use client";
 
 import { useEffect, useMemo, useState, useTransition } from "react";
+import Link from "next/link";
 import { Minus, Plus, TriangleAlert } from "lucide-react";
 
-import { traCuuPhongTrong } from "@/app/(app)/bookings/new/actions";
+import { datPhong, traCuuPhongTrong } from "@/app/(app)/bookings/new/actions";
+import { ThongBao } from "@/components/shared/thong-bao";
+import { useThaoTac } from "@/components/shared/use-thao-tac";
 import { formatVnd } from "@/lib/format";
 import { congTien, tamTinhDatPhong, themNgay } from "@/lib/tinh-toan";
 
@@ -38,6 +41,10 @@ export function BookingForm({
   const [ngayTra, setNgayTra] = useState(themNgay(ngayMacDinh, 2));
   const [maLoai, setMaLoai] = useState(loaiPhong[0]?.maLoaiPhong ?? "");
   const [soKhach, setSoKhach] = useState(2);
+  const [loiTraCuu, setLoiTraCuu] = useState<string | null>(null);
+  // Tang len sau moi lan lap phieu thanh cong, de tra cuu lai so phong trong.
+  const [lanTraCuu, setLanTraCuu] = useState(0);
+  const lap = useThaoTac();
 
   const loai = loaiPhong.find((l) => l.maLoaiPhong === maLoai);
   const khachDaChon = khach.find((k) => k.maKh === maKh);
@@ -48,12 +55,14 @@ export function BookingForm({
     let conHieuLuc = true;
     chuyenTiep(async () => {
       const r = await traCuuPhongTrong(ngayNhan, ngayTra);
-      if (conHieuLuc && r.ok) setLoaiPhong(r.data);
+      if (!conHieuLuc) return;
+      if (r.ok) setLoaiPhong(r.data);
+      setLoiTraCuu(r.ok ? null : r.loi);
     });
     return () => {
       conHieuLuc = false;
     };
-  }, [ngayNhan, ngayTra]);
+  }, [ngayNhan, ngayTra, lanTraCuu]);
 
   const tamTinh = useMemo(
     () =>
@@ -65,7 +74,8 @@ export function BookingForm({
     [ngayNhan, ngayTra, loai],
   );
 
-  // Tien coc quy uoc bang mot dem, dung nhu du lieu mau.
+  // Tien coc quy uoc bang mot dem, dung nhu du lieu mau. Server tinh lai
+  // dung so nay khi lap phieu, khong nhan so tu day gui len.
   const tienCoc = tamTinh.loi ? "0.00" : (loai?.donGiaNgay ?? "0.00");
   const conLai = congTien(tamTinh.tienPhong, `-${tienCoc}`);
 
@@ -172,7 +182,7 @@ export function BookingForm({
             </div>
           </div>
           <p className="text-muted-foreground m-0 text-[11.5px]">
-            Đơn giá lấy theo bảng giá có hiệu lực ngày nhận phòng — hệ số hiện hành 1,00.
+            Đơn giá / đêm là trung bình bảng giá của các đêm đã chọn, đúng số hệ thống ghi vào phiếu.
           </p>
         </Buoc>
 
@@ -182,6 +192,7 @@ export function BookingForm({
               ? "Đang tra cứu phòng trống…"
               : `${loaiPhong.reduce((s, l) => s + l.soPhongTrong, 0)} phòng trống trong khoảng ngày đã chọn`}
           </span>
+          {loiTraCuu ? <ThongBao tb={{ loai: "loi", noiDung: loiTraCuu }} /> : null}
           <div className="grid grid-cols-2 gap-[10px] xl:grid-cols-3">
             {loaiPhong.map((l) => {
               const on = l.maLoaiPhong === maLoai;
@@ -243,14 +254,26 @@ export function BookingForm({
 
         <button
           type="button"
-          disabled={tamTinh.loi !== null}
+          disabled={tamTinh.loi !== null || !loai || loai.soPhongTrong === 0 || lap.dangChay}
+          onClick={() =>
+            lap.chay(
+              () => datPhong(maKh, ngayNhan, ngayTra, maLoai),
+              (d) => {
+                setLanTraCuu((n) => n + 1);
+                return `Đã lập phiếu ${d.maDatPhong} · phòng ${d.soPhong} · cọc ${formatVnd(d.tienCoc)}`;
+              },
+            )
+          }
           className="bg-primary text-primary-foreground h-11 rounded-[10px] text-[13.5px] font-semibold disabled:cursor-not-allowed disabled:opacity-45"
         >
-          Lập phiếu đặt phòng
+          {lap.dangChay ? "Đang lập phiếu…" : "Lập phiếu đặt phòng"}
         </button>
-        <p className="text-muted-foreground m-0 text-[11px]">
-          Nút lập phiếu chưa được nối với CSDL.
-        </p>
+        <ThongBao tb={lap.thongBao} />
+        {lap.thongBao?.loai === "ok" ? (
+          <Link href="/front-desk" className="text-primary text-[12.5px] font-semibold">
+            Sang Nhận & trả phòng →
+          </Link>
+        ) : null}
       </aside>
     </div>
   );
