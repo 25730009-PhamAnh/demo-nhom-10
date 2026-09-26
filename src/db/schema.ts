@@ -1,4 +1,4 @@
-import { mysqlTable, mysqlSchema, AnyMySqlColumn, index, foreignKey, primaryKey, check, char, decimal, date, int, varchar, unique, datetime } from "drizzle-orm/mysql-core"
+import { mysqlTable, mysqlSchema, AnyMySqlColumn, index, foreignKey, primaryKey, check, char, decimal, date, int, varchar, unique, datetime, mysqlView, bigint, text } from "drizzle-orm/mysql-core"
 import { sql } from "drizzle-orm"
 
 export const bangGiaPhong = mysqlTable("BANG_GIA_PHONG", {
@@ -201,3 +201,44 @@ export const taiKhoan = mysqlTable("TAI_KHOAN", {
 	unique("UQ_TAI_KHOAN_TenDangNhap").on(table.tenDangNhap),
 	check("CK_TAI_KHOAN_TrangThai", sql`(\`TrangThai\` in (_utf8mb4\'DangLamViec\',_utf8mb4\'TamNghi\',_utf8mb4\'NghiViec\'))`),
 ]);
+export const vPhieudatdanghieuluc = mysqlView("v_phieudatdanghieuluc", {
+	maDatPhong: char("MaDatPhong", { length: 10 }).notNull(),
+	maKh: char("MaKH", { length: 10 }).notNull(),
+	tenKhachHang: varchar("TenKhachHang", { length: 100 }).notNull(),
+	sdt: varchar("SDT", { length: 15 }),
+	maTk: char("MaTK", { length: 10 }).notNull(),
+	ngayLap: datetime("NgayLap", { mode: 'string'}).default(sql`(CURRENT_TIMESTAMP)`).notNull(),
+	// you can use { mode: 'date' }, if you want to have Date as type for this column
+	ngayCheckIn: date("NgayCheckIn", { mode: 'string' }).notNull(),
+	// you can use { mode: 'date' }, if you want to have Date as type for this column
+	ngayCheckOut: date("NgayCheckOut", { mode: 'string' }).notNull(),
+	soDem: int("SoDem"),
+	tienCoc: decimal("TienCoc", { precision: 18, scale: 2 }).default('0.00').notNull(),
+	trangThai: varchar("TrangThai", { length: 20 }).default('DaDat').notNull(),
+	soPhongGiu: bigint("SoPhongGiu", { mode: "number" }).notNull(),
+	danhSachPhong: text("DanhSachPhong"),
+}).algorithm("undefined").sqlSecurity("definer").as(sql`select \`pd\`.\`MaDatPhong\` AS \`MaDatPhong\`,\`pd\`.\`MaKH\` AS \`MaKH\`,\`kh\`.\`HoTen\` AS \`TenKhachHang\`,\`kh\`.\`SDT\` AS \`SDT\`,\`pd\`.\`MaTK\` AS \`MaTK\`,\`pd\`.\`NgayLap\` AS \`NgayLap\`,\`pd\`.\`NgayCheckIn\` AS \`NgayCheckIn\`,\`pd\`.\`NgayCheckOut\` AS \`NgayCheckOut\`,(to_days(\`pd\`.\`NgayCheckOut\`) - to_days(\`pd\`.\`NgayCheckIn\`)) AS \`SoDem\`,\`pd\`.\`TienCoc\` AS \`TienCoc\`,\`pd\`.\`TrangThai\` AS \`TrangThai\`,count(\`ct\`.\`MaPhong\`) AS \`SoPhongGiu\`,group_concat(\`p\`.\`SoPhong\` order by \`p\`.\`SoPhong\` ASC separator ', ') AS \`DanhSachPhong\` from (((\`quanlykhachsan\`.\`phieu_dat_phong\` \`pd\` join \`quanlykhachsan\`.\`khach_hang\` \`kh\` on((\`kh\`.\`MaKH\` = \`pd\`.\`MaKH\`))) left join \`quanlykhachsan\`.\`chi_tiet_dat_phong\` \`ct\` on((\`ct\`.\`MaDatPhong\` = \`pd\`.\`MaDatPhong\`))) left join \`quanlykhachsan\`.\`phong\` \`p\` on((\`p\`.\`MaPhong\` = \`ct\`.\`MaPhong\`))) where (\`pd\`.\`TrangThai\` in ('DaDat','DangO')) group by \`pd\`.\`MaDatPhong\`,\`pd\`.\`MaKH\`,\`kh\`.\`HoTen\`,\`kh\`.\`SDT\`,\`pd\`.\`MaTK\`,\`pd\`.\`NgayLap\`,\`pd\`.\`NgayCheckIn\`,\`pd\`.\`NgayCheckOut\`,\`pd\`.\`TienCoc\`,\`pd\`.\`TrangThai\``);
+
+export const vPhongkhadung = mysqlView("v_phongkhadung", {
+	maPhong: char("MaPhong", { length: 10 }).notNull(),
+	soPhong: varchar("SoPhong", { length: 10 }).notNull(),
+	tang: int("Tang").notNull(),
+	maLoaiPhong: char("MaLoaiPhong", { length: 10 }).notNull(),
+	tenLoaiPhong: varchar("TenLoaiPhong", { length: 50 }).notNull(),
+	donGiaNgay: decimal("DonGiaNgay", { precision: 18, scale: 2 }).notNull(),
+	trangThai: varchar("TrangThai", { length: 20 }).default('Trong').notNull(),
+}).algorithm("undefined").sqlSecurity("definer").as(sql`select \`p\`.\`MaPhong\` AS \`MaPhong\`,\`p\`.\`SoPhong\` AS \`SoPhong\`,\`p\`.\`Tang\` AS \`Tang\`,\`p\`.\`MaLoaiPhong\` AS \`MaLoaiPhong\`,\`lp\`.\`TenLoaiPhong\` AS \`TenLoaiPhong\`,\`lp\`.\`DonGiaNgay\` AS \`DonGiaNgay\`,\`p\`.\`TrangThai\` AS \`TrangThai\` from (\`quanlykhachsan\`.\`phong\` \`p\` join \`quanlykhachsan\`.\`loai_phong\` \`lp\` on((\`lp\`.\`MaLoaiPhong\` = \`p\`.\`MaLoaiPhong\`))) where (\`p\`.\`TrangThai\` not in ('DangDon','BaoTri'))`);
+
+export const vTinhtrangphonghomnay = mysqlView("v_tinhtrangphonghomnay", {
+	maPhong: char("MaPhong", { length: 10 }).notNull(),
+	soPhong: varchar("SoPhong", { length: 10 }).notNull(),
+	tang: int("Tang").notNull(),
+	tenLoaiPhong: varchar("TenLoaiPhong", { length: 50 }).notNull(),
+	trangThai: varchar("TrangThai", { length: 20 }).default('Trong').notNull(),
+	maDatPhong: char("MaDatPhong", { length: 10 }),
+	khachLuuTru: varchar("KhachLuuTru", { length: 100 }),
+	// you can use { mode: 'date' }, if you want to have Date as type for this column
+	ngayCheckIn: date("NgayCheckIn", { mode: 'string' }),
+	// you can use { mode: 'date' }, if you want to have Date as type for this column
+	ngayCheckOut: date("NgayCheckOut", { mode: 'string' }),
+}).algorithm("undefined").sqlSecurity("definer").as(sql`select \`p\`.\`MaPhong\` AS \`MaPhong\`,\`p\`.\`SoPhong\` AS \`SoPhong\`,\`p\`.\`Tang\` AS \`Tang\`,\`lp\`.\`TenLoaiPhong\` AS \`TenLoaiPhong\`,\`p\`.\`TrangThai\` AS \`TrangThai\`,\`hn\`.\`MaDatPhong\` AS \`MaDatPhong\`,\`kh\`.\`HoTen\` AS \`KhachLuuTru\`,\`hn\`.\`NgayCheckIn\` AS \`NgayCheckIn\`,\`hn\`.\`NgayCheckOut\` AS \`NgayCheckOut\` from (((\`quanlykhachsan\`.\`phong\` \`p\` join \`quanlykhachsan\`.\`loai_phong\` \`lp\` on((\`lp\`.\`MaLoaiPhong\` = \`p\`.\`MaLoaiPhong\`))) left join (select \`ct\`.\`MaPhong\` AS \`MaPhong\`,\`pd\`.\`MaDatPhong\` AS \`MaDatPhong\`,\`pd\`.\`MaKH\` AS \`MaKH\`,\`pd\`.\`NgayCheckIn\` AS \`NgayCheckIn\`,\`pd\`.\`NgayCheckOut\` AS \`NgayCheckOut\` from (\`quanlykhachsan\`.\`chi_tiet_dat_phong\` \`ct\` join \`quanlykhachsan\`.\`phieu_dat_phong\` \`pd\` on((\`pd\`.\`MaDatPhong\` = \`ct\`.\`MaDatPhong\`))) where ((\`pd\`.\`TrangThai\` in ('DaDat','DangO')) and (curdate() >= \`pd\`.\`NgayCheckIn\`) and (curdate() < \`pd\`.\`NgayCheckOut\`))) \`hn\` on((\`hn\`.\`MaPhong\` = \`p\`.\`MaPhong\`))) left join \`quanlykhachsan\`.\`khach_hang\` \`kh\` on((\`kh\`.\`MaKH\` = \`hn\`.\`MaKH\`)))`);
