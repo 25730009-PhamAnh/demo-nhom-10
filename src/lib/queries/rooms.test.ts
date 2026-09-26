@@ -1,51 +1,82 @@
 import { describe, expect, it } from "vitest";
-import * as mock from "@/lib/mock/data";
-import { TRANG_THAI_PHONG } from "@/lib/status";
+
 import {
   getNhatKyBuongPhong,
   getSoDoPhong,
   getThongKePhongTheoTrangThai,
+  gopThongKeTrangThai,
 } from "@/lib/queries/rooms";
 
 describe("getSoDoPhong", () => {
-  it("tra du moi phong kem ten loai phong da noi bang", async () => {
+  it("tra du 42 phong kem loai phong da noi bang", async () => {
     const ds = await getSoDoPhong();
-    expect(ds).toHaveLength(mock.PHONG.length);
-    expect(ds[0].tenLoaiPhong).toBeTruthy();
-    expect(ds[0].donGiaNgay).toMatch(/^\d+\.\d{2}$/);
+    expect(ds).toHaveLength(42);
+    expect(ds[0]).toEqual({
+      maPhong: "PH00000001",
+      soPhong: "101",
+      tang: 1,
+      tenLoaiPhong: "Standard Single",
+      donGiaNgay: "600000.00",
+      trangThai: "Trong",
+    });
   });
+
   it("sap xep theo so phong tang dan", async () => {
-    const ds = await getSoDoPhong();
-    const so = ds.map((p) => p.soPhong);
+    const so = (await getSoDoPhong()).map((p) => p.soPhong);
     expect(so).toEqual([...so].sort());
   });
 });
 
 describe("getThongKePhongTheoTrangThai", () => {
-  it("dem du 5 trang thai, ke ca trang thai khong co phong nao", async () => {
+  it("dem dung 5 trang thai, theo thu tu TRANG_THAI_PHONG", async () => {
     const tk = await getThongKePhongTheoTrangThai();
-    expect(tk.map((t) => t.ma)).toEqual([...TRANG_THAI_PHONG]);
+    expect(tk.map((t) => [t.ma, t.soLuong])).toEqual([
+      ["Trong", 5],
+      ["DaDat", 15],
+      ["DangSuDung", 10],
+      ["DangDon", 10],
+      ["BaoTri", 2],
+    ]);
+    expect(tk[0].nhan).toBe("Trống");
   });
-  it("tong so luong bang tong so phong", async () => {
-    const tk = await getThongKePhongTheoTrangThai();
-    const tong = tk.reduce((s, t) => s + t.soLuong, 0);
-    expect(tong).toBe(mock.PHONG.length);
-  });
+});
 
-  // Review Focus #3 — man hinh phai xu ly duoc truong hop dem ra 0
-  it("trang thai khong co phong nao van tra ve dong voi soLuong 0", async () => {
-    const tk = await getThongKePhongTheoTrangThai();
-    for (const t of tk) expect(t.soLuong).toBeGreaterThanOrEqual(0);
-    expect(tk).toHaveLength(5);
+describe("gopThongKeTrangThai", () => {
+  // Man hinh phai xu ly duoc truong hop dem ra 0.
+  it("trang thai khong co phong nao van co dong voi soLuong 0", () => {
+    const tk = gopThongKeTrangThai([{ ma: "Trong", soLuong: 3 }]);
+    expect(tk.map((t) => [t.ma, t.soLuong])).toEqual([
+      ["Trong", 3],
+      ["DaDat", 0],
+      ["DangSuDung", 0],
+      ["DangDon", 0],
+      ["BaoTri", 0],
+    ]);
   });
 });
 
 describe("getNhatKyBuongPhong", () => {
-  it("gop don phong va sua phong, moi nhat len dau", async () => {
+  it("gop 16 lan don va 12 lan sua, moi nhat len dau", async () => {
     const nk = await getNhatKyBuongPhong();
-    expect(nk.length).toBeGreaterThan(0);
+    expect(nk).toHaveLength(28);
+    expect(nk.filter((n) => n.loai === "DonPhong")).toHaveLength(16);
     const gio = nk.map((n) => n.ngayGio);
     expect(gio).toEqual([...gio].sort().reverse());
-    expect(new Set(nk.map((n) => n.loai))).toEqual(new Set(["DonPhong", "SuaPhong"]));
+    expect(nk[0]).toEqual({
+      ngayGio: "2026-09-23 12:00:00",
+      soPhong: "301",
+      loai: "DonPhong",
+      nhanVien: "TK00000004",
+      ghiChu: "Dang don tong quat sau check-out",
+      chiPhi: null,
+    });
+  });
+
+  it("su co chua co chi phi mang chiPhi '0.00' de man Tong quan nhan ra phong dang hong", async () => {
+    const nk = await getNhatKyBuongPhong();
+    expect(nk.find((n) => n.loai === "SuaPhong" && n.chiPhi === "0.00")).toMatchObject({
+      soPhong: "303",
+      ghiChu: "May lanh khong chay, dang kiem tra",
+    });
   });
 });
