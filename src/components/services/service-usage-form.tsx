@@ -3,6 +3,9 @@
 import { useState } from "react";
 import { Minus, Plus } from "lucide-react";
 
+import { ghiDichVu } from "@/app/(app)/services/actions";
+import { ThongBao } from "@/components/shared/thong-bao";
+import { useThaoTac } from "@/components/shared/use-thao-tac";
 import { formatVnd } from "@/lib/format";
 import { tienDichVu } from "@/lib/tinh-toan";
 
@@ -11,7 +14,8 @@ type Phieu = { maDatPhong: string; hoTenKhach: string; soPhong: string[] };
 
 /**
  * Khung ghi nhan su dung dich vu, theo design/Services.dc.html dong 161-cuoi.
- * Thanh tien tinh lai ngay khi doi so luong (mo phong fn_TienDichVu).
+ * Thanh tien tinh lai ngay khi doi so luong (mo phong fn_TienDichVu). Nut ghi
+ * goi sp_GhiNhanDichVu; phieu da co hoa don nhap thi thu tuc tu tinh lai.
  */
 export function ServiceUsageForm({
   dichVu,
@@ -23,6 +27,7 @@ export function ServiceUsageForm({
   const [maDatPhong, setMaDatPhong] = useState(phieu[0]?.maDatPhong ?? "");
   const [maDv, setMaDv] = useState(dichVu[0]?.maDv ?? "");
   const [soLuong, setSoLuong] = useState(1);
+  const tt = useThaoTac();
 
   const dv = dichVu.find((d) => d.maDv === maDv);
   const thanhTien = tienDichVu(dv?.giaDv ?? "0.00", soLuong);
@@ -106,13 +111,21 @@ export function ServiceUsageForm({
 
       <button
         type="button"
-        className="bg-primary text-primary-foreground h-11 rounded-[10px] text-[13.5px] font-semibold"
+        disabled={tt.dangChay || !maDatPhong || !dv}
+        onClick={() =>
+          tt.chay(
+            () => ghiDichVu(maDatPhong, maDv, soLuong),
+            (d) => {
+              setSoLuong(1);
+              return `Đã ghi ${d.maSuDungDv}: ${soLuong} × ${dv?.tenDv} cho phiếu ${maDatPhong}.`;
+            },
+          )
+        }
+        className="bg-primary text-primary-foreground h-11 rounded-[10px] text-[13.5px] font-semibold disabled:opacity-45"
       >
-        Ghi nhận dịch vụ
+        {tt.dangChay ? "Đang ghi…" : "Ghi nhận dịch vụ"}
       </button>
-      <p className="text-muted-foreground m-0 text-[11px]">
-        Nút ghi nhận chưa được nối với CSDL.
-      </p>
+      <ThongBao tb={tt.thongBao} />
     </aside>
   );
 }
