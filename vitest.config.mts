@@ -23,6 +23,9 @@ export default defineConfig({
     environment: "node",
     include: ["src/**/*.test.ts"],
     globalSetup: ["./src/test/dung-db-test.ts"],
+    // Test ghi (thao-tac/*) sua CSDL kiem thu dung chung, nen cac file chay
+    // lan luot; moi file ghi tu nap lai du lieu mau (src/test/nap-lai-mau.ts).
+    fileParallelism: false,
     // Tien trinh test dung CSDL kiem thu, khong bao gio dung CSDL dev.
     env: { DATABASE_URL: urlTest, DB_NGAY_CO_DINH: NGAY_CO_DINH },
   },
