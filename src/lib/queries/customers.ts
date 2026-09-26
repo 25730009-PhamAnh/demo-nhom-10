@@ -1,6 +1,10 @@
-import * as mock from "@/lib/mock/data";
-import { NGAY_HIEN_TAI } from "@/lib/mock/now";
-import { congTien } from "@/lib/tinh-toan";
+import "server-only";
+
+import { asc, sql } from "drizzle-orm";
+import type { RowDataPacket } from "mysql2";
+
+import { db, pool } from "@/db";
+import * as schema from "@/db/schema";
 
 /**
  * Mat tien doc khach hang.
@@ -23,50 +27,63 @@ export type KhachHangTrenBang = {
   conNo: boolean;
 };
 
-export async function getDanhSachKhachHang(): Promise<KhachHangTrenBang[]> {
-  return mock.KHACH_HANG.map((k) => {
-    const phieu = mock.PHIEU_DAT_PHONG.filter((p) => p.maKh === k.maKh);
-    // Chi tinh la mot lan luu tru khi khach thuc su den o (dang o hoac da xong).
-    const daO = phieu.filter((p) => p.trangThai === "HoanTat" || p.trangThai === "DangO");
-    const hoaDon = mock.HOA_DON.filter((h) =>
-      phieu.some((p) => p.maDatPhong === h.maDatPhong),
-    );
+const kh = schema.khachHang;
 
-    return {
-      maKh: k.maKh,
-      hoTen: k.hoTen,
-      cccd: k.cccd,
-      sdt: k.sdt,
-      email: k.email,
-      soLanLuuTru: daO.length,
-      tongChiTieu: congTien(
-        ...hoaDon.filter((h) => h.trangThai === "DaThanhToan").map((h) => h.tongTien),
-      ),
-      dangLuuTru: phieu.some((p) => p.trangThai === "DangO"),
-      conNo: hoaDon.some((h) => h.trangThai === "ChuaThanhToan" && Number(h.tongTien) > 0),
-    };
-  });
+// Cac subquery duoi day tuong quan voi dong KHACH_HANG dang doc, nen phai viet
+// ro KHACH_HANG.MaKH: trong select mot bang, Drizzle in ${kh.maKh} thanh `MaKH`
+// khong kem ten bang, va `p.MaKH = MaKH` thanh so sanh cot voi chinh no.
+
+export async function getDanhSachKhachHang(): Promise<KhachHangTrenBang[]> {
+  return db
+    .select({
+      maKh: kh.maKh,
+      hoTen: kh.hoTen,
+      cccd: kh.cccd,
+      sdt: kh.sdt,
+      email: kh.email,
+      // Chi tinh la mot lan luu tru khi khach thuc su den o (dang o hoac da xong).
+      soLanLuuTru: sql<number>`(
+        SELECT COUNT(*) FROM PHIEU_DAT_PHONG p
+        WHERE  p.MaKH = KHACH_HANG.MaKH AND p.TrangThai IN ('DangO', 'HoanTat'))`.mapWith(Number),
+      // Cung quy tac voi sp_BaoCaoKhachHang: hoa don da thanh toan, cong
+      // TienPhong + DichVu + PhuThu + GiamGia. GiamTru la tien coc bu tru,
+      // khong phai chi tieu bot di, nen khong cong.
+      tongChiTieu: sql<string>`(
+        SELECT COALESCE(SUM(ct.SoTien), 0)
+        FROM   PHIEU_DAT_PHONG  p
+        JOIN   HOA_DON          hd ON hd.MaDatPhong = p.MaDatPhong
+                                  AND hd.TrangThai  = 'DaThanhToan'
+        JOIN   CHI_TIET_HOA_DON ct ON ct.MaHoaDon   = hd.MaHoaDon
+                                  AND ct.LoaiKhoanMuc IN ('TienPhong', 'DichVu', 'PhuThu', 'GiamGia')
+        WHERE  p.MaKH = KHACH_HANG.MaKH)`,
+      dangLuuTru: sql<boolean>`EXISTS (
+        SELECT 1 FROM PHIEU_DAT_PHONG p
+        WHERE  p.MaKH = KHACH_HANG.MaKH AND p.TrangThai = 'DangO')`.mapWith(Boolean),
+      conNo: sql<boolean>`EXISTS (
+        SELECT 1 FROM PHIEU_DAT_PHONG p
+        JOIN   HOA_DON hd ON hd.MaDatPhong = p.MaDatPhong
+        WHERE  p.MaKH = KHACH_HANG.MaKH AND hd.TrangThai = 'ChuaThanhToan' AND hd.TongTien > 0)`.mapWith(Boolean),
+    })
+    .from(kh)
+    .orderBy(asc(kh.maKh));
 }
 
 export async function getThongKeKhachHang() {
-  const ds = await getDanhSachKhachHang();
-  const thangNay = NGAY_HIEN_TAI.slice(0, 7);
-
   // Bang KHACH_HANG khong co cot ngay tao ho so, nen "khach moi thang nay" duoc
-  // hieu la khach co phieu dat DAU TIEN roi vao thang hien tai.
-  const khachMoiThangNay = mock.KHACH_HANG.filter((k) => {
-    const lap = mock.PHIEU_DAT_PHONG
-      .filter((p) => p.maKh === k.maKh)
-      .map((p) => p.ngayLap)
-      .sort();
-    return lap.length > 0 && lap[0].slice(0, 7) === thangNay;
-  }).length;
+  // hieu la khach co phieu dat DAU TIEN roi vao thang cua CURDATE().
+  const [ds, [moi]] = await Promise.all([
+    getDanhSachKhachHang(),
+    pool.query<RowDataPacket[]>(`
+      SELECT COUNT(*) AS n
+      FROM   (SELECT MaKH, MIN(NgayLap) AS LanDau FROM PHIEU_DAT_PHONG GROUP BY MaKH) x
+      WHERE  DATE_FORMAT(x.LanDau, '%Y-%m') = DATE_FORMAT(CURDATE(), '%Y-%m')`),
+  ]);
 
   const quayLai = ds.filter((k) => k.soLanLuuTru >= 2).length;
 
   return {
     tongHoSo: ds.length,
-    khachMoiThangNay,
+    khachMoiThangNay: Number(moi[0].n),
     dangLuuTru: ds.filter((k) => k.dangLuuTru).length,
     tyLeQuayLai: ds.length === 0 ? 0 : Math.round((quayLai / ds.length) * 100),
   };
