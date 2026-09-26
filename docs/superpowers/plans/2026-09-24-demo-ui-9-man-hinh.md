@@ -10,6 +10,8 @@
 
 **Spec:** `docs/superpowers/specs/2026-09-24-demo-ui-mock-design.md`
 
+**Trạng thái:** Đã xong, 18/18 task (commit `5868712`..`026c857`, đã vào `main`).
+
 ## Global Constraints
 
 - Chữ hiển thị trên giao diện: **tiếng Việt có dấu**, đúng câu chữ trong artboard tương ứng.
@@ -69,13 +71,13 @@ Năm chỗ spec ngụ ý nhưng không task nào tự nhiên chạm tới; mỗi
 - Consumes: không
 - Produces: `formatVnd(v: string | number): string`, `formatNgay(iso: string): string`, `formatNgayGio(iso: string): string`, `formatSo(v: number): string`
 
-- [ ] **Step 1: Cài Vitest**
+- [x] **Step 1: Cài Vitest**
 
 ```bash
 npm install -D vitest
 ```
 
-- [ ] **Step 2: Tạo `vitest.config.ts`**
+- [x] **Step 2: Tạo `vitest.config.ts`**
 
 ```ts
 import { defineConfig } from "vitest/config";
@@ -89,11 +91,11 @@ export default defineConfig({
 });
 ```
 
-- [ ] **Step 3: Thêm script test vào `package.json`**
+- [x] **Step 3: Thêm script test vào `package.json`**
 
 Trong `"scripts"`, thêm: `"test": "vitest run"` và `"test:watch": "vitest"`.
 
-- [ ] **Step 4: Viết test thất bại**
+- [x] **Step 4: Viết test thất bại**
 
 ```ts
 // src/lib/format.test.ts
@@ -131,12 +133,12 @@ describe("formatSo", () => {
 });
 ```
 
-- [ ] **Step 5: Chạy test, xác nhận thất bại**
+- [x] **Step 5: Chạy test, xác nhận thất bại**
 
 Run: `npm test -- src/lib/format.test.ts`
 Expected: FAIL — `formatNgay`, `formatNgayGio`, `formatSo` chưa tồn tại.
 
-- [ ] **Step 6: Bổ sung `src/lib/format.ts`**
+- [x] **Step 6: Bổ sung `src/lib/format.ts`**
 
 Giữ nguyên `formatVnd` sẵn có, thêm bên dưới:
 
@@ -168,12 +170,12 @@ export function formatSo(v: number): string {
 }
 ```
 
-- [ ] **Step 7: Chạy test, xác nhận đạt**
+- [x] **Step 7: Chạy test, xác nhận đạt**
 
 Run: `npm test -- src/lib/format.test.ts`
 Expected: PASS, 5 test.
 
-- [ ] **Step 8: Commit**
+- [x] **Step 8: Commit**
 
 ```bash
 git add vitest.config.ts package.json package-lock.json src/lib/format.ts src/lib/format.test.ts
@@ -197,7 +199,7 @@ git commit -m "test: them Vitest va mo rong lib/format"
   - `nhanTrangThaiHoaDon(ma: string): KieuTrangThai`
   - `TRANG_THAI_PHONG: readonly ["Trong","DaDat","DangSuDung","DangDon","BaoTri"]`
 
-- [ ] **Step 1: Viết test thất bại**
+- [x] **Step 1: Viết test thất bại**
 
 ```ts
 // src/lib/status.test.ts
@@ -250,12 +252,12 @@ describe("nhanTrangThaiHoaDon", () => {
 });
 ```
 
-- [ ] **Step 2: Chạy test, xác nhận thất bại**
+- [x] **Step 2: Chạy test, xác nhận thất bại**
 
 Run: `npm test -- src/lib/status.test.ts`
 Expected: FAIL — không tìm thấy module `@/lib/status`.
 
-- [ ] **Step 3: Viết `src/lib/status.ts`**
+- [x] **Step 3: Viết `src/lib/status.ts`**
 
 ```ts
 export type KieuTrangThai = { nhan: string; fg: string; bg: string; dot: string };
@@ -299,12 +301,12 @@ export const nhanTrangThaiPhieu   = (ma: string) => PHIEU[ma]   ?? DU_PHONG(ma);
 export const nhanTrangThaiHoaDon  = (ma: string) => HOA_DON[ma] ?? DU_PHONG(ma);
 ```
 
-- [ ] **Step 4: Chạy test, xác nhận đạt**
+- [x] **Step 4: Chạy test, xác nhận đạt**
 
 Run: `npm test -- src/lib/status.test.ts`
 Expected: PASS, 5 test.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/lib/status.ts src/lib/status.test.ts
@@ -329,7 +331,7 @@ git commit -m "feat: them lib/status anh xa trang thai sang nhan va mau"
 
 Ghi chú: tiền vào/ra đều là `string` dạng `DECIMAL(18,2)`. Tính bằng số nguyên **xu** rồi đổi ngược lại, tránh sai số dấu phẩy động khi cộng dồn hóa đơn.
 
-- [ ] **Step 1: Viết test thất bại**
+- [x] **Step 1: Viết test thất bại**
 
 ```ts
 // src/lib/tinh-toan.test.ts
@@ -386,12 +388,12 @@ describe("congTien", () => {
 });
 ```
 
-- [ ] **Step 2: Chạy test, xác nhận thất bại**
+- [x] **Step 2: Chạy test, xác nhận thất bại**
 
 Run: `npm test -- src/lib/tinh-toan.test.ts`
 Expected: FAIL — không tìm thấy module `@/lib/tinh-toan`.
 
-- [ ] **Step 3: Viết `src/lib/tinh-toan.ts`**
+- [x] **Step 3: Viết `src/lib/tinh-toan.ts`**
 
 ```ts
 /**
@@ -449,12 +451,12 @@ export function congTien(...cac: string[]): string {
 }
 ```
 
-- [ ] **Step 4: Chạy test, xác nhận đạt**
+- [x] **Step 4: Chạy test, xác nhận đạt**
 
 Run: `npm test -- src/lib/tinh-toan.test.ts`
 Expected: PASS, 9 test.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/lib/tinh-toan.ts src/lib/tinh-toan.test.ts
@@ -475,7 +477,7 @@ git commit -m "feat: mo phong fn_SoDem, fn_TienPhong, fn_TienDichVu"
 - Produces các mảng, mỗi mảng kiểu `(typeof schema.<bang>.$inferSelect)[]`:
   `LOAI_TAI_KHOAN`, `TAI_KHOAN`, `KHACH_HANG`, `LOAI_PHONG`, `BANG_GIA_PHONG`, `PHONG`, `PHIEU_DAT_PHONG`, `CHI_TIET_DAT_PHONG`, `DON_PHONG`, `SUA_PHONG`, `DICH_VU`, `SU_DUNG_DICH_VU`, `HOA_DON`, `CHI_TIET_HOA_DON`; và `NGAY_HIEN_TAI` từ `now.ts`.
 
-- [ ] **Step 1: Viết `src/lib/mock/now.ts`**
+- [x] **Step 1: Viết `src/lib/mock/now.ts`**
 
 ```ts
 /**
@@ -486,7 +488,7 @@ git commit -m "feat: mo phong fn_SoDem, fn_TienPhong, fn_TienDichVu"
 export const NGAY_HIEN_TAI = "2026-09-23";
 ```
 
-- [ ] **Step 2: Viết test thất bại**
+- [x] **Step 2: Viết test thất bại**
 
 ```ts
 // src/lib/mock/data.test.ts
@@ -563,12 +565,12 @@ describe("toan ven du lieu", () => {
 });
 ```
 
-- [ ] **Step 3: Chạy test, xác nhận thất bại**
+- [x] **Step 3: Chạy test, xác nhận thất bại**
 
 Run: `npm test -- src/lib/mock/data.test.ts`
 Expected: FAIL — không tìm thấy module `@/lib/mock/data`.
 
-- [ ] **Step 4: Viết `src/lib/mock/data.ts`**
+- [x] **Step 4: Viết `src/lib/mock/data.ts`**
 
 Cách làm, theo đúng thứ tự:
 
@@ -600,17 +602,17 @@ export const PHONG: Phong[] = [
 ];
 ```
 
-- [ ] **Step 5: Chạy test, xác nhận đạt**
+- [x] **Step 5: Chạy test, xác nhận đạt**
 
 Run: `npm test -- src/lib/mock/data.test.ts`
 Expected: PASS, 12 test. Sửa dữ liệu cho tới khi mọi ràng buộc toàn vẹn đều đạt.
 
-- [ ] **Step 6: Kiểm TypeScript**
+- [x] **Step 6: Kiểm TypeScript**
 
 Run: `npx tsc --noEmit`
 Expected: không lỗi. Nếu báo sai tên trường thì sửa theo `src/db/schema.ts`, **không** sửa `schema.ts`.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add src/lib/mock/
@@ -633,7 +635,7 @@ git commit -m "feat: du lieu gia mo phong bang that, tach dong goc va dong don t
   - `getThongKePhongTheoTrangThai(): Promise<{ ma: string; nhan: string; soLuong: number }[]>`
   - `getNhatKyBuongPhong(): Promise<{ ngayGio: string; soPhong: string; loai: "DonPhong" | "SuaPhong"; nhanVien: string; ghiChu: string; chiPhi: string | null }[]>`
 
-- [ ] **Step 1: Viết test thất bại**
+- [x] **Step 1: Viết test thất bại**
 
 ```ts
 // src/lib/queries/rooms.test.ts
@@ -690,12 +692,12 @@ describe("getNhatKyBuongPhong", () => {
 });
 ```
 
-- [ ] **Step 2: Chạy test, xác nhận thất bại**
+- [x] **Step 2: Chạy test, xác nhận thất bại**
 
 Run: `npm test -- src/lib/queries/rooms.test.ts`
 Expected: FAIL — không tìm thấy module `@/lib/queries/rooms`.
 
-- [ ] **Step 3: Viết `src/lib/queries/rooms.ts`**
+- [x] **Step 3: Viết `src/lib/queries/rooms.ts`**
 
 ```ts
 import * as mock from "@/lib/mock/data";
@@ -766,12 +768,12 @@ export async function getNhatKyBuongPhong() {
 
 Tên trường đã đối chiếu `src/db/schema.ts`: `donPhong` có `maDon, maPhong, maTk, thoiGian, ghiChu`; `suaPhong` có `maSua, maPhong, maTk, thoiGian, chiPhi, moTaLoi`. `ngayGio` chỉ là tên trường của view-model trả ra, không phải tên cột.
 
-- [ ] **Step 4: Chạy test, xác nhận đạt**
+- [x] **Step 4: Chạy test, xác nhận đạt**
 
 Run: `npm test -- src/lib/queries/rooms.test.ts`
 Expected: PASS, 6 test.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/lib/queries/rooms.ts src/lib/queries/rooms.test.ts
@@ -795,7 +797,7 @@ git commit -m "feat: mat tien queries/rooms"
 
 Mật khẩu để **dạng thô** vì đây là dữ liệu giả — chưa có SHA2, chưa có phiên thật.
 
-- [ ] **Step 1: Viết test thất bại**
+- [x] **Step 1: Viết test thất bại**
 
 ```ts
 // src/lib/queries/accounts.test.ts
@@ -850,12 +852,12 @@ describe("NHAN_VIEN_MAC_DINH", () => {
 
 Ghi chú: mật khẩu thô của `kythuat.son` và `cskh.uyen` phải lấy đúng từ `Scripts/02_Sample_Data.sql` (đối số của `SHA2(...)`), không được đoán.
 
-- [ ] **Step 2: Chạy test, xác nhận thất bại**
+- [x] **Step 2: Chạy test, xác nhận thất bại**
 
 Run: `npm test -- src/lib/queries/accounts.test.ts`
 Expected: FAIL — không tìm thấy module.
 
-- [ ] **Step 3: Viết `src/lib/queries/accounts.ts`**
+- [x] **Step 3: Viết `src/lib/queries/accounts.ts`**
 
 ```ts
 import * as mock from "@/lib/mock/data";
@@ -919,12 +921,12 @@ export const NHAN_VIEN_MAC_DINH: PhienDangNhap = {
 };
 ```
 
-- [ ] **Step 4: Chạy test, xác nhận đạt**
+- [x] **Step 4: Chạy test, xác nhận đạt**
 
 Run: `npm test -- src/lib/queries/accounts.test.ts`
 Expected: PASS, 7 test.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/lib/queries/accounts.ts src/lib/queries/accounts.test.ts
@@ -948,7 +950,7 @@ git commit -m "feat: mo phong sp_DangNhap bang du lieu gia"
   - `getPhieuTheoMa(ma: string): Promise<PhieuTomTat | null>`
   - `getLoaiPhongConTrong(checkIn: string, checkOut: string): Promise<{ maLoaiPhong: string; tenLoaiPhong: string; donGiaNgay: string; soPhongTrong: number }[]>`
 
-- [ ] **Step 1: Viết test thất bại**
+- [x] **Step 1: Viết test thất bại**
 
 ```ts
 // src/lib/queries/bookings.test.ts
@@ -1014,12 +1016,12 @@ describe("getLoaiPhongConTrong", () => {
 });
 ```
 
-- [ ] **Step 2: Chạy test, xác nhận thất bại**
+- [x] **Step 2: Chạy test, xác nhận thất bại**
 
 Run: `npm test -- src/lib/queries/bookings.test.ts`
 Expected: FAIL — không tìm thấy module.
 
-- [ ] **Step 3: Viết `src/lib/queries/bookings.ts`**
+- [x] **Step 3: Viết `src/lib/queries/bookings.ts`**
 
 ```ts
 import * as mock from "@/lib/mock/data";
@@ -1120,12 +1122,12 @@ export async function getLoaiPhongConTrong(checkIn: string, checkOut: string) {
 }
 ```
 
-- [ ] **Step 4: Chạy test, xác nhận đạt**
+- [x] **Step 4: Chạy test, xác nhận đạt**
 
 Run: `npm test -- src/lib/queries/bookings.test.ts`
 Expected: PASS, 7 test.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/lib/queries/bookings.ts src/lib/queries/bookings.test.ts
@@ -1150,7 +1152,7 @@ git commit -m "feat: mat tien queries/bookings"
   - `getDoanhThuTheoThang(): Promise<{ thang: string; tienPhong: string; dichVu: string; phuThu: string; tong: string }[]>`
   - `getChiSoTongQuan(): Promise<{ congSuat: number; khachLuuTru: number; doanhThuHomNay: string; soNhanHomNay: number; soTraHomNay: number; hoaDonChuaThanhToan: number }>`
 
-- [ ] **Step 1: Viết test thất bại cho customers**
+- [x] **Step 1: Viết test thất bại cho customers**
 
 ```ts
 // src/lib/queries/customers.test.ts
@@ -1187,7 +1189,7 @@ describe("getThongKeKhachHang", () => {
 });
 ```
 
-- [ ] **Step 2: Viết test thất bại cho invoices**
+- [x] **Step 2: Viết test thất bại cho invoices**
 
 ```ts
 // src/lib/queries/invoices.test.ts
@@ -1221,7 +1223,7 @@ describe("getHoaDon", () => {
 });
 ```
 
-- [ ] **Step 3: Viết test thất bại cho reports**
+- [x] **Step 3: Viết test thất bại cho reports**
 
 ```ts
 // src/lib/queries/reports.test.ts
@@ -1257,21 +1259,21 @@ describe("getChiSoTongQuan", () => {
 });
 ```
 
-- [ ] **Step 4: Chạy 3 test, xác nhận thất bại**
+- [x] **Step 4: Chạy 3 test, xác nhận thất bại**
 
 Run: `npm test -- src/lib/queries/`
 Expected: FAIL — thiếu 4 module.
 
-- [ ] **Step 5: Viết 4 file `queries/`**
+- [x] **Step 5: Viết 4 file `queries/`**
 
 Theo đúng mẫu của `queries/rooms.ts`: nối bảng bằng `Map`, mọi phép cộng tiền dùng `congTien()`, mọi phép nhân dùng `tienPhong()` / `tienDichVu()`. `getDoanhThuTheoThang()` gom `CHI_TIET_HOA_DON` theo `YYYY-MM` của `HOA_DON.ngayLap`, tách ba cột theo `LoaiKhoanMuc` (`TienPhong` → `tienPhong`, `DichVu` → `dichVu`, phần còn lại → `phuThu`), sinh đủ 12 tháng lùi từ `NGAY_HIEN_TAI` kể cả tháng không có hóa đơn (điền `"0.00"`).
 
-- [ ] **Step 6: Chạy test, xác nhận đạt**
+- [x] **Step 6: Chạy test, xác nhận đạt**
 
 Run: `npm test`
 Expected: PASS toàn bộ.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add src/lib/queries/
@@ -1291,11 +1293,11 @@ git commit -m "feat: mat tien queries cho khach hang, dich vu, hoa don, bao cao"
 **Interfaces:**
 - Produces: biến CSS `--font-display`, `--font-sans`, `--font-mono`; toàn bộ token màu trong `:root`
 
-- [ ] **Step 1: Thay khối `:root` trong `src/app/globals.css`**
+- [x] **Step 1: Thay khối `:root` trong `src/app/globals.css`**
 
 Chép nguyên khối `:root` trong `design/README.md` mục "Token màu", thay cho khối `:root` mặc định của shadcn đang có. Giữ nguyên `@import`, `@custom-variant` và `@theme inline` ở đầu file.
 
-- [ ] **Step 2: Bổ sung ánh xạ font trong `@theme inline`**
+- [x] **Step 2: Bổ sung ánh xạ font trong `@theme inline`**
 
 ```css
   --font-display: var(--font-playfair);
@@ -1304,7 +1306,7 @@ Chép nguyên khối `:root` trong `design/README.md` mục "Token màu", thay c
   --font-heading: var(--font-playfair);
 ```
 
-- [ ] **Step 3: Đổi font trong `src/app/layout.tsx`**
+- [x] **Step 3: Đổi font trong `src/app/layout.tsx`**
 
 ```tsx
 import { Be_Vietnam_Pro, JetBrains_Mono, Playfair_Display } from "next/font/google";
@@ -1333,7 +1335,7 @@ Thay `className` trên `<html>` thành:
 
 Đổi `<body>` thành `className="min-h-full bg-background text-foreground font-sans"`.
 
-- [ ] **Step 4: Chuyển trang kiểm tra kết nối**
+- [x] **Step 4: Chuyển trang kiểm tra kết nối**
 
 ```bash
 mkdir -p src/app/db-check
@@ -1342,12 +1344,12 @@ git mv src/app/page.tsx src/app/db-check/page.tsx
 
 Sửa tiêu đề trong file mới thành "Kiểm tra kết nối database" và ghi chú rằng trang này không nằm trong thanh điều hướng.
 
-- [ ] **Step 5: Kiểm tra build**
+- [x] **Step 5: Kiểm tra build**
 
 Run: `npm run build`
 Expected: thành công. `/` sẽ tạm 404 cho tới Task 11 — đúng như dự kiến.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add src/app/globals.css src/app/layout.tsx src/app/db-check/ src/app/page.tsx
@@ -1372,7 +1374,7 @@ git commit -m "feat: ap token mau va font cua ban thiet ke, chuyen trang kiem tr
   - `MUC_DIEU_HUONG: { nhan: string; href: string; icon: LucideIcon }[]`
   - `<Sidebar />`, `<Topbar tieuDe={...} phu={...} hanhDong={...} />`
 
-- [ ] **Step 1: Viết test thất bại**
+- [x] **Step 1: Viết test thất bại**
 
 ```ts
 // src/lib/nav.test.ts
@@ -1402,12 +1404,12 @@ describe("MUC_DIEU_HUONG", () => {
 });
 ```
 
-- [ ] **Step 2: Chạy test, xác nhận thất bại**
+- [x] **Step 2: Chạy test, xác nhận thất bại**
 
 Run: `npm test -- src/lib/nav.test.ts`
 Expected: FAIL — không tìm thấy `@/lib/nav`.
 
-- [ ] **Step 3: Viết `src/lib/nav.ts`**
+- [x] **Step 3: Viết `src/lib/nav.ts`**
 
 ```ts
 import {
@@ -1428,12 +1430,12 @@ export const MUC_DIEU_HUONG = [
 ] as const;
 ```
 
-- [ ] **Step 4: Chạy test, xác nhận đạt**
+- [x] **Step 4: Chạy test, xác nhận đạt**
 
 Run: `npm test -- src/lib/nav.test.ts`
 Expected: PASS, 3 test.
 
-- [ ] **Step 5: Dựng Sidebar**
+- [x] **Step 5: Dựng Sidebar**
 
 Đọc `design/Main.dc.html` dòng **21–55** (khối `<aside>`): logo "SEN VÀNG / Hotel Management", danh sách mục, khối nhân viên ở đáy, link Đăng xuất.
 
@@ -1451,7 +1453,7 @@ import { NHAN_VIEN_MAC_DINH } from "@/lib/queries/accounts";
 Mục đang mở: `pathname === href` (riêng `/` phải so bằng tuyệt đối để không khớp mọi route).
 Kích thước theo artboard: `aside` rộng 248px, nền `--sidebar`; mỗi mục cao 44px, bo góc 9px, chữ 13.5px.
 
-- [ ] **Step 6: Dựng Topbar và PageHeader**
+- [x] **Step 6: Dựng Topbar và PageHeader**
 
 Đọc `design/Main.dc.html` dòng **57–76**. `topbar.tsx` là Server Component nhận props:
 
@@ -1467,7 +1469,7 @@ export function Topbar({
 
 Cao 76px, nền `--card`, viền dưới `--border`, đệm ngang 32px. Tiêu đề dùng `font-display` 22px/600, dòng phụ 12.5px màu `--muted-foreground`. Ô tìm kiếm có `<label>` ẩn bằng lớp `.sr-only`.
 
-- [ ] **Step 7: Viết `src/app/(app)/layout.tsx`**
+- [x] **Step 7: Viết `src/app/(app)/layout.tsx`**
 
 ```tsx
 import { Sidebar } from "@/components/layout/sidebar";
@@ -1482,18 +1484,18 @@ export default function AppLayout({ children }: LayoutProps<"/">) {
 }
 ```
 
-- [ ] **Step 8: Thêm component shadcn còn thiếu**
+- [x] **Step 8: Thêm component shadcn còn thiếu**
 
 ```bash
 npx shadcn@latest add input label select separator tabs avatar
 ```
 
-- [ ] **Step 9: Kiểm tra build**
+- [x] **Step 9: Kiểm tra build**
 
 Run: `npm run lint && npm run build`
 Expected: không lỗi.
 
-- [ ] **Step 10: Commit**
+- [x] **Step 10: Commit**
 
 ```bash
 git add src/lib/nav.ts src/lib/nav.test.ts src/components/layout/ src/components/ui/ src/app/\(app\)/
@@ -1514,7 +1516,7 @@ git commit -m "feat: app shell voi sidebar va topbar theo ban thiet ke"
 - Consumes: `getChiSoTongQuan`, `getThongKePhongTheoTrangThai`, `getSoDoPhong`, `getPhieuNhanHomNay`, `getPhieuTraHomNay`
 - Produces: `<StatCard nhan phanTram giaTri phu />`, `<StatusBadge trangThai loai />`, `<EmptyState thongDiep />`
 
-- [ ] **Step 1: Đọc artboard**
+- [x] **Step 1: Đọc artboard**
 
 Mở `design/Main.dc.html`. Bốn khối của `<main>`:
 - dòng **79–118** — hàng 4 thẻ chỉ số, cao 116px
@@ -1522,13 +1524,13 @@ Mở `design/Main.dc.html`. Bốn khối của `<main>`:
 - dòng **194–280** — bảng "Nhận & trả sắp tới"
 - khối "Cần xử lý hôm nay" nằm bên phải khối 304px
 
-- [ ] **Step 2: Viết 3 component dùng chung**
+- [x] **Step 2: Viết 3 component dùng chung**
 
 `StatCard`: nền trắng, viền `--border`, bo 14px, đệm 20px; nhãn 12.5px `--muted-foreground`, giá trị `font-display` 28px, chip phần trăm nền `--accent`.
 `StatusBadge`: gọi `nhanTrangThaiPhong` / `nhanTrangThaiPhieu` / `nhanTrangThaiHoaDon` theo prop `loai`, đặt màu bằng `style={{ color: t.fg, background: t.bg }}` và chấm tròn 6px màu `t.dot`.
 `EmptyState`: căn giữa, chữ 13px `--muted-foreground`.
 
-- [ ] **Step 3: Viết `src/app/(app)/page.tsx`**
+- [x] **Step 3: Viết `src/app/(app)/page.tsx`**
 
 ```tsx
 import { Topbar } from "@/components/layout/topbar";
@@ -1550,17 +1552,17 @@ export default async function TongQuanPage() {
 
 Mọi con số hiển thị lấy từ `chiSo`, **không** viết cứng số của artboard.
 
-- [ ] **Step 4: Xem bằng mắt**
+- [x] **Step 4: Xem bằng mắt**
 
 Run: `npm run dev`, mở `http://localhost:3000/`
 Đối chiếu với `design/Main.dc.html`: 4 thẻ chỉ số, lưới phòng có chú giải 5 màu, bảng nhận/trả, danh sách cần xử lý. Kiểm font tiêu đề là Playfair, số tiền là JetBrains Mono.
 
-- [ ] **Step 5: Lint và build**
+- [x] **Step 5: Lint và build**
 
 Run: `npm run lint && npm run build`
 Expected: không lỗi.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add src/app/\(app\)/page.tsx src/components/shared/
@@ -1579,11 +1581,11 @@ git commit -m "feat: man hinh Tong quan"
 - Consumes: `getSoDoPhong`, `getThongKePhongTheoTrangThai`, `getNhatKyBuongPhong`
 - Produces: `<RoomFilter phong={PhongTrenSoDo[]} />`
 
-- [ ] **Step 1: Đọc artboard**
+- [x] **Step 1: Đọc artboard**
 
 `design/Rooms.dc.html`: dòng **80–108** hàng chip đếm + bộ lọc tầng/loại; dòng **109–140** lưới thẻ phòng; dòng **141–cuối** bảng nhật ký.
 
-- [ ] **Step 2: Viết `room-filter.tsx`**
+- [x] **Step 2: Viết `room-filter.tsx`**
 
 Client Component giữ 3 state: `trangThai` (mặc định `"TatCa"`), `tang`, `maLoaiPhong`. Lọc trên mảng `phong` truyền từ server.
 
@@ -1591,21 +1593,21 @@ Yêu cầu quan trọng (Review Focus #3): khi kết quả lọc rỗng phải h
 
 Chip đếm phải đếm lại **theo kết quả lọc tầng/loại hiện hành**, không phải luôn đếm toàn bộ.
 
-- [ ] **Step 3: Viết `page.tsx`**
+- [x] **Step 3: Viết `page.tsx`**
 
 Server Component: `await` 3 query, truyền xuống `<RoomFilter />`, và tự dựng bảng nhật ký bên dưới.
 
-- [ ] **Step 4: Xem bằng mắt và bấm thử**
+- [x] **Step 4: Xem bằng mắt và bấm thử**
 
 Run: `npm run dev`, mở `/rooms`
 - Bấm từng chip trạng thái → lưới lọc đúng, số trên chip đổi theo
 - Chọn tầng không có phòng nào ở trạng thái đang lọc → thấy dòng "Không có phòng phù hợp bộ lọc"
 
-- [ ] **Step 5: Lint và build**
+- [x] **Step 5: Lint và build**
 
 Run: `npm run lint && npm run build`
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add src/app/\(app\)/rooms/ src/components/rooms/
@@ -1624,11 +1626,11 @@ git commit -m "feat: man hinh So do phong voi bo loc"
 - Consumes: `getLoaiPhongConTrong`, `getDanhSachKhachHang`, `soDem`, `tienPhong`, `congTien`
 - Produces: `<BookingForm loaiPhong={...} khach={...} />`
 
-- [ ] **Step 1: Đọc artboard**
+- [x] **Step 1: Đọc artboard**
 
 `design/Booking.dc.html`: dòng **73–104** bước 1 khách hàng; **105–139** bước 2 thời gian lưu trú (có nút − / + số đêm, dòng 123 và 125); **140–189** bước 3 chọn loại phòng; **190–cuối** cột phải tạm tính.
 
-- [ ] **Step 2: Viết `booking-form.tsx`**
+- [x] **Step 2: Viết `booking-form.tsx`**
 
 Client Component giữ state: `ngayNhan`, `ngayTra`, `maLoaiPhong`, `soKhach`, `tienCoc`.
 
@@ -1650,22 +1652,22 @@ Review Focus #1: khi `ketQua.loi` khác `null`, cột tạm tính hiện thông 
 
 Nút − / + đổi `ngayTra` (cộng/trừ một ngày), không đổi số đêm trực tiếp — số đêm luôn suy ra từ hai ngày, để không bao giờ lệch nhau.
 
-- [ ] **Step 3: Viết `page.tsx`**
+- [x] **Step 3: Viết `page.tsx`**
 
 `await getLoaiPhongConTrong(NGAY_HIEN_TAI, <NGAY_HIEN_TAI + 2 ngày>)` và `getDanhSachKhachHang()`, truyền xuống form.
 
-- [ ] **Step 4: Xem bằng mắt và bấm thử**
+- [x] **Step 4: Xem bằng mắt và bấm thử**
 
 Run: `npm run dev`, mở `/bookings/new`
 - Đổi loại phòng → tạm tính đổi theo
 - Bấm + số đêm → số đêm và thành tiền tăng đúng
 - Đặt ngày trả **trước** ngày nhận → hiện lỗi, nút lập phiếu mờ đi, không có số âm
 
-- [ ] **Step 5: Lint và build**
+- [x] **Step 5: Lint và build**
 
 Run: `npm run lint && npm run build`
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add src/app/\(app\)/bookings/ src/components/bookings/
@@ -1684,29 +1686,29 @@ git commit -m "feat: man hinh Dat phong voi tinh tien truc tiep"
 - Consumes: `getPhieuNhanHomNay`, `getPhieuTraHomNay`
 - Produces: `<BookingPicker nhan={PhieuTomTat[]} tra={PhieuTomTat[]} />`
 
-- [ ] **Step 1: Đọc artboard**
+- [x] **Step 1: Đọc artboard**
 
 `design/CheckInOut.dc.html`: dòng **73–96** hai tab Nhận/Trả + cảnh báo phiếu quá giờ; **97–120** danh sách phiếu bên trái (rộng 480px); **121–cuối** khung chi tiết bên phải.
 
-- [ ] **Step 2: Viết `booking-picker.tsx`**
+- [x] **Step 2: Viết `booking-picker.tsx`**
 
 Client Component, state: `tab` (`"nhan" | "tra"`) và `maDangChon`. Đổi tab thì `maDangChon` nhảy về phiếu đầu của danh sách mới.
 
 Danh sách rỗng → `<EmptyState thongDiep="Không có phiếu nào" />` và khung chi tiết bên phải cũng hiện trạng thái rỗng thay vì đọc `undefined`.
 
-- [ ] **Step 3: Viết `page.tsx`**
+- [x] **Step 3: Viết `page.tsx`**
 
-- [ ] **Step 4: Xem bằng mắt và bấm thử**
+- [x] **Step 4: Xem bằng mắt và bấm thử**
 
 Run: `npm run dev`, mở `/front-desk`
 - Bấm một phiếu khác trong danh sách → khung chi tiết bên phải đổi theo
 - Chuyển tab Nhận ↔ Trả → danh sách và chi tiết đều đổi
 
-- [ ] **Step 5: Lint và build**
+- [x] **Step 5: Lint và build**
 
 Run: `npm run lint && npm run build`
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add src/app/\(app\)/front-desk/ src/components/front-desk/
@@ -1725,11 +1727,11 @@ git commit -m "feat: man hinh Nhan va tra phong"
 - Consumes: `getDanhSachKhachHang`, `getThongKeKhachHang`
 - Produces: `<CustomerTable khach={KhachHangTrenBang[]} />`
 
-- [ ] **Step 1: Đọc artboard**
+- [x] **Step 1: Đọc artboard**
 
 `design/Customers.dc.html`: dòng **80–102** hàng 4 thẻ chỉ số; **103–cuối** khối bảng, gồm tab lọc, ô sắp xếp, bảng và phân trang (dòng 304–315).
 
-- [ ] **Step 2: Viết `customer-table.tsx`**
+- [x] **Step 2: Viết `customer-table.tsx`**
 
 Client Component, state: `tab` (`"TatCa" | "DangLuuTru" | "QuayLai" | "ConNo"`) và `sapXep` (`"MoiCapNhat" | "ChiTieuCao" | "LuuTruNhieu"`).
 
@@ -1737,20 +1739,20 @@ Review Focus #3: tab lọc ra 0 dòng → hiện `<EmptyState thongDiep="Không 
 
 Sắp xếp theo tiền phải so bằng **số**, không so chuỗi: `Number(a.tongChiTieu) - Number(b.tongChiTieu)`.
 
-- [ ] **Step 3: Viết `page.tsx`**
+- [x] **Step 3: Viết `page.tsx`**
 
-- [ ] **Step 4: Xem bằng mắt và bấm thử**
+- [x] **Step 4: Xem bằng mắt và bấm thử**
 
 Run: `npm run dev`, mở `/customers`
 - Bấm từng tab → số dòng đổi
 - Đổi ô sắp xếp sang "Tổng chi tiêu cao nhất" → dòng đầu đúng là khách chi nhiều nhất
 - Chọn tab "Còn công nợ" nếu rỗng → thấy thông báo, không phải bảng trắng
 
-- [ ] **Step 5: Lint và build**
+- [x] **Step 5: Lint và build**
 
 Run: `npm run lint && npm run build`
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add src/app/\(app\)/customers/ src/components/customers/
@@ -1770,22 +1772,22 @@ git commit -m "feat: man hinh Khach hang voi loc va sap xep"
 **Interfaces:**
 - Consumes: `getDanhMucDichVu`, `getSuDungDichVuTheoPhieu`, `getPhieuTraHomNay`, `getHoaDon`, `tienDichVu`, `congTien`
 
-- [ ] **Step 1: Đọc artboard**
+- [x] **Step 1: Đọc artboard**
 
 `design/Services.dc.html`: dòng **73–140** bảng danh mục; **141–160** khối phụ; **161–cuối** cột phải ghi nhận sử dụng (nút − / + ở dòng 189 và 191).
 `design/Invoice.dc.html`: dòng **76–219** mẫu hóa đơn; **220–cuối** cột phải tóm tắt + thanh toán.
 
-- [ ] **Step 2: Viết `service-usage-form.tsx`**
+- [x] **Step 2: Viết `service-usage-form.tsx`**
 
 Client Component, state: `maDv`, `soLuong`. Thành tiền tính bằng `tienDichVu(gia, soLuong)` ngay khi đổi số lượng. `soLuong` chặn dưới ở 1, không cho về 0 hoặc âm.
 
-- [ ] **Step 3: Viết `/services/page.tsx`**
+- [x] **Step 3: Viết `/services/page.tsx`**
 
-- [ ] **Step 4: Viết `/invoices/page.tsx`**
+- [x] **Step 4: Viết `/invoices/page.tsx`**
 
 Thanh điều hướng trỏ tới `/invoices` (không có mã), nên trang này liệt kê hóa đơn và link sang từng mã. Không có trang này thì mục "Hóa đơn" trên sidebar sẽ là link chết.
 
-- [ ] **Step 5: Viết `/invoices/[maHoaDon]/page.tsx`**
+- [x] **Step 5: Viết `/invoices/[maHoaDon]/page.tsx`**
 
 ```tsx
 import { notFound } from "next/navigation";
@@ -1803,18 +1805,18 @@ Phần đầu mẫu hóa đơn giữ nguyên chỗ trống như artboard và spe
 
 Bảng khoản mục hiện đúng `LoaiKhoanMuc` thô (`TienPhong`, `DichVu`, `PhuThu`…) ở cột đầu như artboard vẽ. Dòng `GiamGia` / `GiamTru` có số tiền âm — hiển thị trong ngoặc hoặc kèm dấu trừ, không được bỏ dấu.
 
-- [ ] **Step 6: Xem bằng mắt và bấm thử**
+- [x] **Step 6: Xem bằng mắt và bấm thử**
 
 Run: `npm run dev`
 - `/services` — đổi số lượng, thành tiền tính lại đúng
 - `/invoices` — bấm một hóa đơn, sang đúng trang chi tiết
 - `/invoices/HD99999999` — ra trang 404, **không** phải màn hình lỗi
 
-- [ ] **Step 7: Lint và build**
+- [x] **Step 7: Lint và build**
 
 Run: `npm run lint && npm run build`
 
-- [ ] **Step 8: Commit**
+- [x] **Step 8: Commit**
 
 ```bash
 git add src/app/\(app\)/services/ src/app/\(app\)/invoices/ src/components/services/
@@ -1834,12 +1836,12 @@ git commit -m "feat: man hinh Dich vu va Hoa don"
 **Interfaces:**
 - Consumes: `getDoanhThuTheoThang`, `getChiSoTongQuan`, `dangNhapGia`
 
-- [ ] **Step 1: Đọc artboard**
+- [x] **Step 1: Đọc artboard**
 
 `design/Reports.dc.html`: dòng **75–97** thanh chọn kỳ; **98–125** 4 thẻ chỉ số; **126–210** biểu đồ cột; **211–cuối** hai bảng cơ cấu.
 `design/Login.dc.html`: toàn bộ 103 dòng — cột trái giới thiệu, cột phải form (nút hiện mật khẩu ở dòng 61).
 
-- [ ] **Step 2: Viết `period-picker.tsx`**
+- [x] **Step 2: Viết `period-picker.tsx`**
 
 Client Component, state `ky` (`"HomNay" | "TuanNay" | "ThangNay" | "MuoiHaiThang"`). Lọc mảng 12 tháng đã nhận từ server theo kỳ, dựng lại biểu đồ.
 
@@ -1847,9 +1849,9 @@ Biểu đồ cột: mỗi cột là `div` cao theo tỉ lệ `Number(tong) / max
 
 Khi `max` bằng 0 thì mọi cột cao 0 — phải chặn chia cho 0.
 
-- [ ] **Step 3: Viết `/reports/page.tsx`**
+- [x] **Step 3: Viết `/reports/page.tsx`**
 
-- [ ] **Step 4: Viết `login-form.tsx`**
+- [x] **Step 4: Viết `login-form.tsx`**
 
 Client Component:
 
@@ -1870,11 +1872,11 @@ export function LoginForm() {
 
 Form dùng `<form onSubmit>` thật với `<label htmlFor>` thật cho cả hai trường. Nút "Hiện mật khẩu" đổi `type` của ô mật khẩu giữa `password` và `text`, có `aria-label`.
 
-- [ ] **Step 5: Viết `/login/page.tsx`**
+- [x] **Step 5: Viết `/login/page.tsx`**
 
 Route này nằm trong `(auth)`, **ngoài** shell — không có sidebar, không có topbar.
 
-- [ ] **Step 6: Xem bằng mắt và bấm thử**
+- [x] **Step 6: Xem bằng mắt và bấm thử**
 
 Run: `npm run dev`
 - `/reports` — đổi kỳ, biểu đồ và số liệu đổi theo
@@ -1882,11 +1884,11 @@ Run: `npm run dev`
 - `/login` — đăng nhập `admin` / `sai` → hiện "Tên đăng nhập hoặc mật khẩu không đúng"
 - `/login` — đăng nhập `kythuat.son` với mật khẩu **đúng** → hiện thông báo tài khoản đang tạm nghỉ
 
-- [ ] **Step 7: Lint và build**
+- [x] **Step 7: Lint và build**
 
 Run: `npm run lint && npm run build`
 
-- [ ] **Step 8: Commit**
+- [x] **Step 8: Commit**
 
 ```bash
 git add src/app/\(app\)/reports/ src/app/\(auth\)/ src/components/reports/ src/components/auth/
@@ -1899,17 +1901,17 @@ git commit -m "feat: man hinh Bao cao doanh thu va Dang nhap"
 
 **Files:** không tạo file mới; sửa những gì rà ra.
 
-- [ ] **Step 1: Chạy toàn bộ test**
+- [x] **Step 1: Chạy toàn bộ test**
 
 Run: `npm test`
 Expected: PASS toàn bộ.
 
-- [ ] **Step 2: Lint và build**
+- [x] **Step 2: Lint và build**
 
 Run: `npm run lint && npm run build`
 Expected: không lỗi, không cảnh báo mới.
 
-- [ ] **Step 3: Đi hết 9 route**
+- [x] **Step 3: Đi hết 9 route**
 
 Run: `npm run dev`. Mở lần lượt và đối chiếu với artboard:
 
@@ -1925,15 +1927,15 @@ Run: `npm run dev`. Mở lần lượt và đối chiếu với artboard:
 | `/invoices/<mã bất kỳ>` | `design/Invoice.dc.html` |
 | `/reports` | `design/Reports.dc.html` |
 
-- [ ] **Step 4: Bấm hết 8 mục trên sidebar**
+- [x] **Step 4: Bấm hết 8 mục trên sidebar**
 
 Xác nhận không mục nào 404, và mục đang mở được tô sáng đúng.
 
-- [ ] **Step 5: Kiểm ba chỗ tương tác lần cuối**
+- [x] **Step 5: Kiểm ba chỗ tương tác lần cuối**
 
 Lọc sơ đồ phòng · tính tiền đặt phòng · đổi số lượng dịch vụ.
 
-- [ ] **Step 6: Commit phần sửa (nếu có)**
+- [x] **Step 6: Commit phần sửa (nếu có)**
 
 ```bash
 git add -A

@@ -10,6 +10,8 @@
 
 **Spec:** `docs/superpowers/specs/2026-09-26-noi-csdl-phase-2-ghi-design.md`. Spec đã được bổ sung khi lập plan: hai dòng mới ở bảng §4, tiền cọc theo đơn giá phase 1, tab Trả liệt kê mọi phiếu `DangO`, lỗi `fatal` ở §3.3.
 
+**Trạng thái:** Đã xong, Task 0–17 và bản sửa sau review cuối (commit `8fb6516`..`756ac86`, đã vào `main`). `06_Procedures.sql` sửa ngoài git, trong thư mục Scripts trên OneDrive.
+
 ## Global Constraints
 
 - AGENTS.md: Next 16 có thay đổi phá vỡ, nên đọc `node_modules/next/dist/docs/` trước khi viết code Next. Cho plan này đã đọc: `03-api-reference/04-functions/refresh.md`, `02-guides/server-actions.md`, `03-api-reference/01-directives/use-server.md`. `refresh()` chỉ gọi được trong Server Action; `redirect()` ném ngoại lệ điều khiển, nên đặt sau cùng.
@@ -65,7 +67,7 @@ Review Focus #3 của phase 1 ("lỗi không phải nghiệp vụ thì ném ti�
 
 ### Task 0: Tạo nhánh làm việc
 
-- [ ] **Step 1: Tạo nhánh từ `main`, commit spec đã bổ sung và plan**
+- [x] **Step 1: Tạo nhánh từ `main`, commit spec đã bổ sung và plan**
 
 ```bash
 cd /Users/anhpham/PA/UIT/Demo
@@ -98,7 +100,7 @@ Expected: `git status --short` chỉ liệt kê file trong `docs/superpowers/`, 
 
 Mỗi lần nạp lại chỉ mất khoảng 0,2 giây, nên test ghi nạp lại trước **từng ca** chứ không chỉ trước từng file như spec §6 ghi. Nhờ vậy các ca độc lập nhau. `afterAll` trả CSDL về dữ liệu gốc cho file test đọc chạy sau.
 
-- [ ] **Step 1: Viết test hỏng `src/test/nap-lai-mau.test.ts`**
+- [x] **Step 1: Viết test hỏng `src/test/nap-lai-mau.test.ts`**
 
 ```ts
 import { describe, expect, it } from "vitest";
@@ -132,12 +134,12 @@ describe("napLaiDuLieuMau", () => {
 });
 ```
 
-- [ ] **Step 2: Chạy, xác nhận hỏng**
+- [x] **Step 2: Chạy, xác nhận hỏng**
 
 Run: `npx vitest run src/test/nap-lai-mau.test.ts`
 Expected: FAIL, `Cannot find package '@/test/nap-lai-mau'`.
 
-- [ ] **Step 3: Viết `src/test/nap-lai-mau.ts` và `src/test/csdl.ts`**
+- [x] **Step 3: Viết `src/test/nap-lai-mau.ts` và `src/test/csdl.ts`**
 
 `src/test/nap-lai-mau.ts`:
 
@@ -193,7 +195,7 @@ export async function trangThai(maDatPhong: string) {
 }
 ```
 
-- [ ] **Step 4: Cho file test chạy tuần tự**
+- [x] **Step 4: Cho file test chạy tuần tự**
 
 `vitest.config.mts` — tìm:
 
@@ -210,12 +212,12 @@ thay bằng:
     fileParallelism: false,
 ```
 
-- [ ] **Step 5: Chạy lại**
+- [x] **Step 5: Chạy lại**
 
 Run: `npx vitest run src/test/nap-lai-mau.test.ts` → Expected: 2 passed.
 Run: `npm test` → Expected: `Test Files 17 passed`, `Tests 114 passed`. Tổng thời gian dài hơn phase 1 (khoảng 6 giây) vì các file giờ chạy tuần tự.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add src/test/nap-lai-mau.ts src/test/nap-lai-mau.test.ts src/test/csdl.ts vitest.config.mts
@@ -240,7 +242,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 
 Biến `@out1` sống theo connection (spec §3.2), nên `CALL` và `SELECT @out1` phải chạy trên cùng một connection lấy riêng từ pool. Connection đó phải được trả lại trong `finally`, kể cả khi thủ tục báo lỗi (Review Focus #5).
 
-- [ ] **Step 1: Viết test hỏng `src/db/procedures.test.ts`**
+- [x] **Step 1: Viết test hỏng `src/db/procedures.test.ts`**
 
 ```ts
 import { afterAll, beforeEach, describe, expect, it } from "vitest";
@@ -283,12 +285,12 @@ describe("callProcedure", () => {
 });
 ```
 
-- [ ] **Step 2: Chạy, xác nhận hỏng**
+- [x] **Step 2: Chạy, xác nhận hỏng**
 
 Run: `npx vitest run src/db/procedures.test.ts`
 Expected: 2 FAIL `callProcedureOut is not a function`; ca `callProcedure` pass.
 
-- [ ] **Step 3: Viết `src/db/procedures.ts`** (thay toàn bộ nội dung)
+- [x] **Step 3: Viết `src/db/procedures.ts`** (thay toàn bộ nội dung)
 
 ```ts
 import "server-only";
@@ -355,13 +357,13 @@ export async function callProcedure<T = RowDataPacket>(
 }
 ```
 
-- [ ] **Step 4: Chạy lại**
+- [x] **Step 4: Chạy lại**
 
 Run: `npx vitest run src/db/procedures.test.ts` → Expected: 3 passed.
 Run: `npm test` → Expected: `Test Files 18 passed`, `Tests 117 passed`.
 Run: `npx tsc --noEmit && npm run lint` → Expected: không lỗi. Nếu `tsc` báo thiếu `PageProps` / `LayoutProps`, chạy `npx next typegen` rồi chạy lại.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/db/procedures.ts src/db/procedures.test.ts
@@ -387,7 +389,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 
 Hai test cũ "lỗi không phải nghiệp vụ thì ném tiếp" và "lỗi 1292 thì ném tiếp" đổi theo spec §3.3; đây là thay đổi có chủ đích, không phải hồi quy. `traCuuPhongTrongAnToan` vẫn chặn ngày rỗng trước (Task 4), nên form đặt phòng vẫn báo "Ngày không hợp lệ" thay vì `Lỗi CSDL (1292)`.
 
-- [ ] **Step 1: Viết test hỏng `src/db/loi.test.ts`** (thay toàn bộ nội dung)
+- [x] **Step 1: Viết test hỏng `src/db/loi.test.ts`** (thay toàn bộ nội dung)
 
 ```ts
 import { afterEach, beforeEach, describe, expect, it, vi, type MockInstance } from "vitest";
@@ -455,7 +457,7 @@ describe("thongBaoCsdl", () => {
 });
 ```
 
-- [ ] **Step 2: Chạy, xác nhận hỏng**
+- [x] **Step 2: Chạy, xác nhận hỏng**
 
 Run: `npx vitest run src/db/loi.test.ts`
 Expected: 3 FAIL:
@@ -465,7 +467,7 @@ Expected: 3 FAIL:
 
 3 ca còn lại pass.
 
-- [ ] **Step 3: Viết `src/db/loi.ts`** (thay toàn bộ nội dung)
+- [x] **Step 3: Viết `src/db/loi.ts`** (thay toàn bộ nội dung)
 
 ```ts
 /**
@@ -509,12 +511,12 @@ function laLoiCsdl(err: unknown): err is Error & { errno?: number; sqlMessage?: 
 }
 ```
 
-- [ ] **Step 4: Chạy lại**
+- [x] **Step 4: Chạy lại**
 
 Run: `npx vitest run src/db/loi.test.ts` → Expected: 6 passed.
 Run: `npm test` → Expected: `Test Files 18 passed`, `Tests 119 passed`.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/db/loi.ts src/db/loi.test.ts
@@ -545,7 +547,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
   - `docSoTien(nhap: string): string` (`@/lib/tinh-toan`, dùng được ở client): bỏ `.`, `,` và khoảng trắng.
   - `bookings.ts` bỏ hàm riêng `laNgayHopLe`, dùng `laNgay`; hành vi không đổi.
 
-- [ ] **Step 1: Viết test hỏng**
+- [x] **Step 1: Viết test hỏng**
 
 `src/lib/thao-tac/kiem-tra.test.ts`:
 
@@ -708,12 +710,12 @@ describe("docSoTien", () => {
 });
 ```
 
-- [ ] **Step 2: Chạy, xác nhận hỏng**
+- [x] **Step 2: Chạy, xác nhận hỏng**
 
 Run: `npx vitest run src/lib/thao-tac src/lib/tinh-toan.test.ts`
 Expected: 2 file FAIL vì `Cannot find package '@/lib/thao-tac/kiem-tra'` và `'@/lib/thao-tac/ket-qua'`. Trong `tinh-toan.test.ts`, 2 ca `docSoTien` FAIL (`docSoTien is not a function`), 16 ca cũ pass.
 
-- [ ] **Step 3: Viết hai module mới và `docSoTien`**
+- [x] **Step 3: Viết hai module mới và `docSoTien`**
 
 `src/lib/thao-tac/kiem-tra.ts`:
 
@@ -816,7 +818,7 @@ export function docSoTien(nhap: string): string {
 }
 ```
 
-- [ ] **Step 4: `bookings.ts` dùng `laNgay` thay hàm riêng**
+- [x] **Step 4: `bookings.ts` dùng `laNgay` thay hàm riêng**
 
 `src/lib/queries/bookings.ts` — tìm:
 
@@ -867,14 +869,14 @@ thay bằng:
   if (!laNgay(checkIn) || !laNgay(checkOut)) {
 ```
 
-- [ ] **Step 5: Chạy lại**
+- [x] **Step 5: Chạy lại**
 
 Run: `npx vitest run src/lib/thao-tac src/lib/tinh-toan.test.ts src/lib/queries/bookings.test.ts`
 Expected: `kiem-tra` 9, `ket-qua` 3, `tinh-toan` 18, `bookings` 16 — tất cả pass.
 Run: `npm test` → Expected: `Test Files 20 passed`, `Tests 133 passed`.
 Run: `npx tsc --noEmit && npm run lint` → Expected: không lỗi.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add src/lib/thao-tac/kiem-tra.ts src/lib/thao-tac/kiem-tra.test.ts src/lib/thao-tac/ket-qua.ts src/lib/thao-tac/ket-qua.test.ts src/lib/tinh-toan.ts src/lib/tinh-toan.test.ts src/lib/queries/bookings.ts
@@ -905,7 +907,7 @@ Dữ liệu mẫu ở mốc 23/09/2026 10:00 mà các test dựa vào:
 - Hóa đơn: HD00000023 `ChuaThanhToan` 3.100.000; HD00000007 là hóa đơn nháp của DP00000007 (phòng 401, nhận 12/10).
 - Mã kế tiếp: DP00000099, HD00000099, SD00000099, DON0000017, SUA0000013.
 
-- [ ] **Step 1: Viết test hỏng `src/db/thu-tuc.test.ts`**
+- [x] **Step 1: Viết test hỏng `src/db/thu-tuc.test.ts`**
 
 ```ts
 import { afterAll, beforeEach, describe, expect, it } from "vitest";
@@ -988,7 +990,7 @@ describe("sp_HuyPhieuDat", () => {
 });
 ```
 
-- [ ] **Step 2: Chạy trên thủ tục cũ, xác nhận hỏng đúng lý do**
+- [x] **Step 2: Chạy trên thủ tục cũ, xác nhận hỏng đúng lý do**
 
 Run: `npx vitest run src/db/thu-tuc.test.ts`
 
@@ -1001,7 +1003,7 @@ Expected: 5 FAIL, 1 pass:
 
 Ca `phong DangDon va BaoTri van ve Trong` pass từ đầu. Nó chặn trường hợp sửa quá tay.
 
-- [ ] **Step 3: Sao lưu `06`, đọc lại chỗ neo ngay trước khi sửa**
+- [x] **Step 3: Sao lưu `06`, đọc lại chỗ neo ngay trước khi sửa**
 
 Đặt `BK` là thư mục tạm của phiên (scratchpad; không có thì `mktemp -d`) và giữ nguyên cho các bước sau.
 
@@ -1021,7 +1023,7 @@ grep -c "Hoa don nhap da co thi goi lai sp_LapHoaDon de cap nhat" "$F"
 
 Expected: 4 số `1` đầu. Số cuối là `1` nếu chú thích đầu `sp_GhiNhanDichVu` còn, `0` nếu nhóm đã rút gọn (script bỏ qua đoạn đó). Có số `0` ở 4 dòng đầu, hoặc số nào lớn hơn 1, thì **dừng lại, báo người dùng**: nhóm đã sửa thủ tục.
 
-- [ ] **Step 4: Lưu script sửa vào `$BK/sua_06_phase2.py`**
+- [x] **Step 4: Lưu script sửa vào `$BK/sua_06_phase2.py`**
 
 ```python
 """Sua 4 thu tuc cua 06_Procedures.sql theo spec phase 2 muc 4.
@@ -1151,7 +1153,7 @@ open(f, "w", encoding="ascii", newline="\n").write(s)
 print(f"Da sua 4 thu tuc ({dem} doan) trong {f}")
 ```
 
-- [ ] **Step 5: Sửa `06`, đối chiếu với bản sao lưu**
+- [x] **Step 5: Sửa `06`, đối chiếu với bản sao lưu**
 
 ```bash
 python3 "$BK/sua_06_phase2.py" "$QLKS_SCRIPTS_DIR/06_Procedures.sql"
@@ -1161,12 +1163,12 @@ file "$QLKS_SCRIPTS_DIR/06_Procedures.sql"; grep -c $'\r' "$QLKS_SCRIPTS_DIR/06_
 
 Expected: `Da sua 4 thu tuc (7 doan) trong …`, số dòng đổi `37`, `ASCII text`, `0`. Nếu chú thích đầu `sp_GhiNhanDichVu` đã bị nhóm bỏ thì là `6 doan` và `35`. Mở `$BK/06.diff` đọc: chỉ có 4 thủ tục trên bị đổi.
 
-- [ ] **Step 6: Chạy lại** (globalSetup dựng lại CSDL kiểm thử từ `06` mới)
+- [x] **Step 6: Chạy lại** (globalSetup dựng lại CSDL kiểm thử từ `06` mới)
 
 Run: `npx vitest run src/db/thu-tuc.test.ts` → Expected: 6 passed.
 Run: `npm test` → Expected: `Test Files 21 passed`, `Tests 139 passed`.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add src/db/thu-tuc.test.ts
@@ -1198,7 +1200,7 @@ Phòng được đặt là **dòng đầu tiên** mà `sp_TraCuuPhongTrong(in, o
 
 Tiền cọc là một đêm theo `donGiaNgay` ở trên, đúng con số form đang hiển thị (spec §2, đã bổ sung). Tiền cọc tính lại trên server, không nhận từ client.
 
-- [ ] **Step 1: Viết test hỏng `src/lib/thao-tac/dat-phong.test.ts`**
+- [x] **Step 1: Viết test hỏng `src/lib/thao-tac/dat-phong.test.ts`**
 
 ```ts
 import { afterAll, beforeEach, describe, expect, it } from "vitest";
@@ -1276,12 +1278,12 @@ describe("datPhong", () => {
 });
 ```
 
-- [ ] **Step 2: Chạy, xác nhận hỏng**
+- [x] **Step 2: Chạy, xác nhận hỏng**
 
 Run: `npx vitest run src/lib/thao-tac/dat-phong.test.ts`
 Expected: FAIL `Cannot find package '@/lib/thao-tac/dat-phong'`.
 
-- [ ] **Step 3: Viết `src/lib/thao-tac/dat-phong.ts`**
+- [x] **Step 3: Viết `src/lib/thao-tac/dat-phong.ts`**
 
 ```ts
 import "server-only";
@@ -1339,12 +1341,12 @@ export async function datPhong(
 }
 ```
 
-- [ ] **Step 4: Chạy lại**
+- [x] **Step 4: Chạy lại**
 
 Run: `npx vitest run src/lib/thao-tac/dat-phong.test.ts` → Expected: 4 passed.
 Run: `npm test` → Expected: `Test Files 22 passed`, `Tests 143 passed`.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/lib/thao-tac/dat-phong.ts src/lib/thao-tac/dat-phong.test.ts
@@ -1367,7 +1369,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
   - `thanhToan(maHoaDon: string, loaiThanhToan: string): Promise<KetQua<null>>`: gọi `sp_ThanhToanHoaDon`.
   - `ghiDichVu(maDatPhong: string, maDv: string, soLuong: number): Promise<KetQua<{ maSuDungDv: string }>>`: gọi `sp_GhiNhanDichVu(ma, maDv, soLuong, NULL, @out1)`, với thời điểm là `NOW()` của CSDL.
 
-- [ ] **Step 1: Viết test hỏng**
+- [x] **Step 1: Viết test hỏng**
 
 `src/lib/thao-tac/hoa-don.test.ts`:
 
@@ -1467,12 +1469,12 @@ describe("ghiDichVu", () => {
 });
 ```
 
-- [ ] **Step 2: Chạy, xác nhận hỏng**
+- [x] **Step 2: Chạy, xác nhận hỏng**
 
 Run: `npx vitest run src/lib/thao-tac/hoa-don.test.ts src/lib/thao-tac/dich-vu.test.ts`
 Expected: 2 file FAIL `Cannot find package '@/lib/thao-tac/hoa-don'` / `'@/lib/thao-tac/dich-vu'`.
 
-- [ ] **Step 3: Viết hai module**
+- [x] **Step 3: Viết hai module**
 
 `src/lib/thao-tac/hoa-don.ts`:
 
@@ -1517,12 +1519,12 @@ export function ghiDichVu(
 }
 ```
 
-- [ ] **Step 4: Chạy lại**
+- [x] **Step 4: Chạy lại**
 
 Run: `npx vitest run src/lib/thao-tac/hoa-don.test.ts src/lib/thao-tac/dich-vu.test.ts` → Expected: 4 + 3 passed.
 Run: `npm test` → Expected: `Test Files 24 passed`, `Tests 150 passed`.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/lib/thao-tac/hoa-don.ts src/lib/thao-tac/hoa-don.test.ts src/lib/thao-tac/dich-vu.ts src/lib/thao-tac/dich-vu.test.ts
@@ -1548,7 +1550,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
   - `lapHoaDon(maDatPhong: string): Promise<KetQua<{ maHoaDon: string }>>`: lập mới, hoặc lập lại hóa đơn nháp (giữ mã cũ).
   - `traPhong(maDatPhong: string): Promise<KetQua<null>>`
 
-- [ ] **Step 1: Viết test hỏng `src/lib/thao-tac/le-tan.test.ts`**
+- [x] **Step 1: Viết test hỏng `src/lib/thao-tac/le-tan.test.ts`**
 
 ```ts
 import { afterAll, beforeEach, describe, expect, it } from "vitest";
@@ -1678,12 +1680,12 @@ describe("traPhong", () => {
 });
 ```
 
-- [ ] **Step 2: Chạy, xác nhận hỏng**
+- [x] **Step 2: Chạy, xác nhận hỏng**
 
 Run: `npx vitest run src/lib/thao-tac/le-tan.test.ts`
 Expected: FAIL `Cannot find package '@/lib/thao-tac/le-tan'`.
 
-- [ ] **Step 3: Viết `src/lib/thao-tac/le-tan.ts`**
+- [x] **Step 3: Viết `src/lib/thao-tac/le-tan.ts`**
 
 ```ts
 import "server-only";
@@ -1732,12 +1734,12 @@ export function traPhong(maDatPhong: string): Promise<KetQua<null>> {
 }
 ```
 
-- [ ] **Step 4: Chạy lại**
+- [x] **Step 4: Chạy lại**
 
 Run: `npx vitest run src/lib/thao-tac/le-tan.test.ts` → Expected: 13 passed.
 Run: `npm test` → Expected: `Test Files 25 passed`, `Tests 163 passed`.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/lib/thao-tac/le-tan.ts src/lib/thao-tac/le-tan.test.ts
@@ -1763,7 +1765,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 
 `vong-doi.test.ts` là tiêu chí 1 của spec §1: một phiếu đi trọn 8 bước. Mỗi bước kiểm trạng thái, và kiểm số liệu mà màn Tổng quan / Sơ đồ phòng đọc. Các bước nối tiếp nhau, nên file này chỉ nạp lại dữ liệu một lần (`beforeAll`).
 
-- [ ] **Step 1: Viết test hỏng**
+- [x] **Step 1: Viết test hỏng**
 
 `src/lib/thao-tac/buong-phong.test.ts`:
 
@@ -1941,12 +1943,12 @@ describe("vong doi mot phieu dat phong", () => {
 });
 ```
 
-- [ ] **Step 2: Chạy, xác nhận hỏng**
+- [x] **Step 2: Chạy, xác nhận hỏng**
 
 Run: `npx vitest run src/lib/thao-tac/buong-phong.test.ts src/lib/thao-tac/vong-doi.test.ts`
 Expected: 2 file FAIL `Cannot find package '@/lib/thao-tac/buong-phong'`.
 
-- [ ] **Step 3: Viết `src/lib/thao-tac/buong-phong.ts`**
+- [x] **Step 3: Viết `src/lib/thao-tac/buong-phong.ts`**
 
 ```ts
 import "server-only";
@@ -1978,13 +1980,13 @@ export function ghiSuaPhong(
 }
 ```
 
-- [ ] **Step 4: Chạy lại**
+- [x] **Step 4: Chạy lại**
 
 Run: `npx vitest run src/lib/thao-tac` → Expected: 8 file, tất cả pass (`buong-phong` 8, `vong-doi` 8).
 Run: `npm test` → Expected: `Test Files 27 passed`, `Tests 179 passed`.
 Run: `npx tsc --noEmit && npm run lint` → Expected: không lỗi.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/lib/thao-tac/buong-phong.ts src/lib/thao-tac/buong-phong.test.ts src/lib/thao-tac/vong-doi.test.ts
@@ -2005,7 +2007,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 - Consumes: `schema.hoaDon` (Drizzle).
 - Produces: `PhieuTomTat` thêm trường `hoaDon: { maHoaDon: string; trangThai: string } | null`; chỉ thêm, không đổi trường cũ (spec §2). Mọi hàm đọc phiếu (`getPhieuNhanHomNay`, `getPhieuTraHomNay`, `getPhieuDangO`, `getPhieuTheoMa`) đều có trường này. Mỗi phiếu có tối đa một hóa đơn (ràng buộc duy nhất ở `01`).
 
-- [ ] **Step 1: Sửa test**
+- [x] **Step 1: Sửa test**
 
 `src/lib/queries/bookings.test.ts` — tìm:
 
@@ -2052,12 +2054,12 @@ thay bằng:
 });
 ```
 
-- [ ] **Step 2: Chạy, xác nhận hỏng**
+- [x] **Step 2: Chạy, xác nhận hỏng**
 
 Run: `npx vitest run src/lib/queries/bookings.test.ts`
 Expected: 2 FAIL: phiếu DP00000011 chưa có trường `hoaDon`, và `hoaDon` của DP00000023 là `undefined`. 15 ca còn lại pass.
 
-- [ ] **Step 3: Đọc hóa đơn cùng phiếu**
+- [x] **Step 3: Đọc hóa đơn cùng phiếu**
 
 `src/lib/queries/bookings.ts` — tìm:
 
@@ -2119,13 +2121,13 @@ thay bằng:
       hoaDon: maHoaDon && trangThaiHoaDon ? { maHoaDon, trangThai: trangThaiHoaDon } : null,
 ```
 
-- [ ] **Step 4: Chạy lại**
+- [x] **Step 4: Chạy lại**
 
 Run: `npx vitest run src/lib/queries/bookings.test.ts` → Expected: 17 passed.
 Run: `npm test` → Expected: `Test Files 27 passed`, `Tests 180 passed`.
 Run: `npx tsc --noEmit` → Expected: không lỗi.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/lib/queries/bookings.ts src/lib/queries/bookings.test.ts
@@ -2153,7 +2155,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 
 `refresh()` của `next/cache` chỉ chạy được trong Server Action, nên `lamMoiNeuXong` nằm riêng ở `src/lib/lam-moi.ts`, không nằm trong `thao-tac/*` là tầng test gọi thẳng. Test action chỉ đi các nhánh sai hình thức: action trả về trước khi chạm CSDL hay gọi `refresh()`.
 
-- [ ] **Step 1: Viết test hỏng `src/app/(app)/bookings/new/actions.test.ts`**
+- [x] **Step 1: Viết test hỏng `src/app/(app)/bookings/new/actions.test.ts`**
 
 ```ts
 import { describe, expect, it } from "vitest";
@@ -2179,12 +2181,12 @@ describe("Server Action dat phong: tham so sai hinh thuc", () => {
 });
 ```
 
-- [ ] **Step 2: Chạy, xác nhận hỏng**
+- [x] **Step 2: Chạy, xác nhận hỏng**
 
 Run: `npx vitest run "src/app/(app)/bookings/new/actions.test.ts"`
 Expected: FAIL `datPhong is not a function`.
 
-- [ ] **Step 3: Viết ba module dùng chung**
+- [x] **Step 3: Viết ba module dùng chung**
 
 `src/lib/lam-moi.ts`:
 
@@ -2265,7 +2267,7 @@ export function useThaoTac() {
 }
 ```
 
-- [ ] **Step 4: Viết `src/app/(app)/bookings/new/actions.ts`** (thay toàn bộ nội dung)
+- [x] **Step 4: Viết `src/app/(app)/bookings/new/actions.ts`** (thay toàn bộ nội dung)
 
 ```ts
 "use server";
@@ -2299,11 +2301,11 @@ export async function datPhong(maKh: unknown, ngayNhan: unknown, ngayTra: unknow
 }
 ```
 
-- [ ] **Step 5: Chạy lại test action**
+- [x] **Step 5: Chạy lại test action**
 
 Run: `npx vitest run "src/app/(app)/bookings/new/actions.test.ts"` → Expected: 1 passed.
 
-- [ ] **Step 6: Nối nút trong form**
+- [x] **Step 6: Nối nút trong form**
 
 Form làm bốn việc mới:
 - gọi `datPhong`;
@@ -2488,12 +2490,12 @@ thay bằng:
       <Topbar tieuDe="Lập phiếu đặt phòng" phu="Phiếu mới · chọn khách, ngày và loại phòng" />
 ```
 
-- [ ] **Step 7: Kiểm kiểu, lint, cả bộ test**
+- [x] **Step 7: Kiểm kiểu, lint, cả bộ test**
 
 Run: `npx tsc --noEmit && npm run lint` → Expected: không lỗi.
 Run: `npm test` → Expected: `Test Files 28 passed`, `Tests 181 passed`.
 
-- [ ] **Step 8: Commit**
+- [x] **Step 8: Commit**
 
 ```bash
 git add src/lib/lam-moi.ts src/components/shared/thong-bao.tsx src/components/shared/use-thao-tac.ts "src/app/(app)/bookings/new" src/components/bookings/booking-form.tsx
@@ -2522,7 +2524,7 @@ Theo spec §3.1, nút không khóa theo trạng thái. "Xác nhận trả phòng
 
 "Hủy phiếu" hỏi lại bằng `window.confirm`. Nhận phòng xong thì chuyển sang tab Trả, vẫn chọn phiếu vừa nhận, để lễ tân đi tiếp sang lập hóa đơn. Ô cọc đọc số qua `docSoTien` (Review Focus #1).
 
-- [ ] **Step 1: Viết test hỏng `src/app/(app)/front-desk/actions.test.ts`**
+- [x] **Step 1: Viết test hỏng `src/app/(app)/front-desk/actions.test.ts`**
 
 ```ts
 import { describe, expect, it } from "vitest";
@@ -2545,12 +2547,12 @@ describe("Server Action Nhan & tra phong: tham so sai hinh thuc", () => {
 });
 ```
 
-- [ ] **Step 2: Chạy, xác nhận hỏng**
+- [x] **Step 2: Chạy, xác nhận hỏng**
 
 Run: `npx vitest run "src/app/(app)/front-desk/actions.test.ts"`
 Expected: FAIL `Cannot find package '@/app/(app)/front-desk/actions'` (hoặc `Failed to resolve import`).
 
-- [ ] **Step 3: Viết `src/app/(app)/front-desk/actions.ts`**
+- [x] **Step 3: Viết `src/app/(app)/front-desk/actions.ts`**
 
 ```ts
 "use server";
@@ -2595,11 +2597,11 @@ export async function traPhong(maDatPhong: unknown) {
 }
 ```
 
-- [ ] **Step 4: Chạy lại test action**
+- [x] **Step 4: Chạy lại test action**
 
 Run: `npx vitest run "src/app/(app)/front-desk/actions.test.ts"` → Expected: 1 passed.
 
-- [ ] **Step 5: Viết `src/app/(app)/front-desk/page.tsx`** (thay toàn bộ nội dung)
+- [x] **Step 5: Viết `src/app/(app)/front-desk/page.tsx`** (thay toàn bộ nội dung)
 
 ```tsx
 import { BookingPicker } from "@/components/front-desk/booking-picker";
@@ -2637,7 +2639,7 @@ export default async function LeTanPage() {
 }
 ```
 
-- [ ] **Step 6: Viết `src/components/front-desk/booking-picker.tsx`** (thay toàn bộ nội dung)
+- [x] **Step 6: Viết `src/components/front-desk/booking-picker.tsx`** (thay toàn bộ nội dung)
 
 ```tsx
 "use client";
@@ -2934,12 +2936,12 @@ function O({ nhan, giaTri, mono = false }: { nhan: string; giaTri: string; mono?
 }
 ```
 
-- [ ] **Step 7: Kiểm kiểu, lint, cả bộ test**
+- [x] **Step 7: Kiểm kiểu, lint, cả bộ test**
 
 Run: `npx tsc --noEmit && npm run lint` → Expected: không lỗi.
 Run: `npm test` → Expected: `Test Files 29 passed`, `Tests 182 passed`.
 
-- [ ] **Step 8: Commit**
+- [x] **Step 8: Commit**
 
 ```bash
 git add "src/app/(app)/front-desk" src/components/front-desk/booking-picker.tsx
@@ -2965,7 +2967,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 
 Action chỉ kiểm `loaiThanhToan` là chuỗi tối đa 20 ký tự. Ba giá trị hợp lệ do `sp_ThanhToanHoaDon` kiểm (spec §3.1).
 
-- [ ] **Step 1: Viết test hỏng `src/app/(app)/invoices/[maHoaDon]/actions.test.ts`**
+- [x] **Step 1: Viết test hỏng `src/app/(app)/invoices/[maHoaDon]/actions.test.ts`**
 
 ```ts
 import { describe, expect, it } from "vitest";
@@ -2986,12 +2988,12 @@ describe("Server Action thanh toan: tham so sai hinh thuc", () => {
 });
 ```
 
-- [ ] **Step 2: Chạy, xác nhận hỏng**
+- [x] **Step 2: Chạy, xác nhận hỏng**
 
 Run: `npx vitest run "src/app/(app)/invoices/[maHoaDon]/actions.test.ts"`
 Expected: FAIL, không tìm thấy module `actions`.
 
-- [ ] **Step 3: Viết action và form**
+- [x] **Step 3: Viết action và form**
 
 `src/app/(app)/invoices/[maHoaDon]/actions.ts`:
 
@@ -3082,7 +3084,7 @@ export function ThanhToanForm({ maHoaDon, trangThai }: { maHoaDon: string; trang
 }
 ```
 
-- [ ] **Step 4: Đặt form vào trang**
+- [x] **Step 4: Đặt form vào trang**
 
 `src/app/(app)/invoices/[maHoaDon]/page.tsx` — tìm:
 
@@ -3119,13 +3121,13 @@ thay bằng:
           <ThanhToanForm maHoaDon={hd.maHoaDon} trangThai={hd.trangThai} />
 ```
 
-- [ ] **Step 5: Chạy lại, kiểm kiểu, lint**
+- [x] **Step 5: Chạy lại, kiểm kiểu, lint**
 
 Run: `npx vitest run "src/app/(app)/invoices/[maHoaDon]/actions.test.ts"` → Expected: 1 passed.
 Run: `npx tsc --noEmit && npm run lint` → Expected: không lỗi.
 Run: `npm test` → Expected: `Test Files 30 passed`, `Tests 183 passed`.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add "src/app/(app)/invoices/[maHoaDon]" src/components/invoices/thanh-toan-form.tsx
@@ -3147,7 +3149,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 - Consumes: `ghiDichVu` (Task 7); `laMa`, `laSoNguyenDuong`, `khongHopLe` (Task 4); `lamMoiNeuXong`, `ThongBao`, `useThaoTac` (Task 11).
 - Produces: Server Action `ghiDichVu(maDatPhong: unknown, maDv: unknown, soLuong: unknown)`.
 
-- [ ] **Step 1: Viết test hỏng `src/app/(app)/services/actions.test.ts`**
+- [x] **Step 1: Viết test hỏng `src/app/(app)/services/actions.test.ts`**
 
 ```ts
 import { describe, expect, it } from "vitest";
@@ -3171,12 +3173,12 @@ describe("Server Action ghi dich vu: tham so sai hinh thuc", () => {
 });
 ```
 
-- [ ] **Step 2: Chạy, xác nhận hỏng**
+- [x] **Step 2: Chạy, xác nhận hỏng**
 
 Run: `npx vitest run "src/app/(app)/services/actions.test.ts"`
 Expected: FAIL, không tìm thấy module `actions`.
 
-- [ ] **Step 3: Viết `src/app/(app)/services/actions.ts`**
+- [x] **Step 3: Viết `src/app/(app)/services/actions.ts`**
 
 ```ts
 "use server";
@@ -3194,7 +3196,7 @@ export async function ghiDichVu(maDatPhong: unknown, maDv: unknown, soLuong: unk
 }
 ```
 
-- [ ] **Step 4: Nối nút trong form**
+- [x] **Step 4: Nối nút trong form**
 
 `src/components/services/service-usage-form.tsx` — tìm:
 
@@ -3281,13 +3283,13 @@ thay bằng:
       <ThongBao tb={tt.thongBao} />
 ```
 
-- [ ] **Step 5: Chạy lại, kiểm kiểu, lint**
+- [x] **Step 5: Chạy lại, kiểm kiểu, lint**
 
 Run: `npx vitest run "src/app/(app)/services/actions.test.ts"` → Expected: 1 passed.
 Run: `npx tsc --noEmit && npm run lint` → Expected: không lỗi.
 Run: `npm test` → Expected: `Test Files 31 passed`, `Tests 184 passed`.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add "src/app/(app)/services/actions.ts" "src/app/(app)/services/actions.test.ts" src/components/services/service-usage-form.tsx
@@ -3313,7 +3315,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 
 Form dọn phòng tự gợi ý phòng `DangDon` đầu tiên. Ô chi phí để trống thì gửi `"0"`, và đọc số qua `docSoTien` (Review Focus #1). Bảng nhật ký vẫn do trang server vẽ và được truyền vào dưới dạng `children`.
 
-- [ ] **Step 1: Viết test hỏng `src/app/(app)/rooms/actions.test.ts`**
+- [x] **Step 1: Viết test hỏng `src/app/(app)/rooms/actions.test.ts`**
 
 ```ts
 import { describe, expect, it } from "vitest";
@@ -3342,12 +3344,12 @@ describe("Server Action nhat ky buong phong: tham so sai hinh thuc", () => {
 });
 ```
 
-- [ ] **Step 2: Chạy, xác nhận hỏng**
+- [x] **Step 2: Chạy, xác nhận hỏng**
 
 Run: `npx vitest run "src/app/(app)/rooms/actions.test.ts"`
 Expected: FAIL, không tìm thấy module `actions`.
 
-- [ ] **Step 3: Viết action và form**
+- [x] **Step 3: Viết action và form**
 
 `src/app/(app)/rooms/actions.ts`:
 
@@ -3522,7 +3524,7 @@ export function NhatKyForm({
 }
 ```
 
-- [ ] **Step 4: Dùng form trong trang**
+- [x] **Step 4: Dùng form trong trang**
 
 `src/app/(app)/rooms/page.tsx` — tìm:
 
@@ -3580,13 +3582,13 @@ thay bằng:
         </NhatKyForm>
 ```
 
-- [ ] **Step 5: Chạy lại, kiểm kiểu, lint**
+- [x] **Step 5: Chạy lại, kiểm kiểu, lint**
 
 Run: `npx vitest run "src/app/(app)/rooms/actions.test.ts"` → Expected: 1 passed.
 Run: `npx tsc --noEmit && npm run lint` → Expected: không lỗi.
 Run: `npm test` → Expected: `Test Files 32 passed`, `Tests 185 passed`.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add "src/app/(app)/rooms" src/components/rooms/nhat-ky-form.tsx
@@ -3606,7 +3608,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 - Consumes: toàn bộ Task 1–15.
 - Produces: README mô tả phase 2 xong, hai tầng ghi, `callProcedureOut`. README cũng ghi rõ: chạy lại `06` thì phải chạy lại `08` (MySQL xóa quyền `EXECUTE` của thủ tục bị `DROP`).
 
-- [ ] **Step 1: Sửa `README.md`** (6 chỗ)
+- [x] **Step 1: Sửa `README.md`** (6 chỗ)
 
 `README.md` — tìm:
 
@@ -3721,7 +3723,7 @@ thay bằng:
   đơn, thanh toán, dọn phòng) với 12 thủ tục của `06_Procedures.sql`.
 ````
 
-- [ ] **Step 2: Không còn chữ "chưa được nối", không còn nút trang trí**
+- [x] **Step 2: Không còn chữ "chưa được nối", không còn nút trang trí**
 
 ```bash
 grep -rn "chưa được nối\|dữ liệu giả" src; echo "grep_exit=$?"
@@ -3730,13 +3732,13 @@ grep -rln "use server" "src/app/(app)"
 
 Expected: lệnh `grep` đầu không in dòng nào, `grep_exit=1`. Lệnh sau in đủ 5 file `actions.ts` (`bookings/new`, `front-desk`, `invoices/[maHoaDon]`, `services`, `rooms`).
 
-- [ ] **Step 3: Kiểm kiểu, lint, test, build**
+- [x] **Step 3: Kiểm kiểu, lint, test, build**
 
 Run: `npx tsc --noEmit && npm run lint` → Expected: không lỗi.
 Run: `npm test` → Expected: `Test Files 32 passed`, `Tests 185 passed`.
 Run: `npm run build` → Expected: build xong, bảng route giữ như phase 1: mọi route `(app)` là `ƒ`, chỉ `/_not-found` và `/login` là `○`.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add README.md
@@ -3756,13 +3758,13 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 - Consumes: toàn bộ Task 1–16; `npm run db:mau` (phase 1).
 - Produces: CSDL dev có 17 thủ tục mới và dữ liệu mẫu nạp lại theo hôm nay. Có ảnh chụp từng bước của vòng ở tiêu chí 1 của spec §1 để gửi người dùng.
 
-- [ ] **Step 1: Hỏi người dùng trước khi ghi vào CSDL dev**
+- [x] **Step 1: Hỏi người dùng trước khi ghi vào CSDL dev**
 
 Gửi câu hỏi sau, và **chỉ làm tiếp khi người dùng đồng ý**:
 
 > Sẽ chạy lại `06_Procedures.sql` vào CSDL dev `QuanLyKhachSan`: chỉ thay 17 thủ tục, không đụng bảng hay dữ liệu, và chưa chạy `08`. Sau đó `npm run db:mau`, rồi đi trọn một vòng trên giao diện: đặt phòng, thu cọc, nhận phòng, dịch vụ, hóa đơn, thanh toán, trả phòng, dọn phòng, hủy một phiếu, ghi một lần sửa. Vòng này ghi dữ liệu thử vào CSDL dev. Cuối cùng `npm run db:mau` lần nữa để trả về dữ liệu mẫu. Đồng ý chạy không?
 
-- [ ] **Step 2: Cài `06`, nạp lại dữ liệu mẫu**
+- [x] **Step 2: Cài `06`, nạp lại dữ liệu mẫu**
 
 ```bash
 cd /Users/anhpham/PA/UIT/Demo
@@ -3778,7 +3780,7 @@ npm run db:mau
 
 Expected: `06 ok`, rồi `24` (19 thủ tục + 5 hàm) và `1` (bản `sp_NhanPhong` mới). Sau đó `Da nap lai du lieu mau vao QuanLyKhachSan: hom nay <dd/mm/yyyy> co 12 luot nhan, 9 luot tra phong`.
 
-- [ ] **Step 3: Dev server và kiểm nhanh bằng `curl`**
+- [x] **Step 3: Dev server và kiểm nhanh bằng `curl`**
 
 Nếu `:3000` đang chạy thì dùng luôn (HMR đã nạp code mới). Nếu chưa, mở `npm run dev` trong Terminal panel của người dùng. Không dùng preview pane, vì người dùng đã từ chối.
 
@@ -3792,7 +3794,7 @@ curl -s http://localhost:3000/rooms | grep -o "Ghi nhận sửa chữa" | head -
 
 Expected: mọi route `200`. `/front-desk` in cả `12 lượt nhận · 9 lượt trả` (topbar vẫn đếm lượt trả hôm nay) lẫn `Trả phòng · 10` (tab Trả có mọi phiếu đang ở). `/rooms` in `Ghi nhận sửa chữa`.
 
-- [ ] **Step 4: Đi trọn vòng bằng Chrome headless**
+- [x] **Step 4: Đi trọn vòng bằng Chrome headless**
 
 Lưu script sau vào thư mục tạm của phiên, ví dụ `$TMP/kiem-vong-doi.mjs`. Script dùng Chrome của máy với một profile tạm riêng, không đụng profile của người dùng.
 
@@ -3994,7 +3996,7 @@ Expected (mã có thể khác nếu CSDL dev không vừa nạp lại):
 
 Không có dòng `THAT BAI` hay `LOI JS`. Mở từng ảnh trong `$TMP/anh-phase2/` để xem: thông báo nằm ngay dưới nút vừa bấm, ảnh 5 có dòng đỏ, các ảnh còn lại có dòng xanh.
 
-- [ ] **Step 5: Gửi ảnh cho người dùng, trả CSDL dev về dữ liệu mẫu**
+- [x] **Step 5: Gửi ảnh cho người dùng, trả CSDL dev về dữ liệu mẫu**
 
 Gửi 9 ảnh chụp cho người dùng.
 
@@ -4004,7 +4006,7 @@ npm run db:mau
 
 Expected: `… co 12 luot nhan, 9 luot tra phong`.
 
-- [ ] **Step 6: Kiểm lần cuối**
+- [x] **Step 6: Kiểm lần cuối**
 
 Run: `npm test && npx tsc --noEmit && npm run lint && npm run build`
 Expected: tất cả qua. `git status --short` sạch. `git log --oneline main..` liệt kê 17 commit (Task 0–16).
