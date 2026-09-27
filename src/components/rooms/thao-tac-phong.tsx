@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Brush, Wrench, X } from "lucide-react";
 
 import { baoBaoTri, baoDonPhong } from "@/app/(app)/rooms/actions";
@@ -25,9 +25,18 @@ export function ThaoTacPhong({
 }) {
   const [moTa, setMoTa] = useState("");
   const tt = useThaoTac();
+  const khung = useRef<HTMLElement>(null);
+
+  // Khung nam tren luoi phong: bam mot phong o tang duoi (da cuon xuong) thi
+  // khung mo ngoai man hinh, nhu khong co gi xay ra. Cuon khung vao tam nhin moi
+  // lan chon phong (RoomFilter dat key theo ma phong nen effect chay lai).
+  useEffect(() => {
+    khung.current?.scrollIntoView({ block: "nearest" });
+  }, []);
 
   return (
     <section
+      ref={khung}
       aria-label={`Thao tác phòng ${p.soPhong}`}
       className="bg-card border-border flex shrink-0 flex-col gap-3 rounded-[14px] border p-5"
     >
