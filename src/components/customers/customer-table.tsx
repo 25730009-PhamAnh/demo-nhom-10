@@ -1,7 +1,9 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { Pencil, Plus } from "lucide-react";
 
+import { KhachHangForm } from "@/components/customers/khach-hang-form";
 import { EmptyState } from "@/components/shared/empty-state";
 import { formatVnd } from "@/lib/format";
 import type { KhachHangTrenBang } from "@/lib/queries/customers";
@@ -16,10 +18,18 @@ const TAB: { khoa: Tab; nhan: string }[] = [
   { khoa: "ConNo", nhan: "Còn công nợ" },
 ];
 
-/** Bang khach hang co loc theo tab va sap xep, theo design/Customers.dc.html. */
+/** Form dang mo ngay trong the: them moi, sua mot khach, hoac khong mo. */
+type Form = { cheDo: "them" } | { cheDo: "sua"; khach: KhachHangTrenBang } | null;
+
+/**
+ * Bang khach hang co loc theo tab va sap xep, theo design/Customers.dc.html.
+ * Nut "Them khach hang" (mockup dat o topbar) nam o dau the de dung chung state
+ * voi bang; "Sua" o moi dong mo cung form, dien san ho so.
+ */
 export function CustomerTable({ khach }: { khach: KhachHangTrenBang[] }) {
   const [tab, setTab] = useState<Tab>("TatCa");
   const [sapXep, setSapXep] = useState<SapXep>("MoiCapNhat");
+  const [form, setForm] = useState<Form>(null);
 
   const ketQua = useMemo(() => {
     const loc = khach.filter((k) => {
@@ -34,7 +44,7 @@ export function CustomerTable({ khach }: { khach: KhachHangTrenBang[] }) {
     return [...loc].sort((a, b) => {
       if (sapXep === "ChiTieuCao") return Number(b.tongChiTieu) - Number(a.tongChiTieu);
       if (sapXep === "LuuTruNhieu") return b.soLanLuuTru - a.soLanLuuTru;
-      return a.maKh.localeCompare(b.maKh);
+      return b.maKh.localeCompare(a.maKh);
     });
   }, [khach, tab, sapXep]);
 
@@ -74,7 +84,24 @@ export function CustomerTable({ khach }: { khach: KhachHangTrenBang[] }) {
           <option value="ChiTieuCao">Tổng chi tiêu cao nhất</option>
           <option value="LuuTruNhieu">Số lần lưu trú nhiều nhất</option>
         </select>
+        <button
+          type="button"
+          onClick={() => setForm(form?.cheDo === "them" ? null : { cheDo: "them" })}
+          aria-pressed={form?.cheDo === "them"}
+          className="bg-primary text-primary-foreground flex h-[30px] items-center gap-[6px] rounded-lg px-[13px] text-[12.5px] font-semibold"
+        >
+          <Plus size={14} strokeWidth={2} />
+          Thêm khách hàng
+        </button>
       </div>
+
+      {form ? (
+        <KhachHangForm
+          key={form.cheDo === "sua" ? form.khach.maKh : "them"}
+          ban={form.cheDo === "sua" ? form.khach : undefined}
+          khiDong={() => setForm(null)}
+        />
+      ) : null}
 
       <div className="min-h-0 flex-grow overflow-auto">
         <table className="w-full border-collapse text-left">
@@ -97,6 +124,9 @@ export function CustomerTable({ khach }: { khach: KhachHangTrenBang[] }) {
               </th>
               <th className="border-border bg-card sticky top-0 border-b pb-[9px] font-semibold">
                 Trạng thái
+              </th>
+              <th className="border-border bg-card sticky top-0 border-b pb-[9px]">
+                <span className="sr-only">Thao tác</span>
               </th>
             </tr>
           </thead>
@@ -141,6 +171,17 @@ export function CustomerTable({ khach }: { khach: KhachHangTrenBang[] }) {
                   ) : (
                     <span className="text-muted-foreground text-[12px]">—</span>
                   )}
+                </td>
+                <td className="border-border border-b py-[11px] text-right">
+                  <button
+                    type="button"
+                    onClick={() => setForm({ cheDo: "sua", khach: k })}
+                    aria-label={`Sửa hồ sơ ${k.hoTen}`}
+                    className="text-primary inline-flex items-center gap-[5px] text-[12.5px] font-semibold"
+                  >
+                    <Pencil size={13} strokeWidth={2} />
+                    Sửa
+                  </button>
                 </td>
               </tr>
             ))}
