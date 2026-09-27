@@ -8,6 +8,7 @@ import {
   SprayCan,
   TrendingUp,
   Users,
+  Wrench,
   type LucideIcon,
 } from "lucide-react";
 
@@ -18,6 +19,7 @@ export const MUC_DIEU_HUONG: MucDieuHuong[] = [
   { nhan: "Tổng quan",        href: "/",             icon: LayoutGrid },
   { nhan: "Sơ đồ phòng",      href: "/rooms",        icon: BedDouble },
   { nhan: "Buồng phòng",      href: "/housekeeping", icon: SprayCan },
+  { nhan: "Bảo trì",          href: "/maintenance",  icon: Wrench },
   { nhan: "Đặt phòng",        href: "/bookings/new", icon: CalendarPlus },
   { nhan: "Nhận & trả phòng", href: "/front-desk",   icon: LogIn },
   { nhan: "Khách hàng",       href: "/customers",    icon: Users },

@@ -2,11 +2,12 @@ import { describe, expect, it } from "vitest";
 import { MUC_DIEU_HUONG } from "@/lib/nav";
 
 describe("MUC_DIEU_HUONG", () => {
-  it("8 muc cua artboard, them Buong phong sau So do phong", () => {
+  it("8 muc cua artboard, them Buong phong va Bao tri sau So do phong", () => {
     expect(MUC_DIEU_HUONG.map((m) => m.nhan)).toEqual([
       "Tổng quan",
       "Sơ đồ phòng",
       "Buồng phòng",
+      "Bảo trì",
       "Đặt phòng",
       "Nhận & trả phòng",
       "Khách hàng",
