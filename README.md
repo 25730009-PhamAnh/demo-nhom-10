@@ -3,12 +3,15 @@
 Project demo cho đồ án môn Quản lý thông tin (Nhóm 10).
 Stack: **Next.js 16** (App Router) · **Drizzle ORM** · **shadcn/ui** · **MySQL**.
 
-9 màn hình nghiệp vụ (Tổng quan, Sơ đồ phòng, Đặt phòng, Nhận & trả phòng, Khách
-hàng, Dịch vụ, Hóa đơn, Báo cáo, Đăng nhập) **đọc dữ liệu thật** từ database
-`QuanLyKhachSan`. Mọi nút ghi (đặt phòng, thu cọc, nhận / trả phòng, hủy phiếu,
-ghi dịch vụ, lập hóa đơn, thanh toán, dọn / sửa phòng) gọi đúng thủ tục của
-`06_Procedures.sql`. Phiên đăng nhập và tài khoản MySQL theo vai trò là phase 3.
-Thiết kế: `docs/superpowers/specs/2026-09-26-noi-csdl-phase-*.md`.
+12 màn hình nghiệp vụ (Tổng quan, Sơ đồ phòng, Buồng phòng, Bảo trì, Đặt phòng,
+Nhận & trả phòng, Khách hàng, Dịch vụ, Hóa đơn, Bảng giá, Báo cáo, Đăng nhập)
+**đọc dữ liệu thật** từ database `QuanLyKhachSan`. Mọi nút ghi (thêm / sửa khách,
+đặt phòng, thu cọc, nhận / trả phòng, hủy phiếu, ghi dịch vụ, lập hóa đơn, thanh
+toán, báo dọn / báo bảo trì, dọn xong / sửa xong, đặt giá theo khoảng ngày) gọi
+đúng thủ tục của `06_Procedures.sql`. Giá khi đặt phòng là trung bình giá các đêm
+(`fn_DonGiaTrungBinh`). Phiên đăng nhập và tài khoản MySQL theo vai trò là phase 3.
+Thiết kế: `docs/superpowers/specs/2026-09-26-noi-csdl-phase-*.md`,
+`docs/superpowers/specs/2026-09-27-bo-sung-nghiep-vu-design.md`.
 
 ---
 
@@ -45,9 +48,11 @@ done
 Rồi `npm run dev` và mở http://localhost:3000. Trang `/db-check` in số dòng
 của 14 bảng để kiểm tra kết nối.
 
-Khi nhóm sửa thủ tục, chỉ cần chạy lại `06`: file chỉ `DROP` / `CREATE` thủ tục,
-không đụng dữ liệu. Nhưng MySQL xóa luôn quyền `EXECUTE` đã cấp trên thủ tục bị
-`DROP`, nên máy nào đã chạy `08` thì chạy lại `08` ngay sau `06`.
+Khi nhóm sửa hàm, trigger hay thủ tục, chỉ cần chạy lại `02`, `04`, `06` theo đúng
+thứ tự đó (trigger `trg_CTDP_TinhThanhTien_BI` ở `04` gọi `fn_DonGiaTrungBinh` của
+`02`). Ba file chỉ `DROP` / `CREATE`, không đụng dữ liệu. Nhưng MySQL xóa luôn quyền
+`EXECUTE` đã cấp trên hàm / thủ tục bị `DROP`, nên máy nào đã chạy `08` thì chạy lại
+`08` ngay sau.
 
 ### Trước buổi demo: nạp lại dữ liệu mẫu
 
@@ -138,14 +143,14 @@ Demo/
     │   ├── procedures.ts   # helper gọi CALL sp_*
     │   └── loi.ts          # SIGNAL 45000 -> "CSDL từ chối: …"
     ├── lib/
-    │   ├── queries/        # mặt tiền đọc dữ liệu cho 9 màn hình
+    │   ├── queries/        # mặt tiền đọc dữ liệu cho 12 màn hình
     │   ├── thao-tac/       # mặt tiền ghi: mỗi hàm một thủ tục, trả { ok, data | loi }
     │   ├── lam-moi.ts      # refresh() sau khi Server Action ghi xong
     │   ├── db-check.ts     # query cho trang /db-check
     │   └── format.ts       # format tiền VND
     ├── test/               # dựng / nạp lại CSDL kiểm thử cho vitest
     ├── components/         # theo màn hình + shared/ + ui/ (shadcn)
-    └── app/                # (app)/ 8 màn nghiệp vụ, (auth)/login, db-check
+    └── app/                # (app)/ 11 màn nghiệp vụ, (auth)/login, db-check
 ```
 
 ## Lệnh
@@ -166,6 +171,9 @@ Demo/
 
 - Phase 3: phiên đăng nhập, chặn route, mỗi vai trò dùng tài khoản MySQL riêng
   của `08_Security_Roles.sql`.
+- Yêu cầu dọn cho phòng đang có khách, mức ưu tiên và phân công việc buồng phòng /
+  bảo trì: cần bảng yêu cầu riêng, nhóm đã chọn chưa đổi schema (spec bổ sung
+  nghiệp vụ §4.1).
 
 ---
 
