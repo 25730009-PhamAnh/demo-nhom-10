@@ -5,9 +5,11 @@ import Link from "next/link";
 import { Minus, Plus, TriangleAlert } from "lucide-react";
 
 import { datPhong, traCuuPhongTrong } from "@/app/(app)/bookings/new/actions";
+import { ChonKhach } from "@/components/bookings/chon-khach";
 import { ThongBao } from "@/components/shared/thong-bao";
 import { useThaoTac } from "@/components/shared/use-thao-tac";
 import { formatVnd } from "@/lib/format";
+import type { KhachTimThay } from "@/lib/queries/customers";
 import { congTien, tamTinhDatPhong, themNgay } from "@/lib/tinh-toan";
 
 type LoaiPhong = {
@@ -17,8 +19,6 @@ type LoaiPhong = {
   soPhongTrong: number;
 };
 
-type Khach = { maKh: string; hoTen: string; cccd: string; sdt: string | null };
-
 /**
  * Form lap phieu dat phong, theo design/Booking.dc.html.
  *
@@ -27,16 +27,16 @@ type Khach = { maKh: string; hoTen: string; cccd: string; sdt: string | null };
  */
 export function BookingForm({
   loaiPhong: loaiPhongBanDau,
-  khach,
   ngayMacDinh,
 }: {
   loaiPhong: LoaiPhong[];
-  khach: Khach[];
   ngayMacDinh: string;
 }) {
   const [loaiPhong, setLoaiPhong] = useState(loaiPhongBanDau);
   const [dangTraCuu, chuyenTiep] = useTransition();
-  const [maKh, setMaKh] = useState(khach[0]?.maKh ?? "");
+  // Chua chon khach thi chua lap phieu duoc: truoc day form tu chon khach dau
+  // tien, de lap nham phieu cho nguoi khac.
+  const [khach, setKhach] = useState<KhachTimThay | null>(null);
   const [ngayNhan, setNgayNhan] = useState(ngayMacDinh);
   const [ngayTra, setNgayTra] = useState(themNgay(ngayMacDinh, 2));
   const [maLoai, setMaLoai] = useState(loaiPhong[0]?.maLoaiPhong ?? "");
@@ -47,7 +47,6 @@ export function BookingForm({
   const lap = useThaoTac();
 
   const loai = loaiPhong.find((l) => l.maLoaiPhong === maLoai);
-  const khachDaChon = khach.find((k) => k.maKh === maKh);
 
   // So phong con trong phu thuoc vao khoang ngay, nen phai hoi lai may chu moi
   // khi ngay doi — khong duoc giu nguyen danh sach tinh cho ngay mac dinh.
@@ -83,38 +82,7 @@ export function BookingForm({
     <div className="flex min-h-0 flex-grow gap-5">
       <div className="flex min-w-0 flex-grow flex-col gap-5">
         <Buoc so={1} tieuDe="Thông tin khách hàng">
-          <label htmlFor="kh" className="text-muted-foreground text-[12px]">
-            Chọn khách hàng đã có hồ sơ
-          </label>
-          <select
-            id="kh"
-            value={maKh}
-            onChange={(e) => setMaKh(e.target.value)}
-            className="border-input bg-card h-10 rounded-[10px] border px-3 text-[13px]"
-          >
-            {khach.map((k) => (
-              <option key={k.maKh} value={k.maKh}>
-                {k.hoTen} — {k.cccd}
-              </option>
-            ))}
-          </select>
-          {khachDaChon ? (
-            <div className="bg-muted flex items-center gap-3 rounded-[10px] px-3 py-[10px]">
-              <span className="bg-accent text-accent-foreground flex size-9 shrink-0 items-center justify-center rounded-full text-[12px] font-semibold">
-                {khachDaChon.hoTen
-                  .split(" ")
-                  .slice(-2)
-                  .map((t) => t[0])
-                  .join("")}
-              </span>
-              <span className="flex flex-col gap-px">
-                <span className="text-[13px] font-semibold">{khachDaChon.hoTen}</span>
-                <span className="text-muted-foreground font-mono text-[11.5px]">
-                  {khachDaChon.maKh} · CCCD {khachDaChon.cccd} · {khachDaChon.sdt}
-                </span>
-              </span>
-            </div>
-          ) : null}
+          <ChonKhach khach={khach} onChon={setKhach} />
         </Buoc>
 
         <Buoc so={2} tieuDe="Thời gian lưu trú">
@@ -237,6 +205,7 @@ export function BookingForm({
         ) : null}
 
         <dl className="m-0 flex flex-col gap-[10px] text-[13px]">
+          <Dong nhan="Khách hàng" giaTri={khach?.hoTen ?? "Chưa chọn"} />
           <Dong nhan="Loại phòng" giaTri={loai?.tenLoaiPhong ?? "—"} />
           <Dong nhan="Số đêm" giaTri={`${tamTinh.soDem} đêm · ${soKhach} khách`} mono />
           <Dong
@@ -254,10 +223,10 @@ export function BookingForm({
 
         <button
           type="button"
-          disabled={tamTinh.loi !== null || !loai || loai.soPhongTrong === 0 || lap.dangChay}
+          disabled={!khach || tamTinh.loi !== null || !loai || loai.soPhongTrong === 0 || lap.dangChay}
           onClick={() =>
             lap.chay(
-              () => datPhong(maKh, ngayNhan, ngayTra, maLoai),
+              () => datPhong(khach?.maKh ?? "", ngayNhan, ngayTra, maLoai),
               (d) => {
                 setLanTraCuu((n) => n + 1);
                 return `Đã lập phiếu ${d.maDatPhong} · phòng ${d.soPhong} · cọc ${formatVnd(d.tienCoc)}`;
