@@ -6,6 +6,7 @@ import {
   LogIn,
   Receipt,
   SprayCan,
+  Tags,
   TrendingUp,
   Users,
   Wrench,
@@ -25,5 +26,6 @@ export const MUC_DIEU_HUONG: MucDieuHuong[] = [
   { nhan: "Khách hàng",       href: "/customers",    icon: Users },
   { nhan: "Dịch vụ",          href: "/services",     icon: Receipt },
   { nhan: "Hóa đơn",          href: "/invoices",     icon: FileText },
+  { nhan: "Bảng giá",         href: "/pricing",      icon: Tags },
   { nhan: "Báo cáo",          href: "/reports",      icon: TrendingUp },
 ];

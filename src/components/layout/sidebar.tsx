@@ -59,7 +59,7 @@ export function Sidebar({
 
       <nav
         aria-label="Điều hướng chính"
-        className="flex flex-grow flex-col gap-[2px] px-[14px] py-[6px]"
+        className="flex min-h-0 flex-grow flex-col gap-[2px] overflow-y-auto px-[14px] py-[6px]"
       >
         {MUC_DIEU_HUONG.map((m) => {
           const on = dangMo(m.href);
