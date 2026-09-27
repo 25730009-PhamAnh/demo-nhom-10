@@ -8,7 +8,8 @@ import { datPhong, traCuuPhongTrong } from "@/app/(app)/bookings/new/actions";
 import { ChonKhach } from "@/components/bookings/chon-khach";
 import { ThongBao } from "@/components/shared/thong-bao";
 import { useThaoTac } from "@/components/shared/use-thao-tac";
-import { formatVnd } from "@/lib/format";
+import type { DoanGia } from "@/lib/chi-tiet-gia";
+import { formatNgayNgan, formatVnd } from "@/lib/format";
 import type { KhachTimThay } from "@/lib/queries/customers";
 import { congTien, tamTinhDatPhong, themNgay } from "@/lib/tinh-toan";
 
@@ -17,6 +18,7 @@ type LoaiPhong = {
   tenLoaiPhong: string;
   donGiaNgay: string;
   soPhongTrong: number;
+  chiTietGia: DoanGia[];
 };
 
 /**
@@ -209,10 +211,21 @@ export function BookingForm({
           <Dong nhan="Loại phòng" giaTri={loai?.tenLoaiPhong ?? "—"} />
           <Dong nhan="Số đêm" giaTri={`${tamTinh.soDem} đêm · ${soKhach} khách`} mono />
           <Dong
-            nhan="Đơn giá / đêm"
+            nhan="Đơn giá / đêm (trung bình)"
             giaTri={formatVnd(loai?.donGiaNgay ?? "0.00")}
             mono
           />
+          {!tamTinh.loi && loai && loai.chiTietGia.length > 0 ? (
+            <div className="bg-muted flex flex-col gap-1 rounded-[10px] px-3 py-[10px]">
+              <span className="text-muted-foreground text-[11.5px]">Chi tiết giá</span>
+              {loai.chiTietGia.map((d) => (
+                <span key={d.tuNgay} className="font-mono text-[12px]">
+                  {formatNgayNgan(d.tuNgay)}
+                  {d.soDem > 1 ? `–${formatNgayNgan(d.denNgay)}` : ""} · {formatVnd(d.donGia)} × {d.soDem} đêm
+                </span>
+              ))}
+            </div>
+          ) : null}
           <Dong nhan="Tiền phòng" giaTri={formatVnd(tamTinh.tienPhong)} mono />
           <Dong nhan="Tiền cọc" giaTri={`− ${formatVnd(tienCoc)}`} mono />
           <div className="border-border mt-1 flex items-baseline gap-2 border-t pt-3">
