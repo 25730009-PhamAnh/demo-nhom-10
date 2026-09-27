@@ -3,21 +3,22 @@
 import { lamMoiNeuXong } from "@/lib/lam-moi";
 import { getNhanVienMacDinh } from "@/lib/queries/accounts";
 import * as buongPhong from "@/lib/thao-tac/buong-phong";
-import { khongHopLe, laChuoi, laMa, laTien } from "@/lib/thao-tac/kiem-tra";
+import { khongHopLe, laChuoi, laMa } from "@/lib/thao-tac/kiem-tra";
 
-/** Hai form trong the "Nhat ky buong phong & sua chua". Nguoi ghi tam la nhan vien mac dinh. */
+/**
+ * Khung thao tac cua mot phong tren So do phong. Nguoi bao tam la nhan vien
+ * mac dinh (phase 3 doi sang phien). "Don xong" / "Sua xong" nam o man Buong
+ * phong va Bao tri.
+ */
 
-export async function ghiDonPhong(maPhong: unknown, ghiChu: unknown) {
+export async function baoDonPhong(maPhong: unknown) {
   if (!laMa(maPhong, "PH")) return khongHopLe("Phòng");
-  if (!laChuoi(ghiChu, 200)) return khongHopLe("Ghi chú");
-  const nv = await getNhanVienMacDinh();
-  return lamMoiNeuXong(await buongPhong.ghiDonPhong(maPhong, nv.maTk, ghiChu));
+  return lamMoiNeuXong(await buongPhong.baoDonPhong(maPhong));
 }
 
-export async function ghiSuaPhong(maPhong: unknown, chiPhi: unknown, moTaLoi: unknown) {
+export async function baoBaoTri(maPhong: unknown, moTa: unknown) {
   if (!laMa(maPhong, "PH")) return khongHopLe("Phòng");
-  if (!laTien(chiPhi)) return khongHopLe("Chi phí");
-  if (!laChuoi(moTaLoi, 200)) return khongHopLe("Mô tả lỗi");
+  if (!laChuoi(moTa, 200)) return khongHopLe("Mô tả sự cố");
   const nv = await getNhanVienMacDinh();
-  return lamMoiNeuXong(await buongPhong.ghiSuaPhong(maPhong, nv.maTk, chiPhi, moTaLoi));
+  return lamMoiNeuXong(await buongPhong.baoBaoTri(maPhong, nv.maTk, moTa));
 }

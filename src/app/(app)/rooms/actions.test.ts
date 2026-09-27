@@ -1,24 +1,22 @@
 import { describe, expect, it } from "vitest";
 
-import { ghiDonPhong, ghiSuaPhong } from "@/app/(app)/rooms/actions";
+import { baoBaoTri, baoDonPhong } from "@/app/(app)/rooms/actions";
 
-describe("Server Action nhat ky buong phong: tham so sai hinh thuc", () => {
+// Review Focus #5
+describe("Server Action So do phong: tham so sai hinh thuc", () => {
   it("tu choi truoc khi cham CSDL", async () => {
-    await expect(ghiDonPhong({ MaPhong: "PH00000005" }, "")).resolves.toEqual({
+    await expect(baoDonPhong({ MaPhong: "PH00000001" })).resolves.toEqual({
       ok: false,
       loi: "Phòng không hợp lệ",
     });
-    await expect(ghiDonPhong("PH00000005", "x".repeat(201))).resolves.toEqual({
+    await expect(baoDonPhong("PH1")).resolves.toEqual({ ok: false, loi: "Phòng không hợp lệ" });
+    await expect(baoBaoTri("PH00000001", "x".repeat(201))).resolves.toEqual({
       ok: false,
-      loi: "Ghi chú không hợp lệ",
+      loi: "Mô tả sự cố không hợp lệ",
     });
-    await expect(ghiSuaPhong("PH00000001", "-5", "Vo")).resolves.toEqual({
+    await expect(baoBaoTri("PH00000001", ["Voi sen"])).resolves.toEqual({
       ok: false,
-      loi: "Chi phí không hợp lệ",
-    });
-    await expect(ghiSuaPhong("PH00000001", "0", null)).resolves.toEqual({
-      ok: false,
-      loi: "Mô tả lỗi không hợp lệ",
+      loi: "Mô tả sự cố không hợp lệ",
     });
   });
 });

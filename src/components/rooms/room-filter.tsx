@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 
 import { EmptyState } from "@/components/shared/empty-state";
+import { ThaoTacPhong } from "@/components/rooms/thao-tac-phong";
 import { formatVnd } from "@/lib/format";
 import type { PhongTrenSoDo } from "@/lib/queries/rooms";
 import { TRANG_THAI_PHONG, nhanTrangThaiPhong } from "@/lib/status";
@@ -18,11 +19,18 @@ const TAT_CA = "TatCa";
 export function RoomFilter({
   phong,
   loaiPhong,
+  suCo,
 }: {
   phong: PhongTrenSoDo[];
   loaiPhong: { maLoaiPhong: string; tenLoaiPhong: string }[];
+  /** Ma phong -> mo ta su co dang mo, chi co cho phong BaoTri. */
+  suCo: Record<string, string>;
 }) {
   const [trangThai, setTrangThai] = useState<string>(TAT_CA);
+  // Giu ma chu khong giu object: sau moi lan ghi, trang doc lai CSDL va
+  // khung thao tac hien dung trang thai moi cua phong.
+  const [maDangChon, setMaDangChon] = useState<string | null>(null);
+  const dangChon = phong.find((p) => p.maPhong === maDangChon);
   const [tang, setTang] = useState<string>(TAT_CA);
   const [tenLoai, setTenLoai] = useState<string>(TAT_CA);
 
@@ -126,6 +134,15 @@ export function RoomFilter({
         </select>
       </section>
 
+      {dangChon ? (
+        <ThaoTacPhong
+          key={dangChon.maPhong}
+          phong={dangChon}
+          suCo={suCo[dangChon.maPhong]}
+          onDong={() => setMaDangChon(null)}
+        />
+      ) : null}
+
       <section className="bg-card border-border flex shrink-0 flex-col gap-4 rounded-[14px] border p-5">
         {ketQua.length === 0 ? (
           <EmptyState thongDiep="Không có phòng phù hợp bộ lọc" />
@@ -147,11 +164,20 @@ export function RoomFilter({
                   <div className="grid grid-cols-5 gap-[10px] xl:grid-cols-8">
                     {cua.map((p) => {
                       const mau = nhanTrangThaiPhong(p.trangThai);
+                      const on = p.maPhong === maDangChon;
                       return (
-                        <div
+                        <button
                           key={p.maPhong}
-                          className="flex flex-col gap-[3px] rounded-[10px] px-3 py-[10px]"
-                          style={{ background: mau.bg }}
+                          type="button"
+                          onClick={() => setMaDangChon(on ? null : p.maPhong)}
+                          aria-pressed={on}
+                          aria-label={`Phòng ${p.soPhong}, ${mau.nhan}`}
+                          className="flex flex-col gap-[3px] rounded-[10px] px-3 py-[10px] text-left"
+                          style={{
+                            background: mau.bg,
+                            outline: on ? `2px solid ${mau.dot}` : undefined,
+                            outlineOffset: 1,
+                          }}
                         >
                           <div className="flex items-center gap-[6px]">
                             <span
@@ -174,7 +200,7 @@ export function RoomFilter({
                           <span className="text-muted-foreground font-mono text-[10.5px]">
                             {formatVnd(p.donGiaNgay)}
                           </span>
-                        </div>
+                        </button>
                       );
                     })}
                   </div>

@@ -1,31 +1,34 @@
 import Link from "next/link";
 import { Plus } from "lucide-react";
 
-import { NhatKyForm } from "@/components/rooms/nhat-ky-form";
 import { RoomFilter } from "@/components/rooms/room-filter";
 import { Topbar } from "@/components/layout/topbar";
+import { SectionCard } from "@/components/shared/section-card";
 import { formatNgay, formatNgayGio, formatVnd } from "@/lib/format";
+import { getPhongDangBaoTri } from "@/lib/queries/buong-phong";
 import { getGioHienTai, getNgayHienTai } from "@/lib/queries/ngay";
 import { getNhatKyBuongPhong, getSoDoPhong } from "@/lib/queries/rooms";
 
 export default async function SoDoPhongPage() {
-  const [homNay, gio, phong, nhatKy] = await Promise.all([
+  const [homNay, gio, phong, nhatKy, baoTri] = await Promise.all([
     getNgayHienTai(),
     getGioHienTai(),
     getSoDoPhong(),
     getNhatKyBuongPhong(),
+    getPhongDangBaoTri(),
   ]);
 
   // Danh sach loai phong cho o chon, lay tu chinh cac phong dang co.
   const loaiPhong = [...new Map(phong.map((p) => [p.tenLoaiPhong, p])).values()]
     .map((p) => ({ maLoaiPhong: p.tenLoaiPhong, tenLoaiPhong: p.tenLoaiPhong }))
     .sort((a, b) => a.tenLoaiPhong.localeCompare(b.tenLoaiPhong));
+  const suCo = Object.fromEntries(baoTri.map((p) => [p.maPhong, p.phieu?.moTaLoi ?? ""]));
 
   return (
     <>
       <Topbar
         tieuDe="Sơ đồ phòng"
-        phu={`Cập nhật ${gio} · ${formatNgay(homNay)}`}
+        phu={`Cập nhật ${gio} · ${formatNgay(homNay)} · bấm vào phòng để báo dọn / báo bảo trì`}
         hanhDong={
           <Link
             href="/bookings/new"
@@ -38,11 +41,21 @@ export default async function SoDoPhongPage() {
       />
 
       <main className="flex min-h-0 flex-grow flex-col gap-5 overflow-auto px-8 py-7">
-        <RoomFilter phong={phong} loaiPhong={loaiPhong} />
+        <RoomFilter phong={phong} loaiPhong={loaiPhong} suCo={suCo} />
 
-        <NhatKyForm
-          phong={phong.map((p) => ({ maPhong: p.maPhong, soPhong: p.soPhong, trangThai: p.trangThai }))}
+        <SectionCard
+          tieuDe="Nhật ký buồng phòng & sửa chữa"
           phu={`${nhatKy.length} ghi nhận`}
+          hanhDong={
+            <span className="flex gap-4 text-[12.5px] font-semibold">
+              <Link href="/housekeeping" className="text-primary no-underline">
+                Buồng phòng →
+              </Link>
+              <Link href="/maintenance" className="text-primary no-underline">
+                Bảo trì →
+              </Link>
+            </span>
+          }
         >
           <table className="w-full border-collapse text-left">
             <thead>
@@ -52,9 +65,7 @@ export default async function SoDoPhongPage() {
                 <th className="border-border border-b pb-[9px] font-semibold">Loại ghi nhận</th>
                 <th className="border-border border-b pb-[9px] font-semibold">Nhân viên</th>
                 <th className="border-border border-b pb-[9px] font-semibold">Ghi chú</th>
-                <th className="border-border border-b pb-[9px] text-right font-semibold">
-                  Chi phí
-                </th>
+                <th className="border-border border-b pb-[9px] text-right font-semibold">Chi phí</th>
               </tr>
             </thead>
             <tbody>
@@ -63,9 +74,7 @@ export default async function SoDoPhongPage() {
                   <td className="border-border border-b py-[11px] font-mono text-[12.5px]">
                     {formatNgayGio(n.ngayGio)}
                   </td>
-                  <td className="border-border border-b py-[11px] font-mono text-[12.5px]">
-                    {n.soPhong}
-                  </td>
+                  <td className="border-border border-b py-[11px] font-mono text-[12.5px]">{n.soPhong}</td>
                   <td className="border-border border-b py-[11px]">
                     <span
                       className="rounded-full px-[9px] py-[3px] text-[11.5px] font-medium"
@@ -78,12 +87,8 @@ export default async function SoDoPhongPage() {
                       {n.loai === "DonPhong" ? "Dọn phòng" : "Sửa chữa"}
                     </span>
                   </td>
-                  <td className="border-border border-b py-[11px] font-mono text-[12.5px]">
-                    {n.nhanVien}
-                  </td>
-                  <td className="border-border text-muted-foreground border-b py-[11px]">
-                    {n.ghiChu}
-                  </td>
+                  <td className="border-border border-b py-[11px]">{n.nhanVien}</td>
+                  <td className="border-border text-muted-foreground border-b py-[11px]">{n.ghiChu}</td>
                   <td className="border-border border-b py-[11px] text-right font-mono text-[12.5px]">
                     {n.chiPhi === null ? "—" : formatVnd(n.chiPhi)}
                   </td>
@@ -91,7 +96,7 @@ export default async function SoDoPhongPage() {
               ))}
             </tbody>
           </table>
-        </NhatKyForm>
+        </SectionCard>
       </main>
     </>
   );

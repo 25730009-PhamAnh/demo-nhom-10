@@ -9,30 +9,25 @@ import { formatNgay, formatSo, formatVnd } from "@/lib/format";
 import { getPhieuNhanHomNay, getPhieuTraHomNay } from "@/lib/queries/bookings";
 import { getNgayHienTai } from "@/lib/queries/ngay";
 import { getChiSoTongQuan } from "@/lib/queries/reports";
-import {
-  getNhatKyBuongPhong,
-  getSoDoPhong,
-  getThongKePhongTheoTrangThai,
-} from "@/lib/queries/rooms";
+import { getPhongDangBaoTri } from "@/lib/queries/buong-phong";
+import { getSoDoPhong, getThongKePhongTheoTrangThai } from "@/lib/queries/rooms";
 import { nhanTrangThaiPhong } from "@/lib/status";
 
 const THU = ["Chủ Nhật", "Thứ Hai", "Thứ Ba", "Thứ Tư", "Thứ Năm", "Thứ Sáu", "Thứ Bảy"];
 
 export default async function TongQuanPage() {
-  const [homNay, chiSo, thongKe, phong, nhan, tra, nhatKy] = await Promise.all([
+  const [homNay, chiSo, thongKe, phong, nhan, tra, baoTri] = await Promise.all([
     getNgayHienTai(),
     getChiSoTongQuan(),
     getThongKePhongTheoTrangThai(),
     getSoDoPhong(),
     getPhieuNhanHomNay(),
     getPhieuTraHomNay(),
-    getNhatKyBuongPhong(),
+    getPhongDangBaoTri(),
   ]);
 
   const thu = THU[new Date(`${homNay}T00:00:00Z`).getUTCDay()];
   const phongChoDon = phong.filter((p) => p.trangThai === "DangDon");
-  // Phieu sua chua chua co chi phi = viec dang xu ly, chua xong.
-  const dangHong = nhatKy.filter((n) => n.loai === "SuaPhong" && n.chiPhi === "0.00");
   const tang = [...new Set(phong.map((p) => p.tang))].sort();
 
   return (
@@ -134,24 +129,26 @@ export default async function TongQuanPage() {
                 phu="Xác nhận giấy tờ và gán phòng thực tế"
               />
               <ViecCanLam
-                href="/rooms"
+                href="/housekeeping"
                 mau="#ECE9F5"
                 mauChu="#5B4B85"
                 icon={<Home size={18} strokeWidth={1.8} />}
                 tieuDe={`${phongChoDon.length} phòng chờ dọn`}
                 phu={phongChoDon.map((p) => p.soPhong).join(" · ") || "Không có phòng nào"}
               />
+              {/* Phieu bao tri dang mo (phong BaoTri), khong phai moi dong SUA_PHONG 0d. */}
               <ViecCanLam
-                href="/rooms"
+                href="/maintenance"
                 mau="#F8E8E5"
                 mauChu="#8C3A31"
                 icon={<AlertTriangle size={18} strokeWidth={1.8} />}
                 tieuDe={
-                  dangHong.length > 0
-                    ? `Phòng ${dangHong[0].soPhong} báo hỏng`
-                    : "Không có phòng nào báo hỏng"
+                  baoTri.length > 0 ? `${baoTri.length} phòng đang bảo trì` : "Không có phòng nào bảo trì"
                 }
-                phu={dangHong[0]?.ghiChu ?? "Mọi thiết bị đang hoạt động"}
+                phu={
+                  baoTri.map((p) => `${p.soPhong}: ${p.phieu?.moTaLoi ?? "chưa có mô tả"}`).join(" · ") ||
+                  "Mọi thiết bị đang hoạt động"
+                }
               />
               <ViecCanLam
                 href="/invoices"
