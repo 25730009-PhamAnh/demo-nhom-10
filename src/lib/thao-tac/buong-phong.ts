@@ -25,3 +25,23 @@ export function ghiSuaPhong(
     return null;
   });
 }
+
+/** Bao phong can don: Trong / DaDat -> DangDon (sp_BaoDonPhong). */
+export function baoDonPhong(maPhong: string): Promise<KetQua<null>> {
+  return thucHien(async () => {
+    await callProcedure("sp_BaoDonPhong", [maPhong]);
+    return null;
+  });
+}
+
+/** Mo phieu bao tri 0d, phong -> BaoTri (sp_BaoBaoTri). Mo ta rong do thu tuc tu choi. */
+export function baoBaoTri(
+  maPhong: string,
+  maTk: string,
+  moTa: string,
+): Promise<KetQua<{ maSua: string }>> {
+  return thucHien(async () => {
+    const [d] = await callProcedure<{ MaSua: string }>("sp_BaoBaoTri", [maPhong, maTk, moTa]);
+    return { maSua: d.MaSua };
+  });
+}

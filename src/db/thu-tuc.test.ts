@@ -51,11 +51,12 @@ describe("sp_GhiNhanDonPhong", () => {
     expect(await dong("SELECT COUNT(*) AS n FROM DON_PHONG")).toEqual({ n: 18 });
   });
 
-  it("phong DangDon va BaoTri van ve Trong", async () => {
+  // Spec bo sung nghiep vu 4.2: phong BaoTri phai sua xong (sp_GhiNhanSuaPhong) truoc.
+  it("phong DangDon ve Trong; phong BaoTri giu BaoTri", async () => {
     await callProcedure("sp_GhiNhanDonPhong", ["PH00000005", BUONG, null]);
     await callProcedure("sp_GhiNhanDonPhong", ["PH00000004", BUONG, null]);
     expect(await phong("PH00000005")).toEqual({ TrangThai: "Trong" });
-    expect(await phong("PH00000004")).toEqual({ TrangThai: "Trong" });
+    expect(await phong("PH00000004")).toEqual({ TrangThai: "BaoTri" });
   });
 });
 
