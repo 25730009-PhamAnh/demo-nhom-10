@@ -66,7 +66,7 @@ describe("getNhatKyBuongPhong", () => {
       ngayGio: "2026-09-23 12:00:00",
       soPhong: "301",
       loai: "DonPhong",
-      nhanVien: "TK00000004",
+      nhanVien: "Pham Thi Mai",
       ghiChu: "Dang don tong quat sau check-out",
       chiPhi: null,
     });

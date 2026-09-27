@@ -61,21 +61,23 @@ export async function getNhatKyBuongPhong() {
       .select({
         ngayGio: schema.donPhong.thoiGian,
         soPhong: schema.phong.soPhong,
-        nhanVien: schema.donPhong.maTk,
+        nhanVien: schema.taiKhoan.hoTen,
         ghiChu: schema.donPhong.ghiChu,
       })
       .from(schema.donPhong)
-      .innerJoin(schema.phong, eq(schema.donPhong.maPhong, schema.phong.maPhong)),
+      .innerJoin(schema.phong, eq(schema.donPhong.maPhong, schema.phong.maPhong))
+      .innerJoin(schema.taiKhoan, eq(schema.donPhong.maTk, schema.taiKhoan.maTk)),
     db
       .select({
         ngayGio: schema.suaPhong.thoiGian,
         soPhong: schema.phong.soPhong,
-        nhanVien: schema.suaPhong.maTk,
+        nhanVien: schema.taiKhoan.hoTen,
         ghiChu: schema.suaPhong.moTaLoi,
         chiPhi: schema.suaPhong.chiPhi,
       })
       .from(schema.suaPhong)
-      .innerJoin(schema.phong, eq(schema.suaPhong.maPhong, schema.phong.maPhong)),
+      .innerJoin(schema.phong, eq(schema.suaPhong.maPhong, schema.phong.maPhong))
+      .innerJoin(schema.taiKhoan, eq(schema.suaPhong.maTk, schema.taiKhoan.maTk)),
   ]);
 
   return [
