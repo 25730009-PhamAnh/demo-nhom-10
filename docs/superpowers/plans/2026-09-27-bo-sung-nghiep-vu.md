@@ -15,6 +15,8 @@
 - nút trên Sơ đồ phòng không khóa theo trạng thái;
 - thẻ "báo hỏng" ở Tổng quan.
 
+**Trạng thái:** Đã xong, Task 0–16 và bản sửa sau review cuối (commit `bd4e691`..`c1e778a`, đã vào `main`). `02`, `04`, `06`, `08` sửa ngoài git, trong thư mục Scripts trên OneDrive; đã cài vào CSDL dev, cả `08`.
+
 ## Global Constraints
 
 - AGENTS.md: Next 16 có thay đổi phá vỡ, nên đọc `node_modules/next/dist/docs/` trước khi viết code Next. Plan này đã đọc sẵn:
@@ -130,7 +132,7 @@
   - `goc/`: bản gốc 8 file;
   - `vasql.py`: lớp `Tep(thu_muc, ten)`, gồm `thay(cu, moi)`, `thay_doan(bat_dau, ket_thuc, moi, phai_co)`, `chen_truoc(neo, doan)`, `chen_sau(neo, doan)`, `luu()`. Mỗi neo phải xuất hiện đúng 1 lần, không thì `sys.exit`. `thay_doan` ghi đoạn cũ ra `$BK/<tep>.<n>.cu` để đọc lại.
 
-- [ ] **Step 1: Đang ở nhánh `bo-sung-nghiep-vu`, cây làm việc sạch**
+- [x] **Step 1: Đang ở nhánh `bo-sung-nghiep-vu`, cây làm việc sạch**
 
 Spec đã bổ sung và plan này đã được commit khi lập plan (commit ngay sau `bd4e691`).
 
@@ -143,7 +145,7 @@ git log --oneline -3
 
 Expected: `bo-sung-nghiep-vu`; `git status` không in gì; commit mới nhất là `docs: bo sung spec khi lap plan va plan bo sung nghiep vu`.
 
-- [ ] **Step 2: Sao lưu `Scripts/setup_database`**
+- [x] **Step 2: Sao lưu `Scripts/setup_database`**
 
 Đặt `BK` là thư mục tạm của phiên (scratchpad; không có thì `mktemp -d`).
 
@@ -157,7 +159,7 @@ ls -la "$QLKS_SCRIPTS_DIR"; file "$BK"/goc/*.sql; grep -c $'\r' "$BK"/goc/*.sql
 
 Expected: 8 file `01`…`08`, tất cả `ASCII text`, mọi số đếm `\r` đều `0`.
 
-- [ ] **Step 3: Lưu thư viện sửa SQL vào `$BK/vasql.py`**
+- [x] **Step 3: Lưu thư viện sửa SQL vào `$BK/vasql.py`**
 
 ```python
 """Thu vien nho cho cac script sua Scripts/setup_database (plan bo sung nghiep vu).
@@ -246,7 +248,7 @@ Run: `python3 -c "import sys; sys.path.insert(0, '$BK'); import vasql; print('ok
   - `themKhachHang(v: HoSoKhach): Promise<KetQua<KhachDaLuu>>`
   - `suaKhachHang(maKh: string, v: HoSoKhach): Promise<KetQua<KhachDaLuu>>`
 
-- [ ] **Step 1: Viết test hỏng `src/lib/thao-tac/khach-hang.test.ts`**
+- [x] **Step 1: Viết test hỏng `src/lib/thao-tac/khach-hang.test.ts`**
 
 ```ts
 import { afterAll, beforeEach, describe, expect, it } from "vitest";
@@ -386,12 +388,12 @@ describe("suaKhachHang", () => {
 });
 ```
 
-- [ ] **Step 2: Chạy, xác nhận hỏng vì chưa có module**
+- [x] **Step 2: Chạy, xác nhận hỏng vì chưa có module**
 
 Run: `npx vitest run src/lib/thao-tac/khach-hang.test.ts`
 Expected: FAIL, `Failed to resolve import "@/lib/thao-tac/khach-hang"`.
 
-- [ ] **Step 3: Viết `src/lib/thao-tac/khach-hang.ts`**
+- [x] **Step 3: Viết `src/lib/thao-tac/khach-hang.ts`**
 
 ```ts
 import "server-only";
@@ -446,12 +448,12 @@ export function suaKhachHang(maKh: string, v: HoSoKhach): Promise<KetQua<KhachDa
 }
 ```
 
-- [ ] **Step 4: Chạy, xác nhận hỏng vì CSDL chưa có thủ tục**
+- [x] **Step 4: Chạy, xác nhận hỏng vì CSDL chưa có thủ tục**
 
 Run: `npx vitest run src/lib/thao-tac/khach-hang.test.ts`
 Expected: 10 FAIL. Các ca thành công nhận `{ ok: false, loi: "Lỗi CSDL (1305): PROCEDURE QuanLyKhachSan_test.sp_ThemKhachHang does not exist" }`.
 
-- [ ] **Step 5: Đọc lại chỗ neo ngay trước khi sửa**
+- [x] **Step 5: Đọc lại chỗ neo ngay trước khi sửa**
 
 ```bash
 cd /Users/anhpham/PA/UIT/Demo
@@ -466,7 +468,7 @@ grep -c "sp_ThemKhachHang" "$F6" "$F8"
 
 Expected: bốn số `1`, rồi `0` cho cả hai file (chưa sửa). Khác thì **dừng lại, báo người dùng**.
 
-- [ ] **Step 6: Lưu script sửa vào `$BK/sua_a_khach_hang.py`**
+- [x] **Step 6: Lưu script sửa vào `$BK/sua_a_khach_hang.py`**
 
 ```python
 """Phan A (spec bo sung nghiep vu muc 3.1): them / sua khach hang.
@@ -652,7 +654,7 @@ GRANT EXECUTE ON PROCEDURE QuanLyKhachSan.sp_SuaKhachHang  TO r_letan;
 t08.luu()
 ```
 
-- [ ] **Step 7: Sửa `06` và `08`, đối chiếu với bản sao lưu**
+- [x] **Step 7: Sửa `06` và `08`, đối chiếu với bản sao lưu**
 
 ```bash
 python3 "$BK/sua_a_khach_hang.py" "$QLKS_SCRIPTS_DIR"
@@ -663,12 +665,12 @@ file "$QLKS_SCRIPTS_DIR/06_Procedures.sql" "$QLKS_SCRIPTS_DIR/08_Security_Roles.
 
 Expected: `Da sua 06_Procedures.sql: 3 doan`, `Da sua 08_Security_Roles.sql: 1 doan`, `132`, `4`, cả hai file `ASCII text`.
 
-- [ ] **Step 8: Chạy lại** (globalSetup dựng lại CSDL kiểm thử từ `06` mới)
+- [x] **Step 8: Chạy lại** (globalSetup dựng lại CSDL kiểm thử từ `06` mới)
 
 Run: `npx vitest run src/lib/thao-tac/khach-hang.test.ts` → Expected: `Tests 10 passed`.
 Run: `npm test` → Expected: `Test Files 33 passed`, `Tests 196 passed`.
 
-- [ ] **Step 9: Commit**
+- [x] **Step 9: Commit**
 
 ```bash
 git add src/lib/thao-tac/khach-hang.ts src/lib/thao-tac/khach-hang.test.ts
@@ -699,7 +701,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
     - trùng khít CCCD hoặc SĐT xếp đầu.
   - `soLanLuuTru` dùng chung một subquery với `getDanhSachKhachHang`.
 
-- [ ] **Step 1: Thêm test hỏng vào cuối `src/lib/queries/customers.test.ts`**
+- [x] **Step 1: Thêm test hỏng vào cuối `src/lib/queries/customers.test.ts`**
 
 Sửa dòng import thành:
 
@@ -754,12 +756,12 @@ describe("timKhachHang", () => {
 });
 ```
 
-- [ ] **Step 2: Chạy, xác nhận hỏng**
+- [x] **Step 2: Chạy, xác nhận hỏng**
 
 Run: `npx vitest run src/lib/queries/customers.test.ts`
 Expected: 5 FAIL mới, `timKhachHang is not a function`. 5 test cũ vẫn pass.
 
-- [ ] **Step 3: Sửa `src/lib/queries/customers.ts`**
+- [x] **Step 3: Sửa `src/lib/queries/customers.ts`**
 
 Sửa import đầu file thành:
 
@@ -846,12 +848,12 @@ export async function timKhachHang(q: string): Promise<KhachTimThay[]> {
 }
 ```
 
-- [ ] **Step 4: Chạy lại, kiểm kiểu, lint**
+- [x] **Step 4: Chạy lại, kiểm kiểu, lint**
 
 Run: `npx vitest run src/lib/queries/customers.test.ts` → Expected: `Tests 10 passed`.
 Run: `npx tsc --noEmit && npm run lint` → Expected: không lỗi. Nếu `tsc` báo thiếu `PageProps` / `LayoutProps`, chạy `npx next typegen` rồi chạy lại.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/lib/queries/customers.ts src/lib/queries/customers.test.ts
@@ -879,7 +881,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
   - Bảng khách có nút "Thêm khách hàng" ở đầu thẻ và nút "Sửa" ở mỗi dòng.
   - Sắp xếp "Mới cập nhật" đổi sang mã giảm dần, để khách vừa thêm hiện ở đầu bảng.
 
-- [ ] **Step 1: Viết test hỏng `src/app/(app)/customers/actions.test.ts`**
+- [x] **Step 1: Viết test hỏng `src/app/(app)/customers/actions.test.ts`**
 
 ```ts
 import { describe, expect, it } from "vitest";
@@ -922,12 +924,12 @@ describe("Server Action khach hang: tham so sai hinh thuc", () => {
 });
 ```
 
-- [ ] **Step 2: Chạy, xác nhận hỏng**
+- [x] **Step 2: Chạy, xác nhận hỏng**
 
 Run: `npx vitest run "src/app/(app)/customers/actions.test.ts"`
 Expected: FAIL, `Failed to resolve import "@/app/(app)/customers/actions"`.
 
-- [ ] **Step 3: Viết `src/app/(app)/customers/actions.ts`**
+- [x] **Step 3: Viết `src/app/(app)/customers/actions.ts`**
 
 ```ts
 "use server";
@@ -983,11 +985,11 @@ export async function timKhach(q: unknown) {
 }
 ```
 
-- [ ] **Step 4: Chạy lại**
+- [x] **Step 4: Chạy lại**
 
 Run: `npx vitest run "src/app/(app)/customers/actions.test.ts"` → Expected: `Tests 2 passed`.
 
-- [ ] **Step 5: Viết `src/components/customers/khach-hang-form.tsx`**
+- [x] **Step 5: Viết `src/components/customers/khach-hang-form.tsx`**
 
 ```tsx
 "use client";
@@ -1100,7 +1102,7 @@ function Truong({ id, nhan, children }: { id: string; nhan: string; children: Re
 }
 ```
 
-- [ ] **Step 6: Sửa `src/components/customers/customer-table.tsx`**
+- [x] **Step 6: Sửa `src/components/customers/customer-table.tsx`**
 
 Thay 5 dòng import đầu file (từ `import { useMemo, useState } from "react";` tới `import type { KhachHangTrenBang } …`) bằng:
 
@@ -1241,12 +1243,12 @@ bằng:
               </tr>
 ```
 
-- [ ] **Step 7: Kiểm kiểu, lint, cả bộ test**
+- [x] **Step 7: Kiểm kiểu, lint, cả bộ test**
 
 Run: `npx tsc --noEmit && npm run lint` → Expected: không lỗi.
 Run: `npm test` → Expected: `Test Files 34 passed`, `Tests 203 passed`.
 
-- [ ] **Step 8: Commit**
+- [x] **Step 8: Commit**
 
 ```bash
 git add "src/app/(app)/customers" src/components/customers
@@ -1271,7 +1273,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 
 Không có test tự động cho component (repo chưa có hạ tầng test UI). Logic tìm khách đã test ở Task 2–3. Tương tác kiểm trên trình duyệt ở Task 16.
 
-- [ ] **Step 1: Viết `src/components/bookings/chon-khach.tsx`**
+- [x] **Step 1: Viết `src/components/bookings/chon-khach.tsx`**
 
 ```tsx
 "use client";
@@ -1508,7 +1510,7 @@ function TimKhach({
 }
 ```
 
-- [ ] **Step 2: Sửa `src/components/bookings/booking-form.tsx`**
+- [x] **Step 2: Sửa `src/components/bookings/booking-form.tsx`**
 
 Thay:
 
@@ -1604,7 +1606,7 @@ bằng:
               () => datPhong(khach?.maKh ?? "", ngayNhan, ngayTra, maLoai),
 ```
 
-- [ ] **Step 3: Viết lại `src/app/(app)/bookings/new/page.tsx`**
+- [x] **Step 3: Viết lại `src/app/(app)/bookings/new/page.tsx`**
 
 ```tsx
 import { BookingForm } from "@/components/bookings/booking-form";
@@ -1636,12 +1638,12 @@ export default async function DatPhongPage() {
 }
 ```
 
-- [ ] **Step 4: Kiểm kiểu, lint, cả bộ test**
+- [x] **Step 4: Kiểm kiểu, lint, cả bộ test**
 
 Run: `npx tsc --noEmit && npm run lint` → Expected: không lỗi (không còn `maKh`, `khachDaChon`, `Khach` trong `booking-form.tsx`).
 Run: `npm test` → Expected: `Test Files 34 passed`, `Tests 203 passed`.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/components/bookings "src/app/(app)/bookings/new/page.tsx"
@@ -1672,7 +1674,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
   - `baoBaoTri(maPhong: string, maTk: string, moTa: string): Promise<KetQua<{ maSua: string }>>`
   - `ghiDonPhong`, `ghiSuaPhong` giữ nguyên chữ ký.
 
-- [ ] **Step 1: Viết lại `src/lib/thao-tac/buong-phong.test.ts` (test hỏng)**
+- [x] **Step 1: Viết lại `src/lib/thao-tac/buong-phong.test.ts` (test hỏng)**
 
 ```ts
 import { afterAll, beforeEach, describe, expect, it } from "vitest";
@@ -1906,7 +1908,7 @@ describe("mot su co di tron vong", () => {
 });
 ```
 
-- [ ] **Step 2: Sửa ca cũ của `sp_GhiNhanDonPhong` trong `src/db/thu-tuc.test.ts`**
+- [x] **Step 2: Sửa ca cũ của `sp_GhiNhanDonPhong` trong `src/db/thu-tuc.test.ts`**
 
 Thay:
 
@@ -1931,7 +1933,7 @@ bằng:
   });
 ```
 
-- [ ] **Step 3: Thêm hai hàm vào cuối `src/lib/thao-tac/buong-phong.ts`**
+- [x] **Step 3: Thêm hai hàm vào cuối `src/lib/thao-tac/buong-phong.ts`**
 
 ```ts
 /** Bao phong can don: Trong / DaDat -> DangDon (sp_BaoDonPhong). */
@@ -1955,12 +1957,12 @@ export function baoBaoTri(
 }
 ```
 
-- [ ] **Step 4: Chạy trên thủ tục cũ, xác nhận hỏng đúng lý do**
+- [x] **Step 4: Chạy trên thủ tục cũ, xác nhận hỏng đúng lý do**
 
 Run: `npx vitest run src/lib/thao-tac/buong-phong.test.ts src/db/thu-tuc.test.ts`
 Expected: FAIL. Các ca `baoDonPhong` / `baoBaoTri` nhận `Lỗi CSDL (1305): PROCEDURE … does not exist`. Ca `phong BaoTri van BaoTri` và ca sửa ở `thu-tuc.test.ts` nhận `'Trong'` thay vì `'BaoTri'`. Ca `phong DangDon: ghi nhat ky` vẫn pass.
 
-- [ ] **Step 5: Đọc lại chỗ neo ngay trước khi sửa**
+- [x] **Step 5: Đọc lại chỗ neo ngay trước khi sửa**
 
 ```bash
 cd /Users/anhpham/PA/UIT/Demo
@@ -1977,7 +1979,7 @@ grep -c "sp_BaoBaoTri" "$F6" "$F8"
 
 Expected: sáu số `1`, rồi `0` cho cả hai file. Khác thì **dừng lại, báo người dùng**.
 
-- [ ] **Step 6: Lưu script sửa vào `$BK/sua_b_buong_phong.py`**
+- [x] **Step 6: Lưu script sửa vào `$BK/sua_b_buong_phong.py`**
 
 ```python
 """Phan B (spec bo sung nghiep vu muc 4.2): bao don / bao bao tri, sua xong, don xong.
@@ -2307,7 +2309,7 @@ GRANT EXECUTE ON PROCEDURE QuanLyKhachSan.sp_BaoBaoTri
 t08.luu()
 ```
 
-- [ ] **Step 7: Sửa `06` và `08`, đọc lại đoạn cũ bị thay**
+- [x] **Step 7: Sửa `06` và `08`, đọc lại đoạn cũ bị thay**
 
 ```bash
 cp "$QLKS_SCRIPTS_DIR/06_Procedures.sql" "$BK/06_truoc_b.sql"; cp "$QLKS_SCRIPTS_DIR/08_Security_Roles.sql" "$BK/08_truoc_b.sql"
@@ -2321,14 +2323,14 @@ Expected:
 - `Da sua 06_Procedures.sql: 3 doan`, `Da sua 08_Security_Roles.sql: 2 doan`, `244`, `12`.
 - `06_Procedures.sql.2.cu` phải là **đúng** hai thủ tục cũ `sp_GhiNhanDonPhong` và `sp_GhiNhanSuaPhong`, không có gì khác. Nếu có đoạn khác thì khôi phục `$BK/06_truoc_b.sql` rồi báo người dùng.
 
-- [ ] **Step 8: Chạy lại**
+- [x] **Step 8: Chạy lại**
 
 Run: `npx vitest run src/lib/thao-tac/buong-phong.test.ts src/db/thu-tuc.test.ts` → Expected: `Tests 24 passed` (18 + 6).
 Run: `npm test` → Expected: `Test Files 34 passed`, `Tests 213 passed`.
 
 `src/app/(app)/rooms/actions.test.ts` chỉ kiểm hình thức nên vẫn pass. Form "Ghi nhận sửa chữa" cũ trên Sơ đồ phòng sẽ bị CSDL từ chối với phòng không Bảo trì, Task 9 thay form này.
 
-- [ ] **Step 9: Commit**
+- [x] **Step 9: Commit**
 
 ```bash
 git add src/lib/thao-tac/buong-phong.ts src/lib/thao-tac/buong-phong.test.ts src/db/thu-tuc.test.ts
@@ -2366,7 +2368,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 
 `v_TinhTrangPhongHomNay` đọc bằng SQL thô với đúng tên hoa / thường. Drizzle introspect ra tên chữ thường (`v_tinhtrangphonghomnay`), tên này chỉ chạy được trên macOS.
 
-- [ ] **Step 1: Viết test hỏng `src/lib/queries/buong-phong.test.ts`**
+- [x] **Step 1: Viết test hỏng `src/lib/queries/buong-phong.test.ts`**
 
 ```ts
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
@@ -2490,16 +2492,16 @@ describe("getPhongChoDon", () => {
 });
 ```
 
-- [ ] **Step 2: Sửa kỳ vọng `nhanVien` trong `src/lib/queries/rooms.test.ts`**
+- [x] **Step 2: Sửa kỳ vọng `nhanVien` trong `src/lib/queries/rooms.test.ts`**
 
 Trong ca `gop 16 lan don va 12 lan sua, moi nhat len dau`, thay `      nhanVien: "TK00000004",` bằng `      nhanVien: "Pham Thi Mai",`.
 
-- [ ] **Step 3: Chạy, xác nhận hỏng**
+- [x] **Step 3: Chạy, xác nhận hỏng**
 
 Run: `npx vitest run src/lib/queries/buong-phong.test.ts src/lib/queries/rooms.test.ts`
 Expected: FAIL. `Failed to resolve import "@/lib/queries/buong-phong"`, và `rooms.test.ts` nhận `'TK00000004'` thay vì `'Pham Thi Mai'`.
 
-- [ ] **Step 4: Viết `src/lib/vai-tro.ts`**
+- [x] **Step 4: Viết `src/lib/vai-tro.ts`**
 
 ```ts
 /**
@@ -2510,7 +2512,7 @@ export const LOAI_TK_BUONG_PHONG = "LTK0000003";
 export const LOAI_TK_KY_THUAT = "LTK0000004";
 ```
 
-- [ ] **Step 5: Viết `src/lib/queries/buong-phong.ts`**
+- [x] **Step 5: Viết `src/lib/queries/buong-phong.ts`**
 
 ```ts
 import "server-only";
@@ -2648,7 +2650,7 @@ export async function getNhatKySua(n = 20) {
 }
 ```
 
-- [ ] **Step 6: `getNhatKyBuongPhong` hiện họ tên nhân viên (`src/lib/queries/rooms.ts`)**
+- [x] **Step 6: `getNhatKyBuongPhong` hiện họ tên nhân viên (`src/lib/queries/rooms.ts`)**
 
 Trong `getNhatKyBuongPhong`, thay hai truy vấn trong `Promise.all`:
 
@@ -2700,13 +2702,13 @@ bằng:
       .innerJoin(schema.taiKhoan, eq(schema.suaPhong.maTk, schema.taiKhoan.maTk)),
 ```
 
-- [ ] **Step 7: Chạy lại, kiểm kiểu, lint**
+- [x] **Step 7: Chạy lại, kiểm kiểu, lint**
 
 Run: `npx vitest run src/lib/queries/buong-phong.test.ts src/lib/queries/rooms.test.ts` → Expected: `Tests 12 passed` (6 + 6).
 Run: `npx tsc --noEmit && npm run lint` → Expected: không lỗi.
 Run: `npm test` → Expected: `Test Files 35 passed`, `Tests 219 passed`.
 
-- [ ] **Step 8: Commit**
+- [x] **Step 8: Commit**
 
 ```bash
 git add src/lib/vai-tro.ts src/lib/queries/buong-phong.ts src/lib/queries/buong-phong.test.ts src/lib/queries/rooms.ts src/lib/queries/rooms.test.ts
@@ -2734,7 +2736,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 
 Kết quả thao tác hiện ở đầu thẻ, không nằm trong ô phòng. Lý do: dọn xong thì trang đọc lại CSDL, phòng rời danh sách và ô phòng biến mất.
 
-- [ ] **Step 1: Viết test hỏng**
+- [x] **Step 1: Viết test hỏng**
 
 `src/app/(app)/housekeeping/actions.test.ts`:
 
@@ -2790,7 +2792,7 @@ bằng:
 Run: `npx vitest run "src/app/(app)/housekeeping/actions.test.ts" src/lib/nav.test.ts`
 Expected: FAIL. Không resolve được `housekeeping/actions`; `nav.test.ts` thiếu "Buồng phòng".
 
-- [ ] **Step 2: Viết `src/app/(app)/housekeeping/actions.ts`**
+- [x] **Step 2: Viết `src/app/(app)/housekeeping/actions.ts`**
 
 ```ts
 "use server";
@@ -2819,7 +2821,7 @@ export async function baoHong(maPhong: unknown, maTk: unknown, moTa: unknown) {
 }
 ```
 
-- [ ] **Step 3: Thêm mục vào `src/lib/nav.ts`**
+- [x] **Step 3: Thêm mục vào `src/lib/nav.ts`**
 
 Trong import từ `lucide-react`, thêm `SprayCan,` sau `Receipt,`. Trong `MUC_DIEU_HUONG`, ngay sau dòng `Sơ đồ phòng`, thêm:
 
@@ -2829,7 +2831,7 @@ Trong import từ `lucide-react`, thêm `SprayCan,` sau `Receipt,`. Trong `MUC_D
 
 Run: `npx vitest run "src/app/(app)/housekeeping/actions.test.ts" src/lib/nav.test.ts` → Expected: `Tests 4 passed`.
 
-- [ ] **Step 4: Viết `src/components/shared/chon-nhan-vien.tsx`**
+- [x] **Step 4: Viết `src/components/shared/chon-nhan-vien.tsx`**
 
 ```tsx
 "use client";
@@ -2872,7 +2874,7 @@ export function ChonNhanVien({
 }
 ```
 
-- [ ] **Step 5: Viết `src/components/housekeeping/buong-phong-ban.tsx`**
+- [x] **Step 5: Viết `src/components/housekeeping/buong-phong-ban.tsx`**
 
 ```tsx
 "use client";
@@ -3068,7 +3070,7 @@ function DonPhongKhac({ phong, maTk }: { phong: Phong[]; maTk: string }) {
 }
 ```
 
-- [ ] **Step 6: Viết `src/app/(app)/housekeeping/page.tsx`**
+- [x] **Step 6: Viết `src/app/(app)/housekeeping/page.tsx`**
 
 ```tsx
 import Link from "next/link";
@@ -3150,12 +3152,12 @@ export default async function BuongPhongPage() {
 }
 ```
 
-- [ ] **Step 7: Kiểm kiểu, lint, cả bộ test**
+- [x] **Step 7: Kiểm kiểu, lint, cả bộ test**
 
 Run: `npx tsc --noEmit && npm run lint` → Expected: không lỗi.
 Run: `npm test` → Expected: `Test Files 36 passed`, `Tests 220 passed`.
 
-- [ ] **Step 8: Commit**
+- [x] **Step 8: Commit**
 
 ```bash
 git add "src/app/(app)/housekeeping" src/components/housekeeping src/components/shared/chon-nhan-vien.tsx src/lib/nav.ts src/lib/nav.test.ts
@@ -3180,7 +3182,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
   - Sidebar có mục "Bảo trì" (`/maintenance`, icon `Wrench`) ngay sau "Buồng phòng".
   - Mỗi phòng đang bảo trì có `role="group"` và `aria-label="Phòng <số>"`. Ô `name="chiPhi"` điền sẵn chi phí của phiếu, bỏ `.00`. Ô `name="moTaLoi"` điền sẵn mô tả của phiếu.
 
-- [ ] **Step 1: Viết test hỏng**
+- [x] **Step 1: Viết test hỏng**
 
 `src/app/(app)/maintenance/actions.test.ts`:
 
@@ -3235,7 +3237,7 @@ bằng:
 
 Run: `npx vitest run "src/app/(app)/maintenance/actions.test.ts" src/lib/nav.test.ts` → Expected: FAIL.
 
-- [ ] **Step 2: Viết `src/app/(app)/maintenance/actions.ts`**
+- [x] **Step 2: Viết `src/app/(app)/maintenance/actions.ts`**
 
 ```ts
 "use server";
@@ -3257,7 +3259,7 @@ export async function suaXong(maPhong: unknown, maTk: unknown, chiPhi: unknown, 
 }
 ```
 
-- [ ] **Step 3: Thêm mục vào `src/lib/nav.ts`**
+- [x] **Step 3: Thêm mục vào `src/lib/nav.ts`**
 
 Trong import từ `lucide-react`, thêm `Wrench,` sau `Users,`. Ngay sau dòng `Buồng phòng`, thêm:
 
@@ -3267,7 +3269,7 @@ Trong import từ `lucide-react`, thêm `Wrench,` sau `Users,`. Ngay sau dòng `
 
 Run: `npx vitest run "src/app/(app)/maintenance/actions.test.ts" src/lib/nav.test.ts` → Expected: `Tests 4 passed`.
 
-- [ ] **Step 4: Viết `src/components/maintenance/bao-tri-ban.tsx`**
+- [x] **Step 4: Viết `src/components/maintenance/bao-tri-ban.tsx`**
 
 ```tsx
 "use client";
@@ -3399,7 +3401,7 @@ function DongBaoTri({ phong: p, maTk, tt }: { phong: PhongDangBaoTri; maTk: stri
 }
 ```
 
-- [ ] **Step 5: Viết `src/app/(app)/maintenance/page.tsx`**
+- [x] **Step 5: Viết `src/app/(app)/maintenance/page.tsx`**
 
 ```tsx
 import Link from "next/link";
@@ -3479,12 +3481,12 @@ export default async function BaoTriPage() {
 }
 ```
 
-- [ ] **Step 6: Kiểm kiểu, lint, cả bộ test**
+- [x] **Step 6: Kiểm kiểu, lint, cả bộ test**
 
 Run: `npx tsc --noEmit && npm run lint` → Expected: không lỗi.
 Run: `npm test` → Expected: `Test Files 37 passed`, `Tests 221 passed`.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add "src/app/(app)/maintenance" src/components/maintenance src/lib/nav.ts src/lib/nav.test.ts
@@ -3511,7 +3513,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
   - `<ThaoTacPhong phong suCo? onDong />`: ô `name="moTaSuCo"`, nút "Báo dọn phòng" và "Báo bảo trì" **không khóa theo trạng thái**.
   - Tổng quan: thẻ chờ dọn dẫn tới `/housekeeping`. Thẻ "N phòng đang bảo trì" lấy từ `getPhongDangBaoTri()`, dẫn tới `/maintenance`.
 
-- [ ] **Step 1: Viết lại test `src/app/(app)/rooms/actions.test.ts` (test hỏng)**
+- [x] **Step 1: Viết lại test `src/app/(app)/rooms/actions.test.ts` (test hỏng)**
 
 ```ts
 import { describe, expect, it } from "vitest";
@@ -3540,7 +3542,7 @@ describe("Server Action So do phong: tham so sai hinh thuc", () => {
 
 Run: `npx vitest run "src/app/(app)/rooms/actions.test.ts"` → Expected: FAIL, `baoDonPhong is not a function`.
 
-- [ ] **Step 2: Viết lại `src/app/(app)/rooms/actions.ts`**
+- [x] **Step 2: Viết lại `src/app/(app)/rooms/actions.ts`**
 
 ```ts
 "use server";
@@ -3571,7 +3573,7 @@ export async function baoBaoTri(maPhong: unknown, moTa: unknown) {
 
 Run: `npx vitest run "src/app/(app)/rooms/actions.test.ts"` → Expected: `Tests 1 passed`.
 
-- [ ] **Step 3: Viết `src/components/rooms/thao-tac-phong.tsx`**
+- [x] **Step 3: Viết `src/components/rooms/thao-tac-phong.tsx`**
 
 ```tsx
 "use client";
@@ -3673,7 +3675,7 @@ export function ThaoTacPhong({
 }
 ```
 
-- [ ] **Step 4: Sửa `src/components/rooms/room-filter.tsx`**
+- [x] **Step 4: Sửa `src/components/rooms/room-filter.tsx`**
 
 Sau `import { EmptyState } from "@/components/shared/empty-state";`, thêm:
 
@@ -3786,7 +3788,7 @@ bằng:
                       );
 ```
 
-- [ ] **Step 5: Viết lại `src/app/(app)/rooms/page.tsx`, xóa `nhat-ky-form.tsx`**
+- [x] **Step 5: Viết lại `src/app/(app)/rooms/page.tsx`, xóa `nhat-ky-form.tsx`**
 
 ```tsx
 import Link from "next/link";
@@ -3898,7 +3900,7 @@ export default async function SoDoPhongPage() {
 git rm src/components/rooms/nhat-ky-form.tsx
 ```
 
-- [ ] **Step 6: Tổng quan: thẻ chờ dọn và thẻ đang bảo trì (`src/app/(app)/page.tsx`)**
+- [x] **Step 6: Tổng quan: thẻ chờ dọn và thẻ đang bảo trì (`src/app/(app)/page.tsx`)**
 
 Thay:
 
@@ -3978,13 +3980,13 @@ bằng:
               />
 ```
 
-- [ ] **Step 7: Kiểm kiểu, lint, cả bộ test**
+- [x] **Step 7: Kiểm kiểu, lint, cả bộ test**
 
 Run: `npx tsc --noEmit && npm run lint` → Expected: không lỗi. Không còn import `NhatKyForm`, `getNhatKyBuongPhong` trong `(app)/page.tsx`, `dangHong`.
 Run: `grep -rn "nhat-ky-form" src; grep -rln "ghiSuaPhong" src/app src/components` → Expected: không có dòng `nhat-ky-form` nào; chỉ còn `src/app/(app)/maintenance/actions.ts` gọi `ghiSuaPhong`.
 Run: `npm test` → Expected: `Test Files 37 passed`, `Tests 221 passed`.
 
-- [ ] **Step 8: Commit**
+- [x] **Step 8: Commit**
 
 ```bash
 git add -A "src/app/(app)/rooms" "src/app/(app)/page.tsx" src/components/rooms
@@ -4013,7 +4015,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 
 Task 11 đổi query của form đặt phòng sang hàm này.
 
-- [ ] **Step 1: Thêm test hỏng vào `src/db/thu-tuc.test.ts`**
+- [x] **Step 1: Thêm test hỏng vào `src/db/thu-tuc.test.ts`**
 
 Thêm `import { pool } from "@/db";` lên đầu nhóm import. Thêm vào cuối file:
 
@@ -4065,7 +4067,7 @@ describe("fn_DonGiaTrungBinh: mot cong thuc gia trung binh", () => {
 });
 ```
 
-- [ ] **Step 2: Chạy trên script cũ, xác nhận hỏng đúng lý do**
+- [x] **Step 2: Chạy trên script cũ, xác nhận hỏng đúng lý do**
 
 Run: `npx vitest run src/db/thu-tuc.test.ts`
 Expected: 3 FAIL:
@@ -4075,7 +4077,7 @@ Expected: 3 FAIL:
 
 6 ca cũ pass.
 
-- [ ] **Step 3: Đọc lại chỗ neo ngay trước khi sửa**
+- [x] **Step 3: Đọc lại chỗ neo ngay trước khi sửa**
 
 ```bash
 cd /Users/anhpham/PA/UIT/Demo
@@ -4096,7 +4098,7 @@ grep -c "fn_DonGiaTrungBinh" "$D/02_Functions.sql" "$D/04_Triggers.sql" "$D/06_P
 
 Expected: mười số `1`, rồi `0` cho cả ba file. Khác thì **dừng lại, báo người dùng**.
 
-- [ ] **Step 4: Lưu script sửa vào `$BK/sua_c1_gia_trung_binh.py`**
+- [x] **Step 4: Lưu script sửa vào `$BK/sua_c1_gia_trung_binh.py`**
 
 ```python
 """Phan C (spec bo sung nghiep vu muc 5.1): mot cong thuc gia trung binh.
@@ -4223,7 +4225,7 @@ GRANT EXECUTE ON FUNCTION QuanLyKhachSan.fn_DonGiaPhongTheoNgay
 t08.luu()
 ```
 
-- [ ] **Step 5: Sửa bốn file, đọc lại đoạn cũ bị thay**
+- [x] **Step 5: Sửa bốn file, đọc lại đoạn cũ bị thay**
 
 ```bash
 for f in 02_Functions 04_Triggers 06_Procedures 08_Security_Roles; do cp "$D/$f.sql" "$BK/${f}_truoc_c1.sql"; done
@@ -4239,14 +4241,14 @@ Expected:
 - Số dòng đổi: `02_Functions 34`, `04_Triggers 16`, `06_Procedures 36`, `08_Security_Roles 6`.
 - `06_Procedures.sql.4.cu` chỉ gồm câu `INSERT INTO CHI_TIET_DAT_PHONG … WITH RECURSIVE CacDem … GROUP BY …` cũ của `sp_DatPhong`.
 
-- [ ] **Step 6: Chạy lại, và cả bộ test hồi quy giá**
+- [x] **Step 6: Chạy lại, và cả bộ test hồi quy giá**
 
 Run: `npx vitest run src/db/thu-tuc.test.ts` → Expected: `Tests 9 passed`.
 Run: `npm test` → Expected: `Test Files 37 passed`, `Tests 224 passed`.
 
 `dat-phong.test.ts`, `bookings.test.ts` (đơn giá `840000.00` qua mép bảng giá) và `bao-cao.test.ts` vẫn pass: giá chốt vào phiếu và số liệu báo cáo không đổi.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add src/db/thu-tuc.test.ts
@@ -4279,7 +4281,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
   - `type LichGia = { ngay: string[]; loai: { maLoaiPhong; tenLoaiPhong; donGiaNgay; gia: { donGia: string; coKhaiGia: boolean }[] }[] }`; `getLichGia(tuNgay: string, soNgay = 14): Promise<LichGia>`.
   - `LoaiPhongConTrong` thêm trường `chiTietGia: DoanGia[]`. `donGiaNgay` lấy qua `fn_DonGiaTrungBinh`.
 
-- [ ] **Step 1: Viết test hỏng**
+- [x] **Step 1: Viết test hỏng**
 
 `src/lib/chi-tiet-gia.test.ts`:
 
@@ -4412,7 +4414,7 @@ Trong cùng `describe("getLoaiPhongConTrong")`, ngay sau ca `khoang ngay vuot qu
 Run: `npx vitest run src/lib/chi-tiet-gia.test.ts src/lib/queries/bang-gia.test.ts src/lib/format.test.ts src/lib/queries/bookings.test.ts`
 Expected: FAIL. Không resolve được `chi-tiet-gia`, `bang-gia`; `formatNgayNgan is not a function`; hai ca `getLoaiPhongConTrong` thiếu `chiTietGia`.
 
-- [ ] **Step 2: Viết `src/lib/chi-tiet-gia.ts`**
+- [x] **Step 2: Viết `src/lib/chi-tiet-gia.ts`**
 
 ```ts
 /**
@@ -4442,7 +4444,7 @@ export function gopDoanGia(dem: GiaDem[]): DoanGia[] {
 }
 ```
 
-- [ ] **Step 3: Thêm `formatNgayNgan` vào `src/lib/format.ts`**
+- [x] **Step 3: Thêm `formatNgayNgan` vào `src/lib/format.ts`**
 
 Ngay sau hàm `formatNgay`, thêm:
 
@@ -4454,7 +4456,7 @@ export function formatNgayNgan(iso: string): string {
 }
 ```
 
-- [ ] **Step 4: Viết `src/lib/queries/bang-gia.ts`**
+- [x] **Step 4: Viết `src/lib/queries/bang-gia.ts`**
 
 ```ts
 import "server-only";
@@ -4573,7 +4575,7 @@ export async function getLichGia(tuNgay: string, soNgay = 14): Promise<LichGia> 
 }
 ```
 
-- [ ] **Step 5: `getLoaiPhongConTrong` lấy đơn giá qua hàm và trả chi tiết giá (`src/lib/queries/bookings.ts`)**
+- [x] **Step 5: `getLoaiPhongConTrong` lấy đơn giá qua hàm và trả chi tiết giá (`src/lib/queries/bookings.ts`)**
 
 Thêm import (theo thứ tự alias như file đang có):
 
@@ -4654,13 +4656,13 @@ Thay toàn bộ thân `getLoaiPhongConTrong` (từ `  const [[loai], phongTrong]
 
 Giữ nguyên chú thích JSDoc phía trên hàm. Giữ nguyên giới hạn 1000 đêm của `traCuuPhongTrongAnToan`, vì CTE đệ quy của phần chi tiết vẫn dừng ở `cte_max_recursion_depth`.
 
-- [ ] **Step 6: Chạy lại, kiểm kiểu, lint**
+- [x] **Step 6: Chạy lại, kiểm kiểu, lint**
 
 Run: `npx vitest run src/lib/chi-tiet-gia.test.ts src/lib/queries/bang-gia.test.ts src/lib/format.test.ts src/lib/queries/bookings.test.ts` → Expected: `Tests 31 passed` (3 + 3 + 7 + 18).
 Run: `npx tsc --noEmit && npm run lint` → Expected: không lỗi. `booking-form.tsx` vẫn chạy được vì trường mới chỉ thêm vào.
 Run: `npm test` → Expected: `Test Files 39 passed`, `Tests 232 passed`.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add src/lib/chi-tiet-gia.ts src/lib/chi-tiet-gia.test.ts src/lib/format.ts src/lib/format.test.ts src/lib/queries/bang-gia.ts src/lib/queries/bang-gia.test.ts src/lib/queries/bookings.ts src/lib/queries/bookings.test.ts
@@ -4688,7 +4690,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 
 Mã `BANG_GIA_PHONG` sinh theo `MAX + 1` sau khi xóa. Vì vậy mã của khoảng vừa xóa có thể được dùng lại (không có khóa ngoại nào trỏ vào bảng này). Phần đuôi của khoảng bị tách được chèn trước khoảng mới, nên phần đuôi nhận mã nhỏ hơn.
 
-- [ ] **Step 1: Viết test hỏng `src/lib/thao-tac/bang-gia.test.ts`**
+- [x] **Step 1: Viết test hỏng `src/lib/thao-tac/bang-gia.test.ts`**
 
 ```ts
 import { afterAll, beforeEach, describe, expect, it } from "vitest";
@@ -4859,7 +4861,7 @@ describe("capNhatGiaGoc", () => {
 });
 ```
 
-- [ ] **Step 2: Viết `src/lib/thao-tac/bang-gia.ts`**
+- [x] **Step 2: Viết `src/lib/thao-tac/bang-gia.ts`**
 
 ```ts
 import "server-only";
@@ -4908,12 +4910,12 @@ export function capNhatGiaGoc(maLoaiPhong: string, donGiaNgay: string): Promise<
 }
 ```
 
-- [ ] **Step 3: Chạy, xác nhận hỏng vì CSDL chưa có thủ tục**
+- [x] **Step 3: Chạy, xác nhận hỏng vì CSDL chưa có thủ tục**
 
 Run: `npx vitest run src/lib/thao-tac/bang-gia.test.ts`
 Expected: 9 FAIL. Các ca nhận `Lỗi CSDL (1305): PROCEDURE QuanLyKhachSan_test.sp_DatGiaPhong does not exist`, hoặc `sp_CapNhatGiaLoaiPhong`.
 
-- [ ] **Step 4: Đọc lại chỗ neo ngay trước khi sửa**
+- [x] **Step 4: Đọc lại chỗ neo ngay trước khi sửa**
 
 ```bash
 cd /Users/anhpham/PA/UIT/Demo
@@ -4928,7 +4930,7 @@ grep -c "sp_DatGiaPhong" "$F6" "$F8"
 
 Expected: bốn số `1`, rồi `0` cho cả hai file. Khác thì **dừng lại, báo người dùng**.
 
-- [ ] **Step 5: Lưu script sửa vào `$BK/sua_c2_bang_gia.py`**
+- [x] **Step 5: Lưu script sửa vào `$BK/sua_c2_bang_gia.py`**
 
 ```python
 """Phan C (spec bo sung nghiep vu muc 5.2): thu tuc ghi bang gia.
@@ -5150,7 +5152,7 @@ GRANT EXECUTE ON PROCEDURE QuanLyKhachSan.sp_CapNhatGiaLoaiPhong TO r_quanly;
 t08.luu()
 ```
 
-- [ ] **Step 6: Sửa `06` và `08`, đối chiếu**
+- [x] **Step 6: Sửa `06` và `08`, đối chiếu**
 
 ```bash
 cp "$F6" "$BK/06_truoc_c2.sql"; cp "$F8" "$BK/08_truoc_c2.sql"
@@ -5161,12 +5163,12 @@ diff "$BK/08_truoc_c2.sql" "$F8" | grep -c '^[<>]'
 
 Expected: `Da sua 06_Procedures.sql: 3 doan`, `Da sua 08_Security_Roles.sql: 1 doan`, `189`, `4`.
 
-- [ ] **Step 7: Chạy lại**
+- [x] **Step 7: Chạy lại**
 
 Run: `npx vitest run src/lib/thao-tac/bang-gia.test.ts` → Expected: `Tests 9 passed`.
 Run: `npm test` → Expected: `Test Files 40 passed`, `Tests 241 passed`.
 
-- [ ] **Step 8: Commit**
+- [x] **Step 8: Commit**
 
 ```bash
 git add src/lib/thao-tac/bang-gia.ts src/lib/thao-tac/bang-gia.test.ts
@@ -5196,7 +5198,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
   - Form đặt giá có ô `#bg-loai`, `#bg-tu`, `#bg-den`, `#bg-gia`.
   - Sidebar có mục "Bảng giá" (`/pricing`, icon `Tags`) ngay trước "Báo cáo".
 
-- [ ] **Step 1: Viết test hỏng**
+- [x] **Step 1: Viết test hỏng**
 
 `src/app/(app)/pricing/actions.test.ts`:
 
@@ -5254,7 +5256,7 @@ và trong mảng kỳ vọng, thay `      "Hóa đơn",\n      "Báo cáo",` b�
 
 Run: `npx vitest run "src/app/(app)/pricing/actions.test.ts" src/lib/nav.test.ts` → Expected: FAIL.
 
-- [ ] **Step 2: Viết `src/app/(app)/pricing/actions.ts`**
+- [x] **Step 2: Viết `src/app/(app)/pricing/actions.ts`**
 
 ```ts
 "use server";
@@ -5283,7 +5285,7 @@ export async function capNhatGiaGoc(maLoai: unknown, donGia: unknown) {
 }
 ```
 
-- [ ] **Step 3: Thêm mục vào `src/lib/nav.ts`; thanh điều hướng cuộn được**
+- [x] **Step 3: Thêm mục vào `src/lib/nav.ts`; thanh điều hướng cuộn được**
 
 Trong import từ `lucide-react`, thêm `Tags,` sau `SprayCan,`. Ngay trước dòng `Báo cáo`, thêm:
 
@@ -5295,7 +5297,7 @@ Sidebar giờ có 11 mục. Trong `src/components/layout/sidebar.tsx`, thay `cla
 
 Run: `npx vitest run "src/app/(app)/pricing/actions.test.ts" src/lib/nav.test.ts` → Expected: `Tests 4 passed`.
 
-- [ ] **Step 4: Viết `src/components/pricing/dat-gia-form.tsx`**
+- [x] **Step 4: Viết `src/components/pricing/dat-gia-form.tsx`**
 
 ```tsx
 "use client";
@@ -5398,7 +5400,7 @@ export function DatGiaForm({ loaiPhong, homNay }: { loaiPhong: LoaiPhong[]; homN
 }
 ```
 
-- [ ] **Step 5: Viết `src/components/pricing/lich-gia.tsx`**
+- [x] **Step 5: Viết `src/components/pricing/lich-gia.tsx`**
 
 ```tsx
 import Link from "next/link";
@@ -5501,7 +5503,7 @@ export function LichGia({ lich, tuNgay, homNay }: { lich: LichGiaKieu; tuNgay: s
 }
 ```
 
-- [ ] **Step 6: Viết `src/components/pricing/cac-khoang-gia.tsx`**
+- [x] **Step 6: Viết `src/components/pricing/cac-khoang-gia.tsx`**
 
 ```tsx
 "use client";
@@ -5612,7 +5614,7 @@ function TheLoaiPhong({ loai: l, homNay }: { loai: LoaiPhongGia; homNay: string 
 }
 ```
 
-- [ ] **Step 7: Viết `src/app/(app)/pricing/page.tsx`**
+- [x] **Step 7: Viết `src/app/(app)/pricing/page.tsx`**
 
 ```tsx
 import { Topbar } from "@/components/layout/topbar";
@@ -5656,12 +5658,12 @@ export default async function BangGiaPage({ searchParams }: PageProps<"/pricing"
 }
 ```
 
-- [ ] **Step 8: Kiểm kiểu, lint, cả bộ test**
+- [x] **Step 8: Kiểm kiểu, lint, cả bộ test**
 
 Run: `npx next typegen && npx tsc --noEmit && npm run lint` → Expected: không lỗi. `typegen` sinh `PageProps<"/pricing">` cho route mới.
 Run: `npm test` → Expected: `Test Files 41 passed`, `Tests 242 passed`.
 
-- [ ] **Step 9: Commit**
+- [x] **Step 9: Commit**
 
 ```bash
 git add "src/app/(app)/pricing" src/components/pricing src/lib/nav.ts src/lib/nav.test.ts src/components/layout/sidebar.tsx
@@ -5681,7 +5683,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 - Consumes: `LoaiPhongConTrong.chiTietGia`, `DoanGia` (Task 11); `formatNgayNgan` (Task 11).
 - Produces: thẻ "Tạm tính" có nhãn "Đơn giá / đêm (trung bình)" và khối "Chi tiết giá". Mỗi dòng có dạng `27/09–28/09 · 1.500.000 ₫ × 2 đêm`; đoạn chỉ có 1 đêm thì không có `–`.
 
-- [ ] **Step 1: Sửa `src/components/bookings/booking-form.tsx`**
+- [x] **Step 1: Sửa `src/components/bookings/booking-form.tsx`**
 
 Thay `import { formatVnd } from "@/lib/format";` bằng:
 
@@ -5729,12 +5731,12 @@ bằng:
           ) : null}
 ```
 
-- [ ] **Step 2: Kiểm kiểu, lint, cả bộ test**
+- [x] **Step 2: Kiểm kiểu, lint, cả bộ test**
 
 Run: `npx tsc --noEmit && npm run lint` → Expected: không lỗi.
 Run: `npm test` → Expected: `Test Files 41 passed`, `Tests 242 passed`.
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add src/components/bookings/booking-form.tsx
@@ -5753,7 +5755,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 - Consumes: toàn bộ Task 1–14.
 - Produces: README mô tả đủ các màn và thứ tự chạy lại script. Nhánh qua được test, lint và build.
 
-- [ ] **Step 1: Sửa `README.md`**
+- [x] **Step 1: Sửa `README.md`**
 
 Thay đoạn mở đầu (dòng 6–11):
 
@@ -5808,18 +5810,18 @@ Trong "Việc chưa làm", thêm dòng sau dòng Phase 3:
   nghiệp vụ §4.1).
 ```
 
-- [ ] **Step 2: Kiểm kiểu, lint, test, build**
+- [x] **Step 2: Kiểm kiểu, lint, test, build**
 
 Run: `npx tsc --noEmit && npm run lint` → Expected: không lỗi.
 Run: `npm test` → Expected: `Test Files 41 passed`, `Tests 242 passed`.
 Run: `npm run build` → Expected: build xong. Danh sách route có `/housekeeping`, `/maintenance`, `/pricing`, tất cả là `ƒ` (dynamic).
 
-- [ ] **Step 3: Rà diff cả nhánh**
+- [x] **Step 3: Rà diff cả nhánh**
 
 Run: `git diff main --stat` → Expected: chỉ có file trong `src/`, `docs/superpowers/`, `README.md`. Không có `.env*`, `src/db/schema.ts`, `src/db/relations.ts`.
 Run: `diff -r "$BK/goc" "$QLKS_SCRIPTS_DIR" --exclude='0[1357]_*'` rồi đọc lại toàn bộ thay đổi của `02`, `04`, `06`, `08`. Expected: chỉ có các đoạn của Task 1, 5, 10, 12. `diff "$BK/goc/01_Create_Database.sql" "$QLKS_SCRIPTS_DIR/01_Create_Database.sql"` và `07` không có dòng nào (schema không đổi).
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add README.md
@@ -5842,7 +5844,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
   - Ảnh chụp ba kịch bản ở tiêu chí 1–3 của spec §1, để gửi người dùng.
   - Kết thúc bằng dữ liệu mẫu nạp lại.
 
-- [ ] **Step 1: Hỏi người dùng trước khi ghi vào CSDL dev**
+- [x] **Step 1: Hỏi người dùng trước khi ghi vào CSDL dev**
 
 Gửi câu hỏi sau, và **chỉ làm tiếp khi người dùng đồng ý**:
 
@@ -5857,7 +5859,7 @@ Gửi câu hỏi sau, và **chỉ làm tiếp khi người dùng đồng ý**:
 >
 > Riêng `08_Security_Roles.sql` (cấp quyền cho thủ tục / hàm mới) sẽ tạo hoặc cập nhật user MySQL thật trên server. Có chạy `08` luôn không?
 
-- [ ] **Step 2: Cài `02 → 04 → 06`, nạp lại dữ liệu mẫu**
+- [x] **Step 2: Cài `02 → 04 → 06`, nạp lại dữ liệu mẫu**
 
 ```bash
 cd /Users/anhpham/PA/UIT/Demo
@@ -5885,7 +5887,7 @@ Expected:
 - `1` (bản `sp_GhiNhanSuaPhong` mới), `1` (trigger mới);
 - `Da nap lai du lieu mau vao QuanLyKhachSan: hom nay <dd/mm/yyyy> co 12 luot nhan, 9 luot tra phong`.
 
-- [ ] **Step 3: Chạy `08` nếu người dùng đồng ý ở Step 1**
+- [x] **Step 3: Chạy `08` nếu người dùng đồng ý ở Step 1**
 
 ```bash
 mysql -u"$NGUOI_DUNG" -h"$MAY" -P"$CONG" --default-character-set=utf8mb4 < "$QLKS_SCRIPTS_DIR/08_Security_Roles.sql" > /dev/null && echo "08 ok"
@@ -5894,7 +5896,7 @@ mysql -u"$NGUOI_DUNG" -h"$MAY" -P"$CONG" -N -e "SHOW GRANTS FOR r_letan" | grep 
 
 Expected: `08 ok`, rồi `3` (MySQL có thể in tên thủ tục chữ thường, nên `grep -i`). Người dùng không đồng ý thì bỏ qua bước này, ghi lại trong báo cáo cuối.
 
-- [ ] **Step 4: Dev server và kiểm nhanh bằng `curl`**
+- [x] **Step 4: Dev server và kiểm nhanh bằng `curl`**
 
 Nếu `:3000` đang chạy thì dùng luôn (HMR đã nạp code mới). Nếu chưa, mở `npm run dev` trong Terminal panel của người dùng. Không dùng preview pane, vì ở phase 2 người dùng đã từ chối.
 
@@ -5909,7 +5911,7 @@ curl -s http://localhost:3000/pricing | grep -o "Lịch giá 14 ngày" | head -1
 
 Expected: mọi route `200` (kể cả `?tu=abc`, trang lấy hôm nay). Ba dòng `grep` đều in ra chữ tìm.
 
-- [ ] **Step 5: Đi ba kịch bản bằng Chrome headless**
+- [x] **Step 5: Đi ba kịch bản bằng Chrome headless**
 
 Lưu script sau vào `$BK/kiem-bo-sung.mjs`. Script dùng Chrome của máy với một profile tạm riêng, không đụng profile của người dùng.
 
@@ -6122,7 +6124,7 @@ Expected:
 
 Nếu một bước hết giờ chờ: chụp màn hình lúc đó (`chup("loi")`), đọc thông báo trên trang, sửa rồi chạy lại từ `npm run db:mau` (Step 2).
 
-- [ ] **Step 6: Đối chiếu CSDL dev**
+- [x] **Step 6: Đối chiếu CSDL dev**
 
 ```bash
 PHIEU=$(node -e "console.log(require('$BK/anh/ket-qua.json').phieuGia)")
@@ -6138,7 +6140,7 @@ Expected:
 - Phiếu giá: `1837500.00 | 4 | 1837500.00`, tức (1.500.000 + 3 × 1.950.000) / 4, cọc một đêm.
 - Dòng `SUA_PHONG` mới nhất: `MaTK` `TK00000006`, `ChiPhi` `250000.00`, mô tả "Vòi sen rỉ nước (kiểm thử)".
 
-- [ ] **Step 7: Trả CSDL dev về dữ liệu mẫu, báo người dùng**
+- [x] **Step 7: Trả CSDL dev về dữ liệu mẫu, báo người dùng**
 
 Run: `npm run db:mau` → Expected: `Da nap lai du lieu mau …`.
 
