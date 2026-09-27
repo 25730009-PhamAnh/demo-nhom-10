@@ -1,5 +1,6 @@
 import { afterAll, beforeEach, describe, expect, it } from "vitest";
 
+import { pool } from "@/db";
 import { callProcedure, callProcedureOut } from "@/db/procedures";
 import { dong, trangThai } from "@/test/csdl";
 import { napLaiDuLieuMau } from "@/test/nap-lai-mau";
@@ -75,5 +76,51 @@ describe("sp_HuyPhieuDat", () => {
   it("huy phieu thi hoa don nhap cua phieu cung DaHuy", async () => {
     await callProcedure("sp_HuyPhieuDat", ["DP00000007"]);
     expect(await trangThai("DP00000007")).toEqual({ phieu: "DaHuy", phong: "Trong", hoaDon: "DaHuy" });
+  });
+});
+
+describe("fn_DonGiaTrungBinh: mot cong thuc gia trung binh", () => {
+  // LP00000002: bang gia 880.000 den het 07/01/2027, sau do lui ve gia goc 800.000.
+  it("trung binh tung dem, lam tron 2 chu so; ngay sai tra NULL", async () => {
+    expect(await dong("SELECT fn_DonGiaTrungBinh('LP00000002', '2027-01-06', '2027-01-10') AS g")).toEqual({
+      g: "840000.00",
+    });
+    // (880.000 + 880.000 + 800.000) / 3 = 853.333,33...
+    expect(await dong("SELECT fn_DonGiaTrungBinh('LP00000002', '2027-01-06', '2027-01-09') AS g")).toEqual({
+      g: "853333.33",
+    });
+    expect(await dong("SELECT fn_DonGiaTrungBinh('LP00000002', '2026-10-03', '2026-10-01') AS g")).toEqual({
+      g: null,
+    });
+  });
+
+  it("sp_TraCuuPhongTrong bao dung don gia sp_DatPhong se chot", async () => {
+    const [p] = await callProcedure<{ MaPhong: string; DonGiaMotDem: string; TamTinh: string }>(
+      "sp_TraCuuPhongTrong",
+      ["2027-01-06", "2027-01-09", "LP00000002"],
+    );
+    expect(p).toMatchObject({ DonGiaMotDem: "853333.33", TamTinh: "2559999.99" });
+    const { out } = await callProcedureOut(
+      "sp_DatPhong",
+      ["KH00000001", LE_TAN, "2027-01-06", "2027-01-09", p.MaPhong, 0],
+      1,
+    );
+    expect(
+      await dong("SELECT GiaThueThoiDiem, SoDem FROM CHI_TIET_DAT_PHONG WHERE MaDatPhong = ?", [out[0]]),
+    ).toEqual({ GiaThueThoiDiem: "853333.33", SoDem: 3 });
+  });
+
+  it("trigger: chen chi tiet voi gia 0 thi tu dien gia trung binh, khong phai gia ngay nhan", async () => {
+    await pool.query(
+      `INSERT INTO PHIEU_DAT_PHONG (MaDatPhong, MaKH, MaTK, NgayCheckIn, NgayCheckOut, TienCoc, TrangThai)
+       VALUES ('DP00000200', 'KH00000001', ?, '2027-01-06', '2027-01-10', 0, 'DaDat')`,
+      [LE_TAN],
+    );
+    await pool.query(
+      "INSERT INTO CHI_TIET_DAT_PHONG (MaDatPhong, MaPhong, GiaThueThoiDiem, SoDem) VALUES ('DP00000200', 'PH00000002', 0, 0)",
+    );
+    expect(
+      await dong("SELECT GiaThueThoiDiem, SoDem FROM CHI_TIET_DAT_PHONG WHERE MaDatPhong = 'DP00000200'"),
+    ).toEqual({ GiaThueThoiDiem: "840000.00", SoDem: 4 });
   });
 });
