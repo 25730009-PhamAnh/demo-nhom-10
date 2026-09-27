@@ -1,6 +1,6 @@
 # Bổ sung nghiệp vụ: khách hàng, buồng phòng – bảo trì, bảng giá theo ngày
 
-Ngày: 2026-09-27 · Trạng thái: chờ duyệt spec
+Ngày: 2026-09-27 · Trạng thái: đã duyệt spec (27/09/2026); bổ sung khi lập plan (các dòng *Bổ sung khi lập plan*)
 Cần xong trước: phase 2 (`2026-09-26-noi-csdl-phase-2-ghi-design.md`). Không phụ thuộc phase 3.
 
 ## 1. Mục tiêu
@@ -57,7 +57,7 @@ mỗi vi phạm một `SIGNAL` riêng:
 |---|---|---|
 | Họ tên | `TRIM` | Bắt buộc, tối đa 100 ký tự |
 | CCCD | `TRIM`, `UPPER` | Bắt buộc, `^[0-9A-Z]{9,20}$` — nhận CMND 9 số, CCCD 12 số, hộ chiếu |
-| SĐT | bỏ khoảng trắng, `.`, `-`; rỗng → `NULL` | Không bắt buộc, `^[+]?[0-9]{9,15}$` |
+| SĐT | bỏ khoảng trắng, `.`, `-`; rỗng → `NULL` | Không bắt buộc, `^[+]?[0-9]{9,14}$` (vừa cột `VARCHAR(15)`) |
 | Email | `TRIM`, `LOWER`; rỗng → `NULL` | Không bắt buộc, dạng `a@b.c` |
 
 - Trùng CCCD hoặc email với khách **khác**: `SIGNAL` kèm mã khách đã có, ví dụ
@@ -67,6 +67,9 @@ mỗi vi phạm một `SIGNAL` riêng:
   đầu tiên là `KH00000061`), trả result set là dòng vừa thêm.
 - `sp_SuaKhachHang`: `MaKH` không tồn tại thì từ chối. Cho sửa cả CCCD (sửa sai sót), vẫn kiểm trùng.
 - Không làm xóa khách: `PHIEU_DAT_PHONG` tham chiếu `ON DELETE RESTRICT`, và QT-12 cấm xóa vật lý.
+- *Bổ sung khi lập plan:* bộ quy tắc trên nằm trong một thủ tục nội bộ `sp_ChuanHoaKhachHang` (tham số
+  `INOUT`, như `sp_LapChiTietHoaDon` là thủ tục nội bộ của `sp_LapHoaDon`), hai thủ tục công khai cùng
+  gọi. Tham số SĐT rộng `VARCHAR(20)` vì còn khoảng trắng trước khi chuẩn hóa.
 
 `08`: `GRANT EXECUTE` hai thủ tục cho `r_letan`.
 
@@ -77,7 +80,9 @@ mỗi vi phạm một `SIGNAL` riêng:
 - `q` đã `trim`. Rỗng → 10 khách có mã lớn nhất (mới tạo gần đây).
 - Khớp `LIKE '%q%'` trên `HoTen` và `MaKH`; `SDT` và `CCCD` so với `q` đã bỏ khoảng trắng, `.`, `-`.
   Escape `%`, `_`, `\` trong `q`.
-- Collation `utf8mb4_unicode_ci` không phân biệt dấu, nên gõ "Nguyễn" ra "Nguyen".
+- Không phân biệt dấu: so `HoTen COLLATE utf8mb4_0900_ai_ci`. *Bổ sung khi lập plan:* collation của cột
+  (`utf8mb4_unicode_ci`) coi "ễ" là "e" nhưng **không** coi "Đ" là "D" ("Đặng" không ra "Dang");
+  `utf8mb4_0900_ai_ci` coi cả hai là một.
 - Trùng khít CCCD hoặc SĐT xếp đầu, rồi theo họ tên. Tối đa 10 dòng, mỗi dòng kèm `soLanLuuTru`
   (cùng định nghĩa với `getDanhSachKhachHang`).
 
@@ -203,10 +208,17 @@ Phase 3 bỏ ô này, lấy người trong phiên.
 **Sơ đồ phòng**
 
 - Ô phòng thành nút chọn. Chọn một phòng thì hiện khung thao tác ở đầu lưới: số phòng, loại, trạng
-  thái; "Báo dọn phòng"; "Báo bảo trì" kèm ô mô tả. Nút không hợp với trạng thái thì khóa, kèm dòng
-  lý do. Phòng Bảo trì hiện sự cố đang mở (từ `getPhongDangBaoTri`).
+  thái; "Báo dọn phòng"; "Báo bảo trì" kèm ô mô tả. Phòng Bảo trì hiện sự cố đang mở (từ
+  `getPhongDangBaoTri`).
+- *Bổ sung khi lập plan:* nút **không** khóa theo trạng thái phòng (bản duyệt ghi "khóa, kèm lý do").
+  Quy ước của repo là không lặp quy tắc nghiệp vụ ở app: bấm nút sai trạng thái thì thủ tục từ chối
+  và câu của CSDL hiện ngay dưới nút, như mọi nút ghi của phase 2.
 - Thẻ "Nhật ký buồng phòng & sửa chữa" chỉ còn để xem: bỏ hai nút ghi nhận (chuyển sang hai màn nhân
   viên), bỏ `nhat-ky-form.tsx`.
+
+**Tổng quan** *(bổ sung khi lập plan)*: thẻ "N phòng chờ dọn" dẫn tới `/housekeeping`. Thẻ "Phòng … báo
+hỏng" đang lấy dòng `SUA_PHONG` 0đ (gặp cả dòng cũ của phòng 303 đang có khách, không phải phiếu đang
+mở), đổi thành "N phòng đang bảo trì" từ `getPhongDangBaoTri()`, dẫn tới `/maintenance`.
 
 **Server Action**
 
@@ -296,13 +308,13 @@ Phiếu đã lập không đổi: giá đã chốt trong `CHI_TIET_DAT_PHONG` (Q
 |---|---|
 | `Scripts/setup_database/02_Functions.sql` | `fn_DonGiaTrungBinh`, cập nhật khối Mong doi (6 hàm) |
 | `Scripts/setup_database/04_Triggers.sql` | `trg_CTDP_TinhThanhTien_BI` dùng `fn_DonGiaTrungBinh` |
-| `Scripts/setup_database/06_Procedures.sql` | 6 thủ tục mới (§3.1, §4.2, §5.2); sửa `sp_DatPhong`, `sp_TraCuuPhongTrong`, `sp_GhiNhanDonPhong`, `sp_GhiNhanSuaPhong`; khối Mong doi |
+| `Scripts/setup_database/06_Procedures.sql` | 7 thủ tục mới, trong đó `sp_ChuanHoaKhachHang` nội bộ (§3.1, §4.2, §5.2); sửa `sp_DatPhong`, `sp_TraCuuPhongTrong`, `sp_GhiNhanDonPhong`, `sp_GhiNhanSuaPhong`; khối Mong doi |
 | `Scripts/setup_database/08_Security_Roles.sql` | quyền ở §3.1, §4.2, §5.1, §5.2 |
 | `src/lib/queries/{customers,bookings,rooms}.ts` | §3.2, §5.3, §4.3 |
 | `src/lib/queries/{buong-phong,bang-gia}.ts`, `src/lib/vai-tro.ts` *(mới)* | §4.3, §5.3 |
 | `src/lib/thao-tac/{khach-hang,bang-gia}.ts` *(mới)*, `buong-phong.ts` | mỗi hàm một thủ tục |
 | `src/app/(app)/customers/actions.ts`, `housekeeping/`, `maintenance/`, `pricing/` *(mới)* | action, trang |
-| `src/app/(app)/rooms/{actions.ts,page.tsx}`, `bookings/new/page.tsx` | §4.4, §3.3 |
+| `src/app/(app)/rooms/{actions.ts,page.tsx}`, `(app)/page.tsx`, `bookings/new/page.tsx` | §4.4, §3.3 |
 | `src/components/customers/*`, `bookings/booking-form.tsx`, `rooms/*` | §3.3, §4.4, §5.3 |
 | `src/components/{housekeeping,maintenance,pricing}/*`, `shared/chon-nhan-vien.tsx` *(mới)* | §4.4, §5.3 |
 | `src/lib/nav.ts` | thêm Buồng phòng, Bảo trì, Bảng giá |
@@ -340,7 +352,7 @@ Trên `QuanLyKhachSan_test`, ngày đóng băng 23/09/2026 10:00, nạp lại d�
 - `sp_DatPhong` đổi cách tính giá: test hồi quy phải cho đúng giá như trước với mọi phiếu.
 - Thư mục `Scripts/` ngoài git và nhóm có thể đang sửa: đọc lại ngay trước khi sửa, giữ bản gốc ở
   scratchpad.
-- Báo cáo (nhóm tự sửa, app không đụng `Report.docx`): Bảng 4.1 thêm 6 thủ tục, sửa mô tả
+- Báo cáo (nhóm tự sửa, app không đụng `Report.docx`): Bảng 4.1 thêm 7 thủ tục (1 nội bộ), sửa mô tả
   `sp_GhiNhanDonPhong`, `sp_GhiNhanSuaPhong`, `sp_TraCuuPhongTrong`; Bảng 4.2 mô tả trigger
   `trg_CTDP_TinhThanhTien_BI`; Bảng 4.3 thêm hàm thứ 6.
 
