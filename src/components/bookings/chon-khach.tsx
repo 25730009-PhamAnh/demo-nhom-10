@@ -176,6 +176,9 @@ function TimKhach({
               e.preventDefault();
               chon(dangChon);
             } else if (e.key === "Escape") {
+              // O type="search": mac dinh Esc xoa chu va ban su kien input, lam
+              // danh sach mo lai voi 10 khach moi nhat. Esc chi dong danh sach.
+              e.preventDefault();
               setMo(false);
             }
           }}
