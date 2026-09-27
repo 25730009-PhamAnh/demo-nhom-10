@@ -122,7 +122,7 @@ export function CustomerTable({ khach }: { khach: KhachHangTrenBang[] }) {
               <th className="border-border bg-card sticky top-0 border-b pb-[9px] text-right font-semibold">
                 Tổng chi tiêu
               </th>
-              <th className="border-border bg-card sticky top-0 border-b pb-[9px] font-semibold">
+              <th className="border-border bg-card sticky top-0 border-b pb-[9px] pl-6 font-semibold">
                 Trạng thái
               </th>
               <th className="border-border bg-card sticky top-0 border-b pb-[9px]">
@@ -153,7 +153,7 @@ export function CustomerTable({ khach }: { khach: KhachHangTrenBang[] }) {
                 <td className="border-border border-b py-[11px] text-right font-mono text-[12.5px]">
                   {formatVnd(k.tongChiTieu)}
                 </td>
-                <td className="border-border border-b py-[11px]">
+                <td className="border-border border-b py-[11px] pl-6">
                   {k.dangLuuTru ? (
                     <span
                       className="rounded-full px-[9px] py-[3px] text-[11.5px] font-medium"
