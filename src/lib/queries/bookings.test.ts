@@ -93,6 +93,7 @@ describe("getLoaiPhongConTrong", () => {
       tenLoaiPhong: "Standard Single",
       donGiaNgay: "600000.00",
       soPhongTrong: 5,
+      chiTietGia: [{ tuNgay: "2026-10-01", denNgay: "2026-10-02", donGia: "600000.00", soDem: 2 }],
     });
     expect(ds.map((l) => l.soPhongTrong)).toEqual([5, 4, 3, 2, 2, 3, 3, 3, 3, 2]);
   });
@@ -121,6 +122,14 @@ describe("getLoaiPhongConTrong", () => {
     // lui ve DonGiaNgay 800.000, nen trung binh 4 dem la 840.000.
     const ds = await getLoaiPhongConTrong("2027-01-06", "2027-01-10");
     expect(ds.find((l) => l.maLoaiPhong === "LP00000002")!.donGiaNgay).toBe("840000.00");
+  });
+
+  it("chiTietGia gop cac dem cung gia, dung cac dem da tinh trung binh", async () => {
+    const ds = await getLoaiPhongConTrong("2027-01-06", "2027-01-10");
+    expect(ds.find((l) => l.maLoaiPhong === "LP00000002")!.chiTietGia).toEqual([
+      { tuNgay: "2027-01-06", denNgay: "2027-01-07", donGia: "880000.00", soDem: 2 },
+      { tuNgay: "2027-01-08", denNgay: "2027-01-09", donGia: "800000.00", soDem: 2 },
+    ]);
   });
 
   it("nem loi cua CSDL khi ngay tra khong sau ngay nhan", async () => {

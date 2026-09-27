@@ -6,6 +6,7 @@ import { db } from "@/db";
 import { thongBaoCsdl } from "@/db/loi";
 import { callProcedure } from "@/db/procedures";
 import * as schema from "@/db/schema";
+import { gopDoanGia, type DoanGia, type GiaDem } from "@/lib/chi-tiet-gia";
 import { laNgay } from "@/lib/thao-tac/kiem-tra";
 import { congTien } from "@/lib/tinh-toan";
 
@@ -38,11 +39,13 @@ export type LoaiPhongConTrong = {
   tenLoaiPhong: string;
   /**
    * Don gia mot dem ma sp_DatPhong se chot cho dung khoang ngay nay (RB-06):
-   * trung binh gia BANG_GIA_PHONG tung dem, dem chua khai gia thi lui ve
-   * LOAI_PHONG.DonGiaNgay. Form dat phong tam tinh va tinh tien coc theo so nay.
+   * fn_DonGiaTrungBinh, cung ham sp_DatPhong goi. Form dat phong tam tinh va
+   * tinh tien coc theo so nay.
    */
   donGiaNgay: string;
   soPhongTrong: number;
+  /** Gia tung dem gop thanh doan, chi de hien "Chi tiet gia". */
+  chiTietGia: DoanGia[];
 };
 
 const pdp = schema.phieuDatPhong;
@@ -126,9 +129,13 @@ export async function getLoaiPhongConTrong(
   checkIn: string,
   checkOut: string,
 ): Promise<LoaiPhongConTrong[]> {
-  const [[loai], phongTrong] = await Promise.all([
-    // Cung cong thuc voi buoc 3e cua sp_DatPhong: moi dem mot gia
-    // (fn_DonGiaPhongTheoNgay), lay trung binh, lam tron 2 chu so.
+  const [[loai], [dem], phongTrong] = await Promise.all([
+    db.execute(sql`
+      SELECT   MaLoaiPhong AS maLoaiPhong,
+               TenLoaiPhong AS tenLoaiPhong,
+               fn_DonGiaTrungBinh(MaLoaiPhong, ${checkIn}, ${checkOut}) AS donGiaNgay
+      FROM     LOAI_PHONG
+      ORDER BY MaLoaiPhong`),
     db.execute(sql`
       WITH RECURSIVE CacDem (Ngay) AS (
         SELECT CAST(${checkIn} AS DATE)
@@ -136,18 +143,23 @@ export async function getLoaiPhongConTrong(
         SELECT Ngay + INTERVAL 1 DAY FROM CacDem WHERE Ngay + INTERVAL 1 DAY < ${checkOut}
       )
       SELECT   lp.MaLoaiPhong AS maLoaiPhong,
-               lp.TenLoaiPhong AS tenLoaiPhong,
-               CAST(ROUND(AVG(fn_DonGiaPhongTheoNgay(lp.MaLoaiPhong, d.Ngay)), 2)
-                    AS DECIMAL(18,2)) AS donGiaNgay
+               DATE_FORMAT(d.Ngay, '%Y-%m-%d') AS ngay,
+               fn_DonGiaPhongTheoNgay(lp.MaLoaiPhong, d.Ngay) AS donGia
       FROM     LOAI_PHONG lp CROSS JOIN CacDem d
-      GROUP BY lp.MaLoaiPhong, lp.TenLoaiPhong
-      ORDER BY lp.MaLoaiPhong`),
+      ORDER BY lp.MaLoaiPhong, d.Ngay`),
     callProcedure<{ MaLoaiPhong: string }>("sp_TraCuuPhongTrong", [checkIn, checkOut, null]),
   ]);
 
-  return (loai as unknown as Omit<LoaiPhongConTrong, "soPhongTrong">[]).map((l) => ({
+  const giaDem = dem as unknown as (GiaDem & { maLoaiPhong: string })[];
+  type DongLoai = Pick<LoaiPhongConTrong, "maLoaiPhong" | "tenLoaiPhong" | "donGiaNgay">;
+  return (loai as unknown as DongLoai[]).map((l) => ({
     ...l,
     soPhongTrong: phongTrong.filter((p) => p.MaLoaiPhong === l.maLoaiPhong).length,
+    chiTietGia: gopDoanGia(
+      giaDem
+        .filter((d) => d.maLoaiPhong === l.maLoaiPhong)
+        .map((d) => ({ ngay: d.ngay, donGia: d.donGia })),
+    ),
   }));
 }
 

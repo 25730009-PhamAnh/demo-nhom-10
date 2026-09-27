@@ -24,6 +24,12 @@ export function formatNgay(iso: string): string {
   return `${d}/${m}/${y}`;
 }
 
+/** '2026-09-27' -> '27/09'. Nhan ca chuoi DATETIME. */
+export function formatNgayNgan(iso: string): string {
+  const [d, m] = tachNgay(iso);
+  return `${d}/${m}`;
+}
+
 /** '2026-09-23 11:42:00' -> '11:42 · 23/09/2026'. */
 export function formatNgayGio(iso: string): string {
   const gio = iso.split(/[ T]/)[1]?.slice(0, 5) ?? "00:00";
